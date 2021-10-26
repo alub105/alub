@@ -1,4 +1,4 @@
-package com.alub.a105.alub;
+package com.a105.alub;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
