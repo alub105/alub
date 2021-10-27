@@ -1,5 +1,5 @@
 package com.a105.alub.domain.enums;
 
-public enum AuthProvider{
+public enum AuthProvider {
   github
 }

@@ -1,5 +1,5 @@
 package com.a105.alub.domain.enums;
 
-public enum CommitType{
+public enum CommitType {
   DEFAULT, CUSTOM
 }
