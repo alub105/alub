@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 public class LoginReq {
   private String code;
-  private Platform plateform;
+  private Platform platform;
 }

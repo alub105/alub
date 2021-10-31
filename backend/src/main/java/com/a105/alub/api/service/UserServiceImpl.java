@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     
     String token = gitHubAuthenticate.getJwtToken(userDetails);
     return LoginRes.builder().userId(user.getId()).name(user.getName()).email(user.getEmail())
-        .imgeUrl(user.getImageUrl()).token(token).build();
+        .imageUrl(user.getImageUrl()).token(token).build();
   }
 
 

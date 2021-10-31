@@ -11,6 +11,6 @@ public class LoginRes {
   private String name;
   private String email;
   private String token;
-  private String imgeUrl;
+  private String imageUrl;
   
 }
