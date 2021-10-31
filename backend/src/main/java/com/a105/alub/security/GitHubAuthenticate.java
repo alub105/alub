@@ -58,13 +58,14 @@ public class GitHubAuthenticate {
    * @return User
    */
   private User registerNewUser(GithubUserRes githubUserRes, String accessToken) {
-    User user = new User();
-    user.setProvider(AuthProvider.github);
-    user.setProviderId(githubUserRes.getId());
-    user.setName(githubUserRes.getLogin());
-    user.setEmail(githubUserRes.getEmail());
-    user.setImageUrl(githubUserRes.getAvatarUrl());
-    user.setGithubAccessToken(accessToken);
+    User user = User.builder()
+        .name(githubUserRes.getLogin())
+        .email(githubUserRes.getEmail())
+        .imageUrl(githubUserRes.getAvatarUrl())
+        .provider(AuthProvider.github)
+        .providerId(githubUserRes.getId())
+        .githubAccessToken(accessToken)
+        .build();
     return userRepository.save(user);
   }
 

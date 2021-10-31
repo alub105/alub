@@ -9,12 +9,14 @@ import javax.persistence.Id;
 import com.a105.alub.domain.enums.AuthProvider;
 import com.a105.alub.domain.enums.CommitType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@Builder
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
