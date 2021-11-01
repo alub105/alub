@@ -26,7 +26,7 @@ client-secret 적용 방법에는 2가지가 있다.
 
      - Name: `GITHUB_CLIENT_SECRET` 
 
-     - Value: [github에서 발급 받은 client secrets]
+     - Value: `[github에서 발급 받은 client secrets]`
 
   <img src="https://user-images.githubusercontent.com/62821450/139608306-59e00734-e9e6-49d6-99ec-01a3f564eace.png" alt="image-20211101100756925" style="zoom:80%;" />
 
