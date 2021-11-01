@@ -1,5 +1,9 @@
 package com.a105.alub.api.service;
 
+import java.util.Collections;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -11,6 +15,7 @@ import com.a105.alub.api.response.GithubUserRes;
 import com.a105.alub.api.response.LoginRes;
 import com.a105.alub.config.GithubConfig;
 import com.a105.alub.domain.entity.User;
+import com.a105.alub.domain.enums.Platform;
 import com.a105.alub.domain.repository.UserRepository;
 import com.a105.alub.security.GitHubAuthenticate;
 import com.a105.alub.security.UserPrincipal;
@@ -39,10 +44,12 @@ public class UserServiceImpl implements UserService {
     GithubUserRes githubUserRes = getGithubUser(githubTokenRes.getAccessToken());
 
     User user = gitHubAuthenticate.checkUser(githubTokenRes, githubUserRes);
+    
     UserDetails userDetails = loadUserByUsername(user.getName());
+    
     log.info("User Details: {}", userDetails);
     
-    String token = gitHubAuthenticate.getJwtToken(userDetails);
+    String token = gitHubAuthenticate.getJwtToken(userDetails, loginReq.getPlatform());
     return LoginRes.builder().userId(user.getId()).name(user.getName()).email(user.getEmail())
         .imageUrl(user.getImageUrl()).token(token).build();
   }
