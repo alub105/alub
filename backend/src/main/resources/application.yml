@@ -11,3 +11,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+     
+github:
+  clientId: 4e92f22f41639a118b4c
+  clientSecret: ${GITHUB_CLIENT_SECRET}
+  
+app:
+  tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+  tokenExpirationExtension: 31556952000
+  tokenExpirationWeb: 1209601000

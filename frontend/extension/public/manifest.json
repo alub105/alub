@@ -13,6 +13,9 @@
       "128": "logo192.png"
   },
   "permissions": ["tabs", "storage", "activeTab"],
+  "background": {
+    "service_worker": "./background.js"
+  },
   "content_scripts": [
     {
         "matches": ["http://*/*", "https://*/*"],
