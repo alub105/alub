@@ -1,0 +1,101 @@
+/*------------- Global -----------*/
+:root {
+  --text-gray: rgb(192, 192, 192);
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+/*-----------x- Global -x---------*/
+.main {
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.main h1,
+.main h3 {
+  text-align: center;
+}
+
+.form {
+  margin-top: 100px;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 70px;
+}
+
+/*-------------- 새 레포 ---------------*/
+.first-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.first-row .first-element {
+  width: 60vw;
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+}
+.first-row input {
+  display: inline-block;
+  width: 30vw;
+  padding: 1rem 2rem;
+}
+.git-user-name {
+  padding: 1rem 4rem;
+  background-color: var(--text-gray);
+}
+
+.first-row .repo-name-check {
+  padding: 0 2.3em;
+}
+/*-----------x-- 새 레포 --x------------*/
+
+/*-------------- 기존 레포 ---------------*/
+.second-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: no-wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.second-row select {
+  width: 20vw;
+  padding: 0 0.5rem;
+}
+
+.second-row input {
+  min-width: 29vw;
+  padding: 1rem 2rem;
+}
+
+/*---------x---- 기존 레포 ----x---------*/
+.btn {
+  text-align: center;
+  width: 100%;
+  margin-top: 70px;
+}
+
+.repo-btn {
+  width: 15vw;
+  height: 3rem;
+}

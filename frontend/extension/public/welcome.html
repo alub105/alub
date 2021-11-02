@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome</title>
+
+    <link rel="stylesheet" href="./css/welcome.css" />
+  </head>
+  <body>
+    <div class="main">
+      <h1 class="title">Welcome ALUB</h1>
+      <h3>GitHub Repository 설정</h3>
+
+      <form id="repo-form" class="form flex-column">
+        <div>
+          <input type="radio" id="new-repo" name="repo-setting" value="new-repo" />
+          <label for="new-repo">새 레포지토리 생성 </label>
+          <div class="first-row">
+            <div class="first-element">
+              <div class="git-user-name">github.com/kim_ssafy</div>
+              <input type="text" id="repo-name" name="new-repo-name" minlength="1" maxlength="40" />
+            </div>
+            <button class="repo-name-check">중복 체크</button>
+          </div>
+        </div>
+        <div>
+          <input type="radio" id="exist-repo" name="repo-setting" value="exist-repo" />
+          <label for="exist-repo">기존 레포지토리 폴더 생성 </label>
+          <div class="second-row">
+            <div class="git-user-name">github.com/kim_ssafy</div>
+            <select id="exist-repo-names">
+              <option value="option1">TIL</option>
+              <option value="option2">BOJ</option>
+              <option value="option3">PROGRAMMERS</option>
+            </select>
+            <input type="text" id="dir-name" maxlength="4096" />
+          </div>
+        </div>
+        <div class="btn">
+          <button class="repo-btn">Get Started</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
