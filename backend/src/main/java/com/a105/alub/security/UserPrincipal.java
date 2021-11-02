@@ -34,7 +34,7 @@ public class UserPrincipal implements UserDetails {
   
   public static UserPrincipal create(User user, Platform platform) {
     List<GrantedAuthority> authorities =
-        Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+platform));
+        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + platform));
 
     return new UserPrincipal(user.getId(), user.getName(), null, authorities);
   }
