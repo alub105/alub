@@ -6,6 +6,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import com.a105.alub.domain.enums.AuthProvider;
 import com.a105.alub.domain.enums.CommitType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,6 +23,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class User extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +44,14 @@ public class User extends BaseTimeEntity {
   
   private String dirPath;
   
+  @Enumerated(EnumType.STRING)
+  @ColumnDefault("'DEFAULT'")
   private CommitType commit;
   
+  @ColumnDefault("true")
   private Boolean timerShown;
   
+  @ColumnDefault("'00:00:00'")
   private String timerDefaultTime;
   
   private String githubAccessToken;
