@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.a105.alub.api.service.UserService;
+import com.a105.alub.domain.enums.Platform;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -32,8 +33,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
       if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
         String name = tokenProvider.getUserIdFromToken(jwt);
-
-        UserDetails userDetails = userService.loadUserByUsername(name);
+        Platform platform = tokenProvider.getPlatformFromToken(jwt);
+        
+        UserDetails userDetails = userService.loadUserByUsername(name, platform);
         UsernamePasswordAuthenticationToken authentication =
             new UsernamePasswordAuthenticationToken(userDetails, null,
                 userDetails.getAuthorities());

@@ -1,9 +1,6 @@
 package com.a105.alub.api.service;
 
-import java.util.Collections;
-import java.util.List;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import javax.persistence.spi.LoadState;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -45,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
     User user = gitHubAuthenticate.checkUser(githubTokenRes, githubUserRes);
     
-    UserDetails userDetails = loadUserByUsername(user.getName());
+    UserDetails userDetails = loadUserByUsername(user.getName(), loginReq.getPlatform());
     
     log.info("User Details: {}", userDetails);
     
@@ -62,9 +59,16 @@ public class UserServiceImpl implements UserService {
     return UserPrincipal.create(user);
   }
 
+  @Override
+  public UserDetails loadUserByUsername(String username, Platform platform) throws UsernameNotFoundException {
+    User user = userRepository.findByName(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
+    return UserPrincipal.create(user, platform);
+  }
   
   /**
    * github의 user 정보 가져오기
+   * 
    * @param githubAccessToken user 정보가져오기 위한 access_token
    * @return github 유저 정보
    */

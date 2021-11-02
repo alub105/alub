@@ -30,9 +30,9 @@ public class TokenProvider {
         appConfig.getTokenExpirationExtension() : appConfig.getTokenExpirationWeb();
     Date expiryDate = new Date(now.getTime() + expirationMsec);
 
-    return Jwts.builder().setSubject(userPrincipal.getUsername()).setIssuedAt(new Date())
-        .setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, appConfig.getTokenSecret())
-        .compact();
+    return Jwts.builder().setSubject(userPrincipal.getUsername()).claim("platform", platform)
+        .setIssuedAt(new Date()).setExpiration(expiryDate)
+        .signWith(SignatureAlgorithm.HS512, appConfig.getTokenSecret()).compact();
   }
 
   public String getUserIdFromToken(String token) {
@@ -40,6 +40,13 @@ public class TokenProvider {
         Jwts.parser().setSigningKey(appConfig.getTokenSecret()).parseClaimsJws(token).getBody();
 
     return claims.getSubject();
+  }
+
+  public Platform getPlatformFromToken(String token) {
+    Claims claims =
+        Jwts.parser().setSigningKey(appConfig.getTokenSecret()).parseClaimsJws(token).getBody();
+
+    return Platform.valueOf((String) claims.get("platform"));
   }
 
   public boolean validateToken(String authToken) {

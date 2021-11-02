@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.a105.alub.domain.entity.User;
+import com.a105.alub.domain.enums.Platform;
 
 public class UserPrincipal implements UserDetails {
   private final Long id;
@@ -27,6 +28,13 @@ public class UserPrincipal implements UserDetails {
   public static UserPrincipal create(User user) {
     List<GrantedAuthority> authorities =
         Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    
+    return new UserPrincipal(user.getId(), user.getName(), null, authorities);
+  }
+  
+  public static UserPrincipal create(User user, Platform platform) {
+    List<GrantedAuthority> authorities =
+        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + platform));
 
     return new UserPrincipal(user.getId(), user.getName(), null, authorities);
   }
