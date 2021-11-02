@@ -1,0 +1,90 @@
+/*-------------- Global ---------------*/
+:root {
+  --white: #ffffff;
+  --text-gray: #90e0ef;
+  --box-width: 500px;
+  --box-height: 300px;
+
+  --background-linear: linear-gradient(#141e30, #243b55);
+  --background-color: rgba(0, 0, 0, 0.5);
+}
+
+p {
+  color: var(--white);
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+/*-----------x--- Global --x------------*/
+
+.App {
+  width: var(--box-width);
+  height: var(--box-height);
+  background: var(--background-linear);
+}
+
+.App-header {
+  /* background-color: #282c34; */
+  min-height: 5vh;
+  height: 60px;
+  width: 100%;
+  justify-content: center;
+}
+
+.title {
+  font-size: 1.2rem;
+  padding: 0rem 0.5rem;
+  margin-left: 1rem;
+  color: var(--white);
+}
+
+/*--------------- Main ---------------*/
+.App-main {
+  width: calc(var(--box-width) - 50px);
+  min-height: 215px;
+  position: relatvie;
+
+  margin: 0 auto;
+
+  background-color: var(--background-color);
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.authenticate {
+  height: 30vh;
+  width: 90%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.authenticate .middle-title {
+  font-size: 1.1rem;
+  color: var(--text-gray);
+  margin-top: 3rem;
+}
+
+.authenticate .login-button {
+  width: 50%;
+  height: 1.8rem;
+  border-radius: 5px;
+  border: none;
+  margin-top: 1.1rem;
+  background-color: var(--text-gray);
+}
+
+.authenticate .login-button:hover {
+  cursor: pointer;
+}
+
+.authenticate .login-button-title {
+  padding: 0 0.3rem;
+  font-size: small;
+  font-weight: 700;
+}
+/*----------x---- Main ----x----------*/
