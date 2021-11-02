@@ -39,7 +39,7 @@ public class User {
   
   private String repoName;
   
-  private String dirName;
+  private String dirPath;
   
   private CommitType commit;
   

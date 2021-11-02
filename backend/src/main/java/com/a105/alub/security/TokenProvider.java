@@ -13,6 +13,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.a105.alub.config.AppConfig;
+import com.a105.alub.domain.enums.Platform;
 
 @Slf4j
 @Service
@@ -21,12 +22,14 @@ public class TokenProvider {
 
   private final AppConfig appConfig;
 
-  public String createToken(Authentication authentication) {
+  public String createToken(Authentication authentication, Platform platform) {
     UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
     Date now = new Date();
-    Date expiryDate = new Date(now.getTime() + appConfig.getTokenExpirationMsec());
-    
+    long expirationMsec = platform == Platform.EXTENSION ? 
+        appConfig.getTokenExpirationExtension() : appConfig.getTokenExpirationWeb();
+    Date expiryDate = new Date(now.getTime() + expirationMsec);
+
     return Jwts.builder().setSubject(userPrincipal.getUsername()).setIssuedAt(new Date())
         .setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, appConfig.getTokenSecret())
         .compact();

@@ -9,6 +9,7 @@ import com.a105.alub.api.response.GithubTokenRes;
 import com.a105.alub.api.response.GithubUserRes;
 import com.a105.alub.domain.entity.User;
 import com.a105.alub.domain.enums.AuthProvider;
+import com.a105.alub.domain.enums.Platform;
 import com.a105.alub.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,11 @@ public class GitHubAuthenticate {
   private final UserRepository userRepository;
   private final TokenProvider tokenProvider;
 
-  public String getJwtToken(UserDetails userDetails) {
+  public String getJwtToken(UserDetails userDetails, Platform platform) {
 
     // 사용자 principal과 credential 정보 Authentication에 담기
-    // UsernamePasswordAuthenticationToken가 Authentication을 상속받는 AbstractAuthenticationToken을 상속 받고
-    // 있음
+    // UsernamePasswordAuthenticationToken이 Authentication을 상속받는 
+    // AbstractAuthenticationToken을 상속 받고 있음
     UsernamePasswordAuthenticationToken authentication =
         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
@@ -33,7 +34,7 @@ public class GitHubAuthenticate {
     // SecurityContext는 SecurityContextHolder에 보관
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    return tokenProvider.createToken(authentication);
+    return tokenProvider.createToken(authentication, platform);
   }
 
   public User checkUser(GithubTokenRes githubTokenRes, GithubUserRes githubUserRes) {
