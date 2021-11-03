@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.a105.alub.api.request.LoginReq;
 import com.a105.alub.api.response.LoginRes;
-import com.a105.alub.api.response.UserInfoRes;
+import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.api.service.UserService;
 import com.a105.alub.common.response.ApiResponseDto;
 import com.a105.alub.security.CurrentUser;
@@ -25,8 +25,8 @@ public class UserController {
   private final UserService userService;
 
   @GetMapping("/")
-  public ApiResponseDto<UserInfoRes> getInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
-    UserInfoRes userInfoRes = userService.getUserInfo(userPrincipal.getName());
+  public ApiResponseDto<MyInfoRes> getMyInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    MyInfoRes userInfoRes = userService.getMyInfo(userPrincipal.getName());
     log.info("Get User Info: {}", userInfoRes);
 
     return ApiResponseDto.success(userInfoRes);

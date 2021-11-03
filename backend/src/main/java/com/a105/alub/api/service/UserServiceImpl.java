@@ -10,7 +10,7 @@ import com.a105.alub.api.request.LoginReq;
 import com.a105.alub.api.response.GithubTokenRes;
 import com.a105.alub.api.response.GithubUserRes;
 import com.a105.alub.api.response.LoginRes;
-import com.a105.alub.api.response.UserInfoRes;
+import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.config.GithubConfig;
 import com.a105.alub.domain.entity.User;
 import com.a105.alub.domain.enums.Platform;
@@ -69,10 +69,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserInfoRes getUserInfo(String username) {
+  public MyInfoRes getMyInfo(String username) {
     User user = userRepository.findByName(username)
         .orElseThrow(() -> new UsernameNotFoundException(username));
-    return UserInfoRes.builder().userId(user.getId()).email(user.getEmail()).name(user.getName())
+    return MyInfoRes.builder().userId(user.getId()).email(user.getEmail()).name(user.getName())
         .imageUrl(user.getImageUrl()).build();
   }
 

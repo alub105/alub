@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UserInfoRes {
+public class MyInfoRes {
 
   private Long userId;
   private String email;

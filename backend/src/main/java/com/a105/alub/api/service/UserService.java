@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.a105.alub.api.request.LoginReq;
 import com.a105.alub.api.response.LoginRes;
-import com.a105.alub.api.response.UserInfoRes;
+import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.domain.enums.Platform;
 
 public interface UserService extends UserDetailsService {
@@ -15,5 +15,5 @@ public interface UserService extends UserDetailsService {
   UserDetails loadUserByUsername(String username, Platform platform)
       throws UsernameNotFoundException;
 
-  UserInfoRes getUserInfo(String username);
+  MyInfoRes getMyInfo(String username);
 }
