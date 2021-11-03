@@ -33,6 +33,11 @@ public class UserServiceImpl implements UserService {
       .defaultHeader("CONTENT-TYPE", "application/json").defaultHeader("Accept", "application/json")
       .build();
 
+  /**
+   * github 인증하고 user 저장 후 user 정보 전달
+   * @param loginReq github code와 platform이 담긴 객체
+   * @return user 정보와 jwt 담긴 객체 반환
+   */
   @Override
   public LoginRes login(LoginReq loginReq) {
 
@@ -51,14 +56,19 @@ public class UserServiceImpl implements UserService {
     return LoginRes.builder().userId(user.getId()).name(user.getName()).email(user.getEmail())
         .imageUrl(user.getImageUrl()).token(token).build();
   }
-  
+
+  /**
+   * 사용자가 설정한 설정값 조회
+   * @param username user 이름
+   * @return 설정값들을 담은 객체 반환
+   */
   @Override
   public ConfigsRes getConfigs(String username) {
-    
+
     User user = userRepository.findByName(username)
         .orElseThrow(() -> new UsernameNotFoundException(username));
-    
-    return ConfigsRes.builder()
+
+        return ConfigsRes.builder()
         .commit(user.getCommit())
         .timerDefaultTime(user.getTimerDefaultTime())
         .timerShown(user.getTimerShown())
@@ -66,13 +76,18 @@ public class UserServiceImpl implements UserService {
         .dirPath(user.getDirPath())
         .build()
         ;
-  }
+      }
 
+  /**
+   * 설정값 update하기
+   * @param username user 이름
+   * @param configsReq 재설정할 설정값을 담은 객체
+   */
   @Override
   public void updateConfigs(String username, ConfigsReq configsReq) {
     User user = userRepository.findByName(username)
         .orElseThrow(() -> new UsernameNotFoundException(username));
-    
+
     // commit 설정
     if (configsReq.getCommit() != null) {
       user.setCommit(configsReq.getCommit());
@@ -81,7 +96,7 @@ public class UserServiceImpl implements UserService {
     } else { // 타이머 보일지 여부 설정
       user.setTimerShown(configsReq.isTimerShown());
     }
-    
+
     userRepository.save(user);
   }
 
