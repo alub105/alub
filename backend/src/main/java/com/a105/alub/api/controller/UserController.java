@@ -26,7 +26,7 @@ public class UserController {
 
   @GetMapping("/")
   public ApiResponseDto<MyInfoRes> getMyInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
-    MyInfoRes userInfoRes = userService.getMyInfo(userPrincipal.getName());
+    MyInfoRes userInfoRes = userService.getMyInfo(userPrincipal.getId());
     log.info("Get User Info: {}", userInfoRes);
 
     return ApiResponseDto.success(userInfoRes);

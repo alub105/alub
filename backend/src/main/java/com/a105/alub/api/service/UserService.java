@@ -15,5 +15,5 @@ public interface UserService extends UserDetailsService {
   UserDetails loadUserByUsername(String username, Platform platform)
       throws UsernameNotFoundException;
 
-  MyInfoRes getMyInfo(String username);
+  MyInfoRes getMyInfo(Long userId);
 }

@@ -69,9 +69,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public MyInfoRes getMyInfo(String username) {
-    User user = userRepository.findByName(username)
-        .orElseThrow(() -> new UsernameNotFoundException(username));
+  public MyInfoRes getMyInfo(Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
     return MyInfoRes.builder().userId(user.getId()).email(user.getEmail()).name(user.getName())
         .imageUrl(user.getImageUrl()).build();
   }
