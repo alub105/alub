@@ -1,10 +1,10 @@
 package com.a105.alub.api.service;
 
-import javax.persistence.spi.LoadState;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import com.a105.alub.api.request.ConfigsReq;
 import com.a105.alub.api.request.GithubTokenReq;
 import com.a105.alub.api.request.LoginReq;
 import com.a105.alub.api.response.ConfigsRes;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
   private final GithubConfig githubConfig;
   private final UserRepository userRepository;
   private final GitHubAuthenticate gitHubAuthenticate;
-  
+
   WebClient webClient = WebClient.builder().baseUrl("https://github.com")
       .defaultHeader("CONTENT-TYPE", "application/json").defaultHeader("Accept", "application/json")
       .build();
@@ -42,11 +42,11 @@ public class UserServiceImpl implements UserService {
     GithubUserRes githubUserRes = getGithubUser(githubTokenRes.getAccessToken());
 
     User user = gitHubAuthenticate.checkUser(githubTokenRes, githubUserRes);
-    
+
     UserDetails userDetails = loadUserByUsername(user.getName(), loginReq.getPlatform());
-    
+
     log.info("User Details: {}", userDetails);
-    
+
     String token = gitHubAuthenticate.getJwtToken(userDetails, loginReq.getPlatform());
     return LoginRes.builder().userId(user.getId()).name(user.getName()).email(user.getEmail())
         .imageUrl(user.getImageUrl()).token(token).build();
@@ -69,6 +69,23 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public void updateConfigs(String username, ConfigsReq configsReq) {
+    User user = userRepository.findByName(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
+    
+    // commit 설정
+    if (configsReq.getCommit() != null) {
+      user.setCommit(configsReq.getCommit());
+    } else if (configsReq.getTimerDefaultTime() != null) { // 기본 시간 설정
+      user.setTimerDefaultTime(configsReq.getTimerDefaultTime());
+    } else { // 타이머 보일지 여부 설정
+      user.setTimerShown(configsReq.isTimerShown());
+    }
+    
+    userRepository.save(user);
+  }
+
+  @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     User user = userRepository.findByName(username)
         .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -81,7 +98,7 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new UsernameNotFoundException(username));
     return UserPrincipal.create(user, platform);
   }
-  
+
   /**
    * github의 user 정보 가져오기
    * 
