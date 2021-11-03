@@ -65,12 +65,12 @@ public class UserController {
       @ApiResponse(code = 401, message = "인증 실패"), @ApiResponse(code = 403, message = "인가 실패"),
       @ApiResponse(code = 500, message = "서버 오류")})
   @PatchMapping("/configs")
-  public ApiResponseDto<Object> updateConfigs(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+  public ApiResponseDto<String> updateConfigs(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
       @RequestBody ConfigsReq configsReq) {
 
     userService.updateConfigs(userPrincipal.getName(), configsReq);
     log.info("Success setting user configs");
 
-    return ApiResponseDto.success(null);
+    return ApiResponseDto.DEFAULT_SUCCESS;
   }
 }
