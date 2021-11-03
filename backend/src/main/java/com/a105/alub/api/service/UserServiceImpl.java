@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.a105.alub.api.request.GithubTokenReq;
 import com.a105.alub.api.request.LoginReq;
+import com.a105.alub.api.response.ConfigsRes;
 import com.a105.alub.api.response.GithubTokenRes;
 import com.a105.alub.api.response.GithubUserRes;
 import com.a105.alub.api.response.LoginRes;
@@ -50,7 +51,22 @@ public class UserServiceImpl implements UserService {
     return LoginRes.builder().userId(user.getId()).name(user.getName()).email(user.getEmail())
         .imageUrl(user.getImageUrl()).token(token).build();
   }
-
+  
+  @Override
+  public ConfigsRes getConfigs(String username) {
+    
+    User user = userRepository.findByName(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
+    
+    return ConfigsRes.builder()
+        .commit(user.getCommit())
+        .timerDefaultTime(user.getTimerDefaultTime())
+        .timerShown(user.getTimerShown())
+        .repoName(user.getRepoName())
+        .dirPath(user.getDirPath())
+        .build()
+        ;
+  }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -93,6 +109,5 @@ public class UserServiceImpl implements UserService {
     return webClient.post().uri("/login/oauth/access_token").bodyValue(githubTokenReq).retrieve()
         .bodyToMono(GithubTokenRes.class).block();
   }
-
 
 }
