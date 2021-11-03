@@ -10,6 +10,7 @@ import com.a105.alub.api.request.LoginReq;
 import com.a105.alub.api.response.GithubTokenRes;
 import com.a105.alub.api.response.GithubUserRes;
 import com.a105.alub.api.response.LoginRes;
+import com.a105.alub.api.response.UserInfoRes;
 import com.a105.alub.config.GithubConfig;
 import com.a105.alub.domain.entity.User;
 import com.a105.alub.domain.enums.Platform;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
   private final GithubConfig githubConfig;
   private final UserRepository userRepository;
   private final GitHubAuthenticate gitHubAuthenticate;
-  
+
   WebClient webClient = WebClient.builder().baseUrl("https://github.com")
       .defaultHeader("CONTENT-TYPE", "application/json").defaultHeader("Accept", "application/json")
       .build();
@@ -41,11 +42,11 @@ public class UserServiceImpl implements UserService {
     GithubUserRes githubUserRes = getGithubUser(githubTokenRes.getAccessToken());
 
     User user = gitHubAuthenticate.checkUser(githubTokenRes, githubUserRes);
-    
+
     UserDetails userDetails = loadUserByUsername(user.getName(), loginReq.getPlatform());
-    
+
     log.info("User Details: {}", userDetails);
-    
+
     String token = gitHubAuthenticate.getJwtToken(userDetails, loginReq.getPlatform());
     return LoginRes.builder().userId(user.getId()).name(user.getName()).email(user.getEmail())
         .imageUrl(user.getImageUrl()).token(token).build();
@@ -60,12 +61,21 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username, Platform platform) throws UsernameNotFoundException {
+  public UserDetails loadUserByUsername(String username, Platform platform)
+      throws UsernameNotFoundException {
     User user = userRepository.findByName(username)
         .orElseThrow(() -> new UsernameNotFoundException(username));
     return UserPrincipal.create(user, platform);
   }
-  
+
+  @Override
+  public UserInfoRes getUserInfo(String username) {
+    User user = userRepository.findByName(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
+    return UserInfoRes.builder().userId(user.getId()).email(user.getEmail()).name(user.getName())
+        .imageUrl(user.getImageUrl()).build();
+  }
+
   /**
    * github의 user 정보 가져오기
    * 
