@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * github 인증하고 user 저장 후 user 정보 전달
+   * 
    * @param loginReq github code와 platform이 담긴 객체
    * @return user 정보와 jwt 담긴 객체 반환
    */
@@ -59,34 +60,34 @@ public class UserServiceImpl implements UserService {
 
   /**
    * 사용자가 설정한 설정값 조회
+   * 
    * @param username user 이름
    * @return 설정값들을 담은 객체 반환
    */
   @Override
-  public ConfigsRes getConfigs(String username) {
+  public ConfigsRes getConfigs(Long userId) {
 
-    User user = userRepository.findByName(username)
-        .orElseThrow(() -> new UsernameNotFoundException(username));
+    User user = userRepository.findById(userId).orElseThrow(RuntimeException::new);
 
-        return ConfigsRes.builder()
-        .commit(user.getCommit())
-        .timerDefaultTime(user.getTimerDefaultTime())
-        .timerShown(user.getTimerShown())
-        .repoName(user.getRepoName())
-        .dirPath(user.getDirPath())
-        .build()
-        ;
-      }
+    return ConfigsRes.builder()
+    .commit(user.getCommit())
+    .timerDefaultTime(user.getTimerDefaultTime())
+    .timerShown(user.getTimerShown())
+    .repoName(user.getRepoName())
+    .dirPath(user.getDirPath())
+    .build()
+    ;
+  }
 
   /**
    * 설정값 update하기
+   * 
    * @param username user 이름
    * @param configsReq 재설정할 설정값을 담은 객체
    */
   @Override
-  public void updateConfigs(String username, ConfigsReq configsReq) {
-    User user = userRepository.findByName(username)
-        .orElseThrow(() -> new UsernameNotFoundException(username));
+  public void updateConfigs(Long userId, ConfigsReq configsReq) {
+    User user = userRepository.findById(userId).orElseThrow(RuntimeException::new);
 
     // commit 설정
     if (configsReq.getCommit() != null) {
@@ -108,7 +109,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username, Platform platform) throws UsernameNotFoundException {
+  public UserDetails loadUserByUsername(String username, Platform platform)
+      throws UsernameNotFoundException {
     User user = userRepository.findByName(username)
         .orElseThrow(() -> new UsernameNotFoundException(username));
     return UserPrincipal.create(user, platform);

@@ -53,7 +53,7 @@ public class UserController {
   public ApiResponseDto<ConfigsRes> getConfigs(
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
 
-    ConfigsRes configsRes = userService.getConfigs(userPrincipal.getName());
+    ConfigsRes configsRes = userService.getConfigs(userPrincipal.getId());
     log.info("Get User Configuration: {}", configsRes);
 
     return ApiResponseDto.success(configsRes);
@@ -68,7 +68,7 @@ public class UserController {
   public ApiResponseDto<String> updateConfigs(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
       @RequestBody ConfigsReq configsReq) {
 
-    userService.updateConfigs(userPrincipal.getName(), configsReq);
+    userService.updateConfigs(userPrincipal.getId(), configsReq);
     log.info("Success setting user configs");
 
     return ApiResponseDto.DEFAULT_SUCCESS;

@@ -16,8 +16,8 @@ public interface UserService extends UserDetailsService {
   UserDetails loadUserByUsername(String username, Platform platform)
       throws UsernameNotFoundException;
 
-  ConfigsRes getConfigs(String username);
+  ConfigsRes getConfigs(Long userId);
   
-  void updateConfigs(String name, ConfigsReq configsReq);
+  void updateConfigs(Long userId, ConfigsReq configsReq);
   
 }
