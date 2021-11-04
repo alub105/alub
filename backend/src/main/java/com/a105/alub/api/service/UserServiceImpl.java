@@ -1,10 +1,28 @@
 package com.a105.alub.api.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import com.a105.alub.api.request.CommitReq;
 import com.a105.alub.api.request.ConfigsReq;
+import com.a105.alub.api.request.GitHubCommitReq;
 import com.a105.alub.api.request.GithubTokenReq;
 import com.a105.alub.api.request.LoginReq;
 import com.a105.alub.api.request.RepoCreateReq;
 import com.a105.alub.api.request.RepoSetReq;
+import com.a105.alub.api.response.CommitRes;
 import com.a105.alub.api.response.ConfigsRes;
 import com.a105.alub.api.response.GithubContentType;
 import com.a105.alub.api.response.GithubRepo;
@@ -15,30 +33,22 @@ import com.a105.alub.api.response.LoginRes;
 import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.api.response.Readme;
 import com.a105.alub.api.response.RepoContent;
+import com.a105.alub.api.response.GithubRepoContentRes;
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
+import com.a105.alub.common.exception.BadRequestException;
 import com.a105.alub.common.exception.DirSettingFailException;
 import com.a105.alub.common.exception.RepoNotFoundException;
 import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.config.GithubConfig;
 import com.a105.alub.domain.entity.User;
+import com.a105.alub.domain.enums.CommitType;
 import com.a105.alub.domain.enums.Platform;
 import com.a105.alub.domain.repository.UserRepository;
 import com.a105.alub.security.GitHubAuthenticate;
 import com.a105.alub.security.UserPrincipal;
 import com.google.common.net.HttpHeaders;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -134,9 +144,8 @@ public class UserServiceImpl implements UserService {
    * @return github 유저 정보
    */
   private GithubUserRes getGithubUser(String githubAccessToken) {
-    return githubApiClient.get().uri("/user")
-        .header("Authorization", "token " + githubAccessToken).retrieve()
-        .bodyToMono(GithubUserRes.class).block();
+    return githubApiClient.get().uri("/user").header("Authorization", "token " + githubAccessToken)
+        .retrieve().bodyToMono(GithubUserRes.class).block();
   }
 
   /**
@@ -152,8 +161,7 @@ public class UserServiceImpl implements UserService {
     log.info("Github Access Token Request: {}", githubTokenReq);
 
     return githubApiClient.post().uri("https://github.com/login/oauth/access_token")
-        .bodyValue(githubTokenReq).retrieve()
-        .bodyToMono(GithubTokenRes.class).block();
+        .bodyValue(githubTokenReq).retrieve().bodyToMono(GithubTokenRes.class).block();
   }
 
   /**
@@ -171,6 +179,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * 특정 유저 github의 모든 public repo 리스트 조회
+   * 
    * @param userId 유저 ID
    * @return
    */
@@ -184,29 +193,26 @@ public class UserServiceImpl implements UserService {
     do {
       List<GithubRepo> resRepos = githubApiClient.get()
           .uri("/user/repos?visibility=public&affiliation=owner&per_page=100&page={page}", page++)
-          .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken())
-          .retrieve()
+          .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
           .onStatus(status -> status == HttpStatus.NOT_FOUND,
               clientResponse -> clientResponse.createException()
                   .flatMap(it -> Mono.error(new RepoNotFoundException())))
           .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
               clientResponse -> clientResponse.bodyToMono(String.class)
                   .map(body -> new RuntimeException(body)))
-          .bodyToFlux(GithubRepo.class)
-          .collectList().blockOptional().orElse(new ArrayList<>());
+          .bodyToFlux(GithubRepo.class).collectList().blockOptional().orElse(new ArrayList<>());
 
       githubRepos.addAll(resRepos);
       resSize = resRepos.size();
     } while (resSize != 0);
 
-    return githubRepos.stream()
-        .filter(e -> !e.getFork())
-        .map(GithubRepoRes::of)
+    return githubRepos.stream().filter(e -> !e.getFork()).map(GithubRepoRes::of)
         .collect(Collectors.toList());
   }
 
   /**
    * alub repo 설정
+   * 
    * @param userId 유저 ID
    * @param repoSetReq repo 설정 관련 request 데이터
    */
@@ -227,29 +233,27 @@ public class UserServiceImpl implements UserService {
 
   /**
    * github public repo 생성
+   * 
    * @param user 유저
    * @param repoName 생성할 repo 이름
    */
   private void createGithubPublicRepo(User user, String repoName) {
     RepoCreateReq repoCreateReq = new RepoCreateReq(repoName);
-    GithubRepo createdRepo = githubApiClient.post()
-        .uri("/user/repos")
+    GithubRepo createdRepo = githubApiClient.post().uri("/user/repos")
         .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken())
-        .contentType(MediaType.APPLICATION_JSON)
-        .bodyValue(repoCreateReq)
-        .retrieve()
+        .contentType(MediaType.APPLICATION_JSON).bodyValue(repoCreateReq).retrieve()
         .onStatus(status -> status == HttpStatus.UNPROCESSABLE_ENTITY,
             clientResponse -> clientResponse.bodyToMono(String.class)
                 .map(body -> new AlreadyExistingRepoException()))
         .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
             clientResponse -> clientResponse.bodyToMono(String.class)
                 .map(body -> new RuntimeException(body)))
-        .bodyToMono(GithubRepo.class)
-        .block();
+        .bodyToMono(GithubRepo.class).block();
   }
 
   /**
    * 유저 자신이 소유한 특정 github repo 조회
+   * 
    * @param userId 유저 ID
    * @param repoName 조회할 repo 이름
    */
@@ -263,24 +267,21 @@ public class UserServiceImpl implements UserService {
     do {
       List<GithubRepo> reposPerPage = githubApiClient.get()
           .uri("/user/repos?affiliation=owner&per_page=100&page={page}", page++)
-          .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken())
-          .retrieve()
+          .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
           .onStatus(status -> status == HttpStatus.NOT_FOUND,
               clientResponse -> clientResponse.createException()
                   .flatMap(it -> Mono.error(new RepoNotFoundException())))
           .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
               clientResponse -> clientResponse.bodyToMono(String.class)
                   .map(body -> new RuntimeException(body)))
-          .bodyToFlux(GithubRepo.class)
-          .collectList().blockOptional().orElse(new ArrayList<>());
+          .bodyToFlux(GithubRepo.class).collectList().blockOptional().orElse(new ArrayList<>());
 
       githubAllRepos.addAll(reposPerPage);
       resSize = reposPerPage.size();
     } while (resSize != 0);
 
     githubAllRepos = githubAllRepos.stream()
-        .filter(githubRepo -> githubRepo.getName().equals(repoName))
-        .collect(Collectors.toList());
+        .filter(githubRepo -> githubRepo.getName().equals(repoName)).collect(Collectors.toList());
 
     int numOfGithubRepo = githubAllRepos.size();
     if (numOfGithubRepo > 1) {
@@ -294,6 +295,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * 이미 존재하는 github repo를 alub repo로 설정
+   * 
    * @param user 유저
    * @param repoName alub repo로 설정할 이미 존재하는 github repo 이름
    * @param dirPath alub repo로 설정할 directory 경로
@@ -327,6 +329,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * github repo의 특정 경로에 README.md 생성
+   * 
    * @param user 유저
    * @param repoName README.md 생성할 repo 이름
    * @param dirPath README.md 생성할 경로
@@ -337,13 +340,11 @@ public class UserServiceImpl implements UserService {
     Readme readme = new Readme("Create README.md by Alub", readmeContent);
 
     // dirPath가 root("")일 경우를 위해 String.format() 사용
-    String url = String
-        .format("/repos/%s/%s/contents/%s/README.md", user.getName(), repoName, dirPath);
+    String url =
+        String.format("/repos/%s/%s/contents/%s/README.md", user.getName(), repoName, dirPath);
 
-    RepoContent repoContents = githubApiClient.put()
-        .uri(url)
-        .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken())
-        .bodyValue(readme)
+    RepoContent repoContents = githubApiClient.put().uri(url)
+        .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).bodyValue(readme)
         .retrieve()
         .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
             clientResponse -> clientResponse.bodyToMono(String.class)
@@ -355,6 +356,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * 특정 github repo의 contents 목록 조회
+   * 
    * @param user 유저
    * @param repoName contents를 조회할 repo 이름
    * @param dirPath contents를 조회할 경로
@@ -362,11 +364,10 @@ public class UserServiceImpl implements UserService {
    */
   private List<RepoContent> getRepoContents(User user, String repoName, String dirPath) {
     List<RepoContent> repoContents = githubApiClient.get()
-        .uri("/repos/{userName}/{repoName}/contents/{dirPath}",
-            user.getName(), repoName, dirPath)
-        .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken())
-        .retrieve()
-        .onStatus(status -> (status.is4xxClientError() && status != HttpStatus.NOT_FOUND)
+        .uri("/repos/{userName}/{repoName}/contents/{dirPath}", user.getName(), repoName, dirPath)
+        .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
+        .onStatus(
+            status -> (status.is4xxClientError() && status != HttpStatus.NOT_FOUND)
                 || status.is5xxServerError(),
             clientResponse -> clientResponse.bodyToMono(String.class)
                 .map(body -> new RuntimeException(body)))
@@ -379,6 +380,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * github repo의 특정 경로의 README.md 조회
+   * 
    * @param user 유저
    * @param repoName README.md를 조회할 repo 이름
    * @param dirPath README.md를 조회할 경로
@@ -386,11 +388,10 @@ public class UserServiceImpl implements UserService {
    */
   private Optional<RepoContent> getReadmeInRepoDir(User user, String repoName, String dirPath) {
     Optional<RepoContent> readme = githubApiClient.get()
-        .uri("/repos/{userName}/{repoName}/readme/{dirPath}",
-            user.getName(), repoName, dirPath)
-        .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken())
-        .retrieve()
-        .onStatus(status -> (status.is4xxClientError() && status != HttpStatus.NOT_FOUND)
+        .uri("/repos/{userName}/{repoName}/readme/{dirPath}", user.getName(), repoName, dirPath)
+        .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
+        .onStatus(
+            status -> (status.is4xxClientError() && status != HttpStatus.NOT_FOUND)
                 || status.is5xxServerError(),
             clientResponse -> clientResponse.bodyToMono(String.class)
                 .map(body -> new RuntimeException(body)))
@@ -398,6 +399,100 @@ public class UserServiceImpl implements UserService {
         .onErrorResume(WebClientResponseException.NotFound.class, notFound -> Mono.empty())
         .blockOptional();
     return readme;
+  }
+
+  @Override
+  public CommitRes commit(Long id, CommitReq commitReq) {
+    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    String url = String.format("/repos/%s/%s/contents/%s/%s/%s", user.getName(), user.getRepoName(),
+        user.getDirPath(), commitReq.getSite(), commitReq.getProblemNum());
+
+    GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq);
+    log.info(gitHubCommitReq.toString());
+
+    try {
+      Long cnt = getCommitCnt(url, user.getGithubAccessToken(), commitReq.getProblemNum());
+      String fileName = getFileName(commitReq, cnt);
+
+      url += "/" + fileName;
+      log.info("url: {}", url);
+      githubApiClient.put().uri(url).bodyValue(gitHubCommitReq)
+          .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
+          .onStatus(status -> status == HttpStatus.NOT_FOUND,
+              clientResponse -> clientResponse.createException()
+                  .flatMap(it -> Mono.error(new RepoNotFoundException())))
+          .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+              clientResponse -> clientResponse.bodyToMono(String.class)
+                  .map(body -> new RuntimeException(body)))
+          .toEntity(String.class).block();
+
+      log.info("Commit complete: {}", url);
+      return new CommitRes(url);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+
+  }
+
+  /**
+   * code를 통해 github repo에서 파일명 최댓값 받아오기
+   *
+   * @param repo github repo, repo 내부 dir 경로
+   * @return 최댓값+1
+   */
+  private Long getCommitCnt(String url, String token, String problemNum) {
+    Long cnt = 1L;
+    try {
+
+      List<GithubRepoContentRes> response = githubApiClient.get().uri(url)
+          .header(HttpHeaders.AUTHORIZATION, "token " + token).retrieve()
+          .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+              clientResponse -> clientResponse.bodyToMono(String.class)
+                  .map(body -> new RuntimeException(body)))
+          .bodyToMono(new ParameterizedTypeReference<List<GithubRepoContentRes>>() {}).block();
+
+      Pattern pattern = Pattern.compile("^" + problemNum + "_\\d+\\b");
+      String maxFileName = response.stream().filter(entry -> {
+        Matcher matcher = pattern.matcher(entry.getName());
+        return matcher.find();
+      }).max((entry1, entry2) -> {
+        Matcher matcher1 = pattern.matcher(entry1.getName());
+        Matcher matcher2 = pattern.matcher(entry2.getName());
+        matcher1.find();
+        matcher2.find();
+        StringTokenizer st1 = new StringTokenizer(matcher1.group(), "_");
+        StringTokenizer st2 = new StringTokenizer(matcher2.group(), "_");
+        st1.nextToken();
+        st2.nextToken();
+        return Long.parseLong(st1.nextToken()) > Long.parseLong(st2.nextToken()) ? 1 : -1;
+      }).get().getName();
+
+      Matcher matcher = pattern.matcher(maxFileName);
+      matcher.find();
+      StringTokenizer st = new StringTokenizer(matcher.group(), "_");
+      st.nextToken();
+      cnt = Long.parseLong(st.nextToken()) + 1L;
+    } catch (Exception e) {
+      // 파일이 없는 경우 첫 번째 커밋이기 때문에 아무것도 하지 않고 1을 return
+    }
+    return cnt;
+  }
+
+  private String getFileName(CommitReq commitReq, Long cnt) {
+    String fileName = "";
+
+    if (commitReq.getCommit() == CommitType.CUSTOM) {
+      if (commitReq.getFileName() == null) {
+        throw new BadRequestException("filaName이 잘못 되었습니다.");
+      }
+      fileName = commitReq.getFileName();
+    } else {
+      fileName = commitReq.getProblemNum() + "_" + cnt;
+    }
+    fileName += "." + commitReq.getLanguage();
+
+    return fileName;
   }
 
 }
