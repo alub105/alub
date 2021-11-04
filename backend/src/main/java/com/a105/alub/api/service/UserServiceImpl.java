@@ -28,6 +28,7 @@ import com.a105.alub.security.UserPrincipal;
 import com.google.common.net.HttpHeaders;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -279,7 +280,7 @@ public class UserServiceImpl implements UserService {
     } while (resSize != 0);
 
     githubAllRepos = githubAllRepos.stream()
-        .filter(githubRepo -> githubRepo.getName().equals(repoName))
+        .filter(githubRepo -> githubRepo.getName().equalsIgnoreCase(repoName))
         .collect(Collectors.toList());
 
     int numOfGithubRepo = githubAllRepos.size();

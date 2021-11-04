@@ -6,22 +6,24 @@ import "./css/bootstrap.min.css";
 import { REDIRECT_URI, CLIENT_ID } from "./constant/index.js";
 
 const App = () => {
-  const [url, setUrl] = useState("");
-  const [responseFromContent, setResponseFromContent] = useState("");
-  const [bojId, setBojId] = useState("");
+  const [url, setUrl] = useState('')
+  const [responseFromContent, setResponseFromContent] = useState('')
 
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [authMode, setAuthMode] = useState(true);
+
+  const [hour, setHour] = useState('')
+  const [minute, setMinute] = useState('')
+  const [second, setSecond] = useState('')
+
 
   useEffect(() => {
     getCurrentTabUrl((url) => {
       setUrl(url || "undefined");
     });
-    getBojInfo();
-    addStatusTable();
     checkToken();
   }, []);
-
+  
   const checkToken = () => {
     chrome.storage.sync.get("token", function (token) {
       if (Object.keys(token).length !== 0) {
@@ -29,80 +31,35 @@ const App = () => {
       }
     });
   };
-
+  
   const deleteToken = () => {
     chrome.storage.sync.remove("token", function () {
       setAuthMode(true);
     });
   };
 
-  const sendTestMessage = () => {
-    const message: ChromeMessage = {
-      from: Sender.React,
-      message: "Hello from React",
-    };
+    const setTimer = () => {
+        const message: ChromeMessage = {
+            from: Sender.React,
+            message: 
+                {data:{hh: hour, mm: minute, ss:second},
+                message:"setTimer"}
+            }
 
-    getCurrentTabUId((id) => {
-      id &&
-        chrome.tabs.sendMessage(id, message, (responseFromContentScript) => {
-          setResponseFromContent(responseFromContentScript);
+        getCurrentTabUId((id) => {
+            id && chrome.tabs.sendMessage(
+                id,
+                message,
+                (response) => {
+                    setResponseFromContent(response);
+                });
         });
-    });
-  };
-
-  const sendCopyMessage = () => {
-    const message: ChromeMessage = {
-      from: Sender.React,
-      message: "copy",
-    };
-
-    getCurrentTabUId((id) => {
-      id &&
-        chrome.tabs.sendMessage(id, message, (responseFromContentScript) => {
-          setResponseFromContent(responseFromContentScript);
-        });
-    });
-  };
-
-  const sendRemoveMessage = () => {
-    const message: ChromeMessage = {
-      from: Sender.React,
-      message: "delete logo",
-    };
-
-    getCurrentTabUId((id) => {
-      id &&
-        chrome.tabs.sendMessage(id, message, (response) => {
-          setResponseFromContent(response);
-        });
-    });
-  };
-  const getBojInfo = () => {
-    const message: ChromeMessage = {
-      from: Sender.React,
-      message: "get boj info",
-    };
-
-    getCurrentTabUId((id) => {
-      id &&
-        chrome.tabs.sendMessage(id, message, (response) => {
-          setBojId(response);
-        });
-    });
-  };
-  const addStatusTable = () => {
-    const message: ChromeMessage = {
-      from: Sender.React,
-      message: "add status table",
-    };
-
-    getCurrentTabUId((id) => {
-      id &&
-        chrome.tabs.sendMessage(id, message, (response) => {
-          setResponseFromContent(response);
-        });
-    });
-  };
+    }
+    const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if(event.target.id === "hour") {setHour(event.target.value)}
+        if(event.target.id === "minute") {setMinute(event.target.value)}
+        if(event.target.id === "second") {setSecond(event.target.value)}
+    }
 
   // authenticate button click
   const gitLogin = () => {
@@ -210,11 +167,13 @@ const App = () => {
                   <div className="flex-row default-time-set">
                     <span className="timer-show-title">기본 시간 설정</span>
                     <div className="flex-row">
-                      <input
+                    <input
                         type="number"
                         className="form-control form-control-sm"
                         id="hour"
                         placeholder="hh"
+                        value={hour}
+                        onChange={onChangeInput}
                       />
                       <span>:</span>
                       <input
@@ -224,6 +183,8 @@ const App = () => {
                         placeholder="mm"
                         min="0"
                         max="60"
+                        value={minute}
+                        onChange={onChangeInput}
                       />
                       <span>:</span>
                       <input
@@ -233,13 +194,18 @@ const App = () => {
                         placeholder="ss"
                         min="0"
                         max="60"
+                        value={second}
+                        onChange={onChangeInput}
                       />
                       <button
                         type="button"
                         className="btn btn-outline-primary timer-setting-button"
+                        onClick={setTimer}
                       >
                         설정
                       </button>
+                        
+
                     </div>
                   </div>
                 </form>
@@ -261,4 +227,4 @@ const App = () => {
   }
 };
 
-export default App;
+export default App
