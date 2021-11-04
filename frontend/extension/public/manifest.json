@@ -4,13 +4,13 @@
   "version": "1.0",
   "manifest_version": 3,
   "action": {
-      "default_popup": "index.html",
-      "default_title": "Open the popup"
+    "default_popup": "index.html",
+    "default_title": "Open the popup"
   },
   "icons": {
-      "16": "logo192.png",
-      "48": "logo192.png",
-      "128": "logo192.png"
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
   },
   "permissions": ["tabs", "storage", "activeTab"],
   "background": {
@@ -18,8 +18,8 @@
   },
   "content_scripts": [
     {
-        "matches": ["http://*/*", "https://*/*"],
-        "js": ["./static/js/content.js"]
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["./static/js/content.js"]
     }
- ]
+  ]
 }
