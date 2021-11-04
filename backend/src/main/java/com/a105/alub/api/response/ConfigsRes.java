@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ConfigsRes {
-  
+
   private CommitType commit;
   private String timerDefaultTime;
   private Boolean timerShown;
   private String repoName;
   private String dirPath;
-  
+
 }

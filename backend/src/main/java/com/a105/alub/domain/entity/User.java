@@ -57,4 +57,9 @@ public class User extends BaseTimeEntity {
   private String timerDefaultTime;
   
   private String githubAccessToken;
+
+  public void updateAlubRepo(String repoName, String dirPath) {
+    this.repoName = repoName;
+    this.dirPath = dirPath;
+  }
 }
