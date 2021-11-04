@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ConfigsReq {
-  
+
   private CommitType commit;
   private String timerDefaultTime;
   private boolean timerShown;
-  
+
 }
