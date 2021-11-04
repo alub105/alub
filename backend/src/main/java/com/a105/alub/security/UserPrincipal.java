@@ -4,12 +4,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.a105.alub.domain.entity.User;
 import com.a105.alub.domain.enums.Platform;
 
+@ToString
 public class UserPrincipal implements UserDetails {
   private final Long id;
   private final String name;

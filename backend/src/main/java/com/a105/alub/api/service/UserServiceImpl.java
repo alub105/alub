@@ -1,17 +1,19 @@
 package com.a105.alub.api.service;
 
-import com.a105.alub.api.response.GithubContentType;
+import com.a105.alub.api.request.ConfigsReq;
 import com.a105.alub.api.request.GithubTokenReq;
 import com.a105.alub.api.request.LoginReq;
-import com.a105.alub.api.response.Readme;
-import com.a105.alub.api.response.RepoContent;
 import com.a105.alub.api.request.RepoCreateReq;
 import com.a105.alub.api.request.RepoSetReq;
+import com.a105.alub.api.response.ConfigsRes;
+import com.a105.alub.api.response.GithubContentType;
 import com.a105.alub.api.response.GithubRepo;
 import com.a105.alub.api.response.GithubRepoRes;
 import com.a105.alub.api.response.GithubTokenRes;
 import com.a105.alub.api.response.GithubUserRes;
 import com.a105.alub.api.response.LoginRes;
+import com.a105.alub.api.response.Readme;
+import com.a105.alub.api.response.RepoContent;
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
 import com.a105.alub.common.exception.DirSettingFailException;
 import com.a105.alub.common.exception.RepoNotFoundException;
@@ -48,6 +50,12 @@ public class UserServiceImpl implements UserService {
   private final GitHubAuthenticate gitHubAuthenticate;
   private final WebClient githubApiClient;
 
+  /**
+   * github 인증하고 user 저장 후 user 정보 전달
+   *
+   * @param loginReq github code와 platform이 담긴 객체
+   * @return user 정보와 jwt 담긴 객체 반환
+   */
   @Override
   public LoginRes login(LoginReq loginReq) {
 
@@ -57,15 +65,55 @@ public class UserServiceImpl implements UserService {
     GithubUserRes githubUserRes = getGithubUser(githubTokenRes.getAccessToken());
 
     User user = gitHubAuthenticate.checkUser(githubTokenRes, githubUserRes);
-    
+
     UserDetails userDetails = loadUserByUsername(user.getName(), loginReq.getPlatform());
-    log.info("User Details: {}", userDetails);
-    
+
     String token = gitHubAuthenticate.getJwtToken(userDetails, loginReq.getPlatform());
     return LoginRes.builder().userId(user.getId()).name(user.getName()).email(user.getEmail())
         .imageUrl(user.getImageUrl()).token(token).build();
   }
 
+  /**
+   * 사용자가 설정한 설정값 조회
+   *
+   * @param userId 유저 ID
+   * @return 설정값들을 담은 객체 반환
+   */
+  @Override
+  public ConfigsRes getConfigs(Long userId) {
+
+    User user = userRepository.findById(userId).orElseThrow(RuntimeException::new);
+
+    return ConfigsRes.builder()
+    .commit(user.getCommit())
+    .timerDefaultTime(user.getTimerDefaultTime())
+    .timerShown(user.getTimerShown())
+    .repoName(user.getRepoName())
+    .dirPath(user.getDirPath())
+    .build();
+  }
+
+  /**
+   * 설정값 update하기
+   *
+   * @param userId 유저 ID
+   * @param configsReq 재설정할 설정값을 담은 객체
+   */
+  @Override
+  public void updateConfigs(Long userId, ConfigsReq configsReq) {
+    User user = userRepository.findById(userId).orElseThrow(RuntimeException::new);
+
+    // commit 설정
+    if (configsReq.getCommit() != null) {
+      user.setCommit(configsReq.getCommit());
+    } else if (configsReq.getTimerDefaultTime() != null) { // 기본 시간 설정
+      user.setTimerDefaultTime(configsReq.getTimerDefaultTime());
+    } else { // 타이머 보일지 여부 설정
+      user.setTimerShown(configsReq.isTimerShown());
+    }
+
+    userRepository.save(user);
+  }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -81,7 +129,7 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new UsernameNotFoundException(username));
     return UserPrincipal.create(user, platform);
   }
-  
+
   /**
    * github의 user 정보 가져오기
    * 
