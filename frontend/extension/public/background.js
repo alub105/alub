@@ -27,9 +27,7 @@ function authListener(tabId, changeInfo, tab) {
             if (response.ok) {
               response.json().then((data) => {
                 chrome.storage.sync.set({ token: data.data.token }, function () {
-                  console.log("저장 되었습니다");
                   chrome.storage.sync.get("token", function (token) {
-                    console.log("token: ", token);
                     const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
                     chrome.tabs.update({ url: welcome_url });
                   });
