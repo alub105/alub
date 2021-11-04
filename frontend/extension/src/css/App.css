@@ -1,12 +1,42 @@
 /*-------------- Global ---------------*/
 :root {
   --white: #ffffff;
-  --text-gray: #90e0ef;
+  --text-gray: #868e96;
+  --text-green: #20c997;
+  --text-black: #343a40;
+
   --box-width: 500px;
   --box-height: 300px;
+  --header-line-height: 45px;
 
-  --background-linear: linear-gradient(#141e30, #243b55);
-  --background-color: rgba(0, 0, 0, 0.5);
+  --background: #e9ecef;
+
+  --IBM: "IBM", cursive;
+  --Mulish: "Mulish", cursive;
+}
+
+@font-face {
+  font-family: IBM;
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Regular.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: Mulish;
+  src: url("/src/font/Mulish/static/Mulish-Bold.ttf");
+}
+
+body {
+  color: var(--text-black);
+}
+
+.hr {
+  background-color: var(--text-gray);
+  border: 0;
+  height: 1px;
+  margin: 0;
+  width: 100%;
 }
 
 p {
@@ -17,39 +47,39 @@ p {
   display: flex;
   flex-direction: row;
 }
-/*-----------x--- Global --x------------*/
-
-.App {
+.app {
   width: var(--box-width);
   height: var(--box-height);
-  background: var(--background-linear);
+  background: var(--background);
 }
 
-.App-header {
-  /* background-color: #282c34; */
-  min-height: 5vh;
-  height: 60px;
+/*-----------x--- Global --x------------*/
+
+/*--------------- auth mode ------------*/
+.auth-header {
+  min-height: 3.5vh;
+  height: var(--header-line-height);
   width: 100%;
-  justify-content: center;
+  display: table;
 }
 
 .title {
-  font-size: 1.2rem;
-  padding: 0rem 0.5rem;
   margin-left: 1rem;
-  color: var(--white);
+  color: var(--text-green);
+  font-weight: bold;
+  font-family: var(--Mulish);
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
 }
 
-/*--------------- Main ---------------*/
-.App-main {
-  width: calc(var(--box-width) - 50px);
-  min-height: 215px;
-  position: relatvie;
-
+.app-main {
+  width: calc(var(--box-width) - 25px);
+  height: calc(var(--box-height) - var(--header-line-height) - 12px);
   margin: 0 auto;
 
-  background-color: var(--background-color);
-  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+  background-color: var(--white);
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.04);
   border-radius: 16px;
 
   display: flex;
@@ -57,34 +87,212 @@ p {
 }
 
 .authenticate {
-  height: 30vh;
+  height: 85%;
   width: 90%;
   margin: 0 auto;
   text-align: center;
 }
 
 .authenticate .middle-title {
-  font-size: 1.1rem;
-  color: var(--text-gray);
-  margin-top: 3rem;
+  font-size: 0.9rem;
+  color: var(--text-black);
+  margin-top: 1.2rem;
+  font-family: var(--IBM);
+}
+
+.authenticate hr + .middle-title {
+  margin-top: 40px;
 }
 
 .authenticate .login-button {
-  width: 50%;
-  height: 1.8rem;
-  border-radius: 5px;
-  border: none;
-  margin-top: 1.1rem;
-  background-color: var(--text-gray);
+  width: 65%;
+  margin-top: 0.7rem;
+  cursor: pointer;
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 0.9rem;
+  font-family: var(--IBM);
+  font-weight: bold;
+}
+.authenticate .login-button .login-button-title {
+  margin-left: 10px;
+  display: inline-block;
 }
 
-.authenticate .login-button:hover {
+.app-main .footer {
+  width: 90%;
+  height: 15%;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.app-main .footer i {
+  display: inline-block;
   cursor: pointer;
 }
 
-.authenticate .login-button-title {
-  padding: 0 0.3rem;
-  font-size: small;
-  font-weight: 700;
+.app-main .footer .logo {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  cursor: pointer;
+  padding: 0;
 }
-/*----------x---- Main ----x----------*/
+
+/*----------x---- auth mode ----x----------*/
+
+/*------------ Commit Mode -------------*/
+.commit-header {
+  min-height: 3.5vh;
+  height: var(--header-line-height);
+  width: 100%;
+  align-items: center;
+  font-family: var(--IBM);
+}
+
+.commit-header .logo {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  margin: 0 0.5rem;
+  cursor: pointer;
+}
+
+.commit-header span,
+.commit-header a {
+  line-height: var(--header-line-height);
+  margin-right: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.commit-header .dir-name {
+  cursor: pointer;
+  color: var(--text-green);
+  text-decoration: none;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 90%;
+  height: 100%;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.commit-setting {
+  width: 100%;
+  text-align: center;
+  font-family: var(--IBM);
+  margin-top: 0;
+}
+
+.commit-setting .middle-title,
+.timer-setting .middle-title {
+  margin: 1px;
+  font-size: 0.9rem;
+  color: var(--text-black);
+  font-family: var(--IBM);
+}
+
+.commit-setting > .middle-title {
+  margin: 11px 0 6px 0;
+}
+
+.commit-setting fieldset {
+  text-align: left;
+}
+
+.commit-setting fieldset .form-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  align-items: center;
+  margin: 0;
+  gap: 10px;
+}
+
+.commit-setting fieldset label {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.commit-setting fieldset .form-descript {
+  display: inline-block;
+  font-size: 0.7rem;
+  margin-left: 10px;
+  color: var(--text-black);
+}
+
+.timer-setting {
+  width: 100%;
+  text-align: center;
+  font-family: var(--IBM);
+}
+
+.timer-setting form {
+  text-align: left;
+}
+.timer-setting form .flex-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.83fr;
+}
+
+.timer-setting form .flex-row {
+  align-items: center;
+}
+
+.timer-setting .form-switch {
+  padding: 0;
+}
+.timer-setting .form-check-label {
+  font-size: 0.8rem;
+  color: var(--text-black);
+  font-weight: bold;
+  margin: 6px;
+  line-height: 100%;
+  vertical-align: middle;
+}
+
+.timer-setting .timer-show-title {
+  margin: 6px 22px 6px 6px;
+  font-size: 0.8rem;
+  color: var(--text-black);
+  font-weight: bold;
+}
+
+.timer-setting .timer-show-title .flex-row span {
+  margin: 6px;
+  font-size: 0.8rem;
+  color: var(--text-black);
+  font-weight: bold;
+}
+
+.timer-setting .default-time-set input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.timer-setting .flex-row .form-control-sm {
+  width: 50px;
+  margin: 0 5px;
+}
+
+.timer-setting-button {
+  padding: 0px;
+  margin-left: 6px;
+}
+
+#git-repo-button {
+  font-family: var(--IBM);
+  font-size: 0.8rem;
+  font-weight: bold;
+  width: 80%;
+  padding: 0;
+  height: 2rem;
+  margin-top: 3px;
+}
+/*-------x---- Commit Mode --x----------*/ ;
