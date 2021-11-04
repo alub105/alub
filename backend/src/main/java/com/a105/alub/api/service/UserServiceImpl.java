@@ -112,6 +112,12 @@ public class UserServiceImpl implements UserService {
     return UserPrincipal.create(user, platform);
   }
 
+  /**
+   * 내정보 가져오기
+   * 
+   * @param userId user ID
+   * @return user 정보
+   */
   @Override
   public MyInfoRes getMyInfo(Long userId) {
     User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
