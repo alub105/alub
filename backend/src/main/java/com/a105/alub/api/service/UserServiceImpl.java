@@ -12,6 +12,7 @@ import com.a105.alub.api.response.GithubRepoRes;
 import com.a105.alub.api.response.GithubTokenRes;
 import com.a105.alub.api.response.GithubUserRes;
 import com.a105.alub.api.response.LoginRes;
+import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.api.response.Readme;
 import com.a105.alub.api.response.RepoContent;
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * github 인증하고 user 저장 후 user 정보 전달
-   *
+   * 
    * @param loginReq github code와 platform이 담긴 객체
    * @return user 정보와 jwt 담긴 객체 반환
    */
@@ -84,13 +85,9 @@ public class UserServiceImpl implements UserService {
 
     User user = userRepository.findById(userId).orElseThrow(RuntimeException::new);
 
-    return ConfigsRes.builder()
-    .commit(user.getCommit())
-    .timerDefaultTime(user.getTimerDefaultTime())
-    .timerShown(user.getTimerShown())
-    .repoName(user.getRepoName())
-    .dirPath(user.getDirPath())
-    .build();
+    return ConfigsRes.builder().commit(user.getCommit())
+        .timerDefaultTime(user.getTimerDefaultTime()).timerShown(user.getTimerShown())
+        .repoName(user.getRepoName()).dirPath(user.getDirPath()).build();
   }
 
   /**
@@ -159,6 +156,18 @@ public class UserServiceImpl implements UserService {
         .bodyToMono(GithubTokenRes.class).block();
   }
 
+  /**
+   * 내정보 가져오기
+   *
+   * @param userId user ID
+   * @return user 정보
+   */
+  @Override
+  public MyInfoRes getMyInfo(Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
+    return MyInfoRes.builder().userId(user.getId()).email(user.getEmail()).name(user.getName())
+        .imageUrl(user.getImageUrl()).build();
+  }
 
   /**
    * 특정 유저 github의 모든 public repo 리스트 조회

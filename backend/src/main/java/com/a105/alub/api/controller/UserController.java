@@ -6,6 +6,7 @@ import com.a105.alub.api.request.RepoSetReq;
 import com.a105.alub.api.response.ConfigsRes;
 import com.a105.alub.api.response.GithubRepoRes;
 import com.a105.alub.api.response.LoginRes;
+import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.api.service.UserService;
 import com.a105.alub.common.response.ApiResponseDto;
 import com.a105.alub.security.CurrentUser;
@@ -46,6 +47,14 @@ public class UserController {
     log.info("Login Response: {}", loginResponse);
 
     return ApiResponseDto.success(loginResponse);
+  }
+
+  @GetMapping("/")
+  public ApiResponseDto<MyInfoRes> getMyInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    MyInfoRes userInfoRes = userService.getMyInfo(userPrincipal.getId());
+    log.info("Get User Info: {}", userInfoRes);
+
+    return ApiResponseDto.success(userInfoRes);
   }
 
   @ApiOperation(value = "사용자 설정 정보", notes = "인증된 사용자의 설정 정보를 반환합니다.",
