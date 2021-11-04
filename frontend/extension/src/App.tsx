@@ -3,17 +3,15 @@ import { ChromeMessage, Sender, getCurrentTabUId, getCurrentTabUrl } from "./typ
 import "./css/App.css";
 import logo from "./image/logo.png";
 import "./css/bootstrap.min.css";
+import { REDIRECT_URI, CLIENT_ID } from "./constant/index.js";
 
 const App = () => {
   const [url, setUrl] = useState("");
   const [responseFromContent, setResponseFromContent] = useState("");
   const [bojId, setBojId] = useState("");
 
-  const client_id = "4e92f22f41639a118b4c";
-  const redirect_uri = "http://localhost:3000/oauth/redirect?platform=EXTENSION";
-
   const [btnDisabled, setBtnDisabled] = useState(false);
-  const [authMode, setAuthMode] = useState(false);
+  const [authMode, setAuthMode] = useState(true);
 
   useEffect(() => {
     getCurrentTabUrl((url) => {
@@ -26,15 +24,15 @@ const App = () => {
 
   const checkToken = () => {
     chrome.storage.sync.get("token", function (token) {
-      if (typeof token !== "undefined") {
-        setAuthMode(true);
+      if (Object.keys(token).length !== 0) {
+        setAuthMode(false);
       }
     });
   };
 
   const deleteToken = () => {
     chrome.storage.sync.remove("token", function () {
-      setAuthMode(false);
+      setAuthMode(true);
     });
   };
 
@@ -110,11 +108,11 @@ const App = () => {
   const gitLogin = () => {
     if (btnDisabled !== false) return;
     setBtnDisabled(true);
-    const newUrl = `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=repo`;
+    const newUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=repo`;
     chrome.tabs.create({ url: newUrl });
   };
 
-  if (!authMode) {
+  if (authMode) {
     return (
       <div className="app">
         <header>

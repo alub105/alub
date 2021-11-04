@@ -16,14 +16,20 @@
 
       <form id="repo-form" class="form flex-column">
         <div>
-          <input type="radio" id="new-repo" name="repo-setting" value="new-repo" />
+          <input type="radio" id="new-repo" name="repo-setting" value="new-repo" checked="true" />
           <label for="new-repo">새 레포지토리 생성 </label>
           <div class="first-row">
             <div class="first-element">
               <div class="git-user-name">github.com/kim_ssafy</div>
-              <input type="text" id="repo-name" name="new-repo-name" minlength="1" maxlength="40" />
+              <input type="text" id="repo-name" class="form-control" minlength="1" maxlength="40" />
+              <div class="invalid-feedback" id="repo-duplicate-invalid" style="display: none">
+                이미 존재하는 Repository 입니다
+              </div>
+              <div class="valid-feedback" id="repo-duplicate-valid" style="display: none">
+                생성 가능한 Repository 입니다
+              </div>
             </div>
-            <button class="repo-name-check">중복 체크</button>
+            <button type="button" id="repo-check-button" class="repo-name-check">중복 체크</button>
           </div>
         </div>
         <div>
@@ -31,16 +37,16 @@
           <label for="exist-repo">기존 레포지토리 폴더 생성 </label>
           <div class="second-row">
             <div class="git-user-name">github.com/kim_ssafy</div>
-            <select id="exist-repo-names">
-              <option value="option1">TIL</option>
-              <option value="option2">BOJ</option>
-              <option value="option3">PROGRAMMERS</option>
-            </select>
-            <input type="text" id="dir-name" maxlength="4096" />
+            <select
+              id="exist-repo-names"
+              class="form-select exist-repo-set"
+              aria-label="Default select example"
+            ></select>
+            <input type="text" id="dir-name" maxlength="4096" class="exist-repo-set" />
           </div>
         </div>
         <div class="btn">
-          <button class="repo-btn">Get Started</button>
+          <button type="button" id="create-repo-button" class="repo-btn">Repo 설정하기</button>
         </div>
       </form>
     </div>
