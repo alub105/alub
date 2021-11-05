@@ -3,63 +3,76 @@ import { ChromeMessage, Sender, getCurrentTabUId, getCurrentTabUrl } from "./typ
 import "./css/App.css";
 import logo from "./image/logo.png";
 import "./css/bootstrap.min.css";
-import { REDIRECT_URI, CLIENT_ID } from "./constant/index.js";
+import { REDIRECT_URI, CLIENT_ID, API_BASE_URL } from "./constant/index.js";
 
 const App = () => {
-  const [url, setUrl] = useState('')
-  const [responseFromContent, setResponseFromContent] = useState('')
+  const [url, setUrl] = useState("");
+  const [responseFromContent, setResponseFromContent] = useState("");
 
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [authMode, setAuthMode] = useState(true);
 
-  const [hour, setHour] = useState('')
-  const [minute, setMinute] = useState('')
-  const [second, setSecond] = useState('')
-
+  const [hour, setHour] = useState("");
+  const [minute, setMinute] = useState("");
+  const [second, setSecond] = useState("");
 
   useEffect(() => {
     getCurrentTabUrl((url) => {
       setUrl(url || "undefined");
     });
-    checkToken();
+    checkMode();
   }, []);
-  
-  const checkToken = () => {
+
+  const checkMode = () => {
     chrome.storage.sync.get("token", function (token) {
       if (Object.keys(token).length !== 0) {
         setAuthMode(false);
+      } else {
+        const url = API_BASE_URL + "/api/user";
+        fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+        }).then((response) => {
+          if (response.ok) {
+          }
+        });
       }
     });
   };
-  
+
   const deleteToken = () => {
     chrome.storage.sync.remove("token", function () {
       setAuthMode(true);
     });
   };
 
-    const setTimer = () => {
-        const message: ChromeMessage = {
-            from: Sender.React,
-            message: 
-                {data:{hh: hour, mm: minute, ss:second},
-                message:"setTimer"}
-            }
+  const setTimer = () => {
+    const message: ChromeMessage = {
+      from: Sender.React,
+      message: { data: { hh: hour, mm: minute, ss: second }, message: "setTimer" },
+    };
 
-        getCurrentTabUId((id) => {
-            id && chrome.tabs.sendMessage(
-                id,
-                message,
-                (response) => {
-                    setResponseFromContent(response);
-                });
+    getCurrentTabUId((id) => {
+      id &&
+        chrome.tabs.sendMessage(id, message, (response) => {
+          setResponseFromContent(response);
         });
+    });
+  };
+  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.id === "hour") {
+      setHour(event.target.value);
     }
-    const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if(event.target.id === "hour") {setHour(event.target.value)}
-        if(event.target.id === "minute") {setMinute(event.target.value)}
-        if(event.target.id === "second") {setSecond(event.target.value)}
+    if (event.target.id === "minute") {
+      setMinute(event.target.value);
     }
+    if (event.target.id === "second") {
+      setSecond(event.target.value);
+    }
+  };
 
   // authenticate button click
   const gitLogin = () => {
@@ -167,7 +180,7 @@ const App = () => {
                   <div className="flex-row default-time-set">
                     <span className="timer-show-title">기본 시간 설정</span>
                     <div className="flex-row">
-                    <input
+                      <input
                         type="number"
                         className="form-control form-control-sm"
                         id="hour"
@@ -204,8 +217,6 @@ const App = () => {
                       >
                         설정
                       </button>
-                        
-
                     </div>
                   </div>
                 </form>
@@ -227,4 +238,4 @@ const App = () => {
   }
 };
 
-export default App
+export default App;
