@@ -10,6 +10,7 @@ var checkDuplicate = false;
 var headers;
 
 var repoRegex = /^[a-zA-Z0-9_.-]*$/;
+var dirRegex = /[/]{2,}/;
 
 chrome.management.get(chrome.runtime.id, function (data) {
   // console.log(data);
@@ -76,6 +77,9 @@ $(document).ready(function () {
 
       $("#no-check-invalid").css("display", "none");
       $("#regex-invalid").css("display", "none");
+
+      $("#dir-regex-invalid").css("display", "none");
+      $("#dir-name").removeClass("is-invalid");
     });
   }
 });
@@ -153,6 +157,8 @@ function getUserRepo() {
 // repo name 중복 체크
 document.getElementById("repo-check-button").addEventListener("click", function () {
   $("#no-check-invalid").css("display", "none");
+  $("#dir-regex-invalid").css("display", "none");
+  $("#dir-name").removeClass("is-invalid");
 
   var input = document.getElementById("repo-name");
   if (input.value === "") {
@@ -205,6 +211,9 @@ document.getElementById("repo-name").addEventListener("focusin", function () {
   checkDuplicate = false;
   $("#regex-invalid").css("display", "none");
   $("#repo-name").removeClass("is-invalid");
+
+  $("#dir-regex-invalid").css("display", "none");
+  $("#dir-name").removeClass("is-invalid");
 });
 
 // repo name 설정 입력 체크
@@ -224,13 +233,29 @@ document.getElementById("repo-name").addEventListener("focusout", function (even
 //dir name 설정 입력 체크
 document.getElementById("dir-name").addEventListener("focusout", function (event) {
   var input = $("#dir-name").val();
+
+  if (dirRegex.test(input)) {
+    $("#dir-regex-invalid").css("display", "block");
+    $("#dir-name").addClass("is-invalid");
+    return;
+  }
+
   input = input.trim();
+  if (input.charAt(0) === "/") {
+    input = input.substring(1, input.length);
+  }
+  if (input.charAt(input.length - 1) === "/") {
+    input = input.substring(0, input.length - 1);
+  }
+
   $("#dir-name").val(input);
 });
 
 // repo 생성 버튼 클릭
 document.getElementById("create-repo-button").addEventListener("click", function () {
   const setting = $("input[name='repo-setting']:checked").val();
+  $("#dir-regex-invalid").css("display", "none");
+  $("#dir-name").removeClass("is-invalid");
 
   var repoName = "";
   var creation = "";
@@ -245,13 +270,14 @@ document.getElementById("create-repo-button").addEventListener("click", function
       input.classList.add("is-invalid");
       return;
     }
-    // 정규식 아닐 경우
+    // Repo name 정규식 아닐 경우
     var isValid = repoRegex.test($("#repo-name").val());
     if (!isValid) {
       $("#regex-invalid").css("display", "block");
       $("#repo-name").addClass("is-invalid");
       return;
     }
+
     // 중복 체크를 안했을 경우
     if (!checkDuplicate) {
       $("#repo-check-button").focus();
@@ -261,6 +287,13 @@ document.getElementById("create-repo-button").addEventListener("click", function
     repoName = $("#repo-name").val();
     creation = true;
   } else if (setting === "exist-repo") {
+    // dir name 정규식
+    if (dirRegex.test(input)) {
+      $("#dir-regex-invalid").css("display", "block");
+      $("#dir-name").addClass("is-invalid");
+      return;
+    }
+
     isNewRepo = false;
 
     repoName = $("select[id='exist-repo-names'] option:selected").text();
@@ -280,7 +313,7 @@ document.getElementById("create-repo-button").addEventListener("click", function
     .then((response) => {
       if (response.ok) {
         response.json().then((data) => {
-          console.log(data);
+          // console.log(data);
           if (data.code === "success") {
             if (isNewRepo) {
               USER_REPO = `github.com/${userName}/${repoName}`;
