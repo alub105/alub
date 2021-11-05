@@ -61,6 +61,11 @@ header {
   width: 100%;
 }
 
+a {
+  text-decoration: none !important;
+  color: white !important;
+}
+
 /*----------- main-----------*/
 .title {
   font-size: 3.3rem;
@@ -104,6 +109,13 @@ label {
   font-weight: bold;
   font-size: 1.2rem;
   color: var(--text-black);
+
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.user:hover {
+  color: var(--background);
 }
 
 .form-check {
@@ -222,10 +234,6 @@ footer span {
   cursor: pointer;
 }
 
-a {
-  text-decoration: none !important;
-  color: white !important;
-}
 /*-------x--- footer -----x----*/
 
 /*------------ Toast 및 로딩 ------------*/

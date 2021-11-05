@@ -11,6 +11,7 @@ const App = () => {
 
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [authMode, setAuthMode] = useState(true);
+  const [repoMode, setRepoMode] = useState(false);
 
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
@@ -28,7 +29,7 @@ const App = () => {
       if (Object.keys(token).length !== 0) {
         setAuthMode(false);
       } else {
-        const url = API_BASE_URL + "/api/user";
+        const url = API_BASE_URL + "/api/user/configs";
         fetch(url, {
           method: "GET",
           headers: {
@@ -37,6 +38,11 @@ const App = () => {
           },
         }).then((response) => {
           if (response.ok) {
+            response.json().then((data) => {
+              if (data.repoName === "") {
+                setRepoMode(true);
+              }
+            });
           }
         });
       }
@@ -82,6 +88,11 @@ const App = () => {
     chrome.tabs.create({ url: newUrl });
   };
 
+  const clickRepoSetting = () => {
+    const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
+    chrome.tabs.update({ url: welcome_url });
+  };
+
   if (authMode) {
     return (
       <div className="app">
@@ -106,6 +117,40 @@ const App = () => {
               >
                 <i className="fab fa-github "></i>
                 <span className="login-button-title">Authenticate</span>
+              </button>
+            </div>
+            <div className="flex-row footer">
+              <i className="fab fa-github "></i>
+              <img className="logo" src={logo} alt={"logo"} />
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  } else if (repoMode) {
+    return (
+      <div className="app">
+        <header>
+          <div className="auth-header flex-row">
+            <h2 className="title">ALUB</h2>
+          </div>
+        </header>
+        <main>
+          <div id="auth-mode" className="app-main">
+            <div className="authenticate">
+              <h4 className="middle-title">
+                <span style={{ color: "#20c997" }}>ALUB</span>으로 백준, 프로그래머스에서 바로
+                커밋하세요
+              </h4>
+              <hr className="hr" />
+              <h4 className="middle-title">GitHub Repository를 설정하세요</h4>
+              <button
+                className="btn btn-lg btn-primary login-button"
+                type="button"
+                onClick={() => clickRepoSetting()}
+              >
+                <i className="fab fa-github "></i>
+                <span className="login-button-title">Git Repository 설정</span>
               </button>
             </div>
             <div className="flex-row footer">
@@ -228,7 +273,8 @@ const App = () => {
                 type="button"
                 onClick={() => deleteToken()}
               >
-                Git Repo 설정
+                <i className="fab fa-github "></i>
+                <span className="login-button-title">Git Repository 설정</span>
               </button>
             </div>
           </div>

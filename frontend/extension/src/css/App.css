@@ -300,4 +300,8 @@ p {
   height: 2rem;
   margin-top: 3px;
 }
+
+.login-button-title {
+  margin-left: 10px;
+}
 /*-------x---- Commit Mode --x----------*/ ;

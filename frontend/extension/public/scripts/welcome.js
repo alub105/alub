@@ -280,6 +280,7 @@ document.getElementById("create-repo-button").addEventListener("click", function
     .then((response) => {
       if (response.ok) {
         response.json().then((data) => {
+          console.log(data);
           if (data.code === "success") {
             if (isNewRepo) {
               USER_REPO = `github.com/${userName}/${repoName}`;
@@ -320,3 +321,11 @@ function resetValid() {
 
   $("#no-check-invalid").css("display", "none");
 }
+
+// repo 이름 클릭 시 깃헙 repo로 이동
+$("#user-git").on("click", function () {
+  const repoUrl = $("#user-git").text();
+  var name = repoUrl.split("/");
+  const url = `https://${name[0]}/${name[1]}/${name[2]}`;
+  chrome.tabs.create({ url: url });
+});
