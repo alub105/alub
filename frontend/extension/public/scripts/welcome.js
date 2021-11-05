@@ -116,7 +116,6 @@ function getUserRepo() {
           $("#loading").addClass("hide");
           $("#content").css("display", "block");
 
-          console.log(data);
           // 설정 안했을 때
           if (data.data.repoName === "") {
             USER_REPO = "설정한 Repository가 없습니다";
@@ -141,7 +140,7 @@ function getUserRepo() {
 
             $("#dir-name").attr("placeholder", data.data.dirPath);
           }
-          console.log(USER_REPO);
+
           $("#user-git").text(USER_REPO);
         });
       }
@@ -281,7 +280,6 @@ document.getElementById("create-repo-button").addEventListener("click", function
     .then((response) => {
       if (response.ok) {
         response.json().then((data) => {
-          console.log(data);
           if (data.code === "success") {
             if (isNewRepo) {
               USER_REPO = `github.com/${userName}/${repoName}`;
