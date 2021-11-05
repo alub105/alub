@@ -1,11 +1,12 @@
-// import axios from 'axios'
+import axios from 'axios'
+
 const copyCode = () => {
-
-
+  console.log(process.env.REACT_APP_SERVER_URL)
   const userId = document.querySelector(".loginbar .username")?.innerHTML
   const solvedUserId = document.querySelector('.table-striped')?.childNodes[1]?.childNodes[0]?.childNodes[1]?.textContent
   const resultTable = document.querySelector('.table-striped')
-  const correct = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("맞")
+  const correct = (resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("맞") || resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("100"))
+    && userId===solvedUserId
   const problemNumber = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent
   const problemName = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent
   const memory = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent
@@ -27,12 +28,14 @@ const copyCode = () => {
     if(lang.includes('Swift')){codeLang = 'swift'}
   } 
   const url = window.location.href
+  const SERVER_URL = process.env.REACT_APP_SERVER_URL
+  
   window.onload = function afterload(){
     if (url.includes("acmicpc.net")){site = "BOJ"};
     if (url.includes("programmers")){site = "PROGRAMMERS"};
     const data = {
             srcCode: answerCode,
-            commit: "default",
+            commit: "DEFAULT",
             language: lang,
             runningTime: timeConsumed,
             runningMemory: memory,
@@ -40,24 +43,14 @@ const copyCode = () => {
             problemNumber: problemNumber,
             site: site,
           }
-
-      // if (correct){
-        //   axios.post(
-      //     "api/user/commits", 
-      //     {
-        //       srcCode: answerCode,
-        //       commit: config,
-        //       language: lang,
-        //       runningTime: timeConsumed,
-        //       runningMemory: memory,
-        //       problemName: problemName,
-        //       problemNumber: problemNumber,
-        //       site: site,
-        //     }
-        //   )
-        // .then((response) => {console.log(response)})
-        // }
-        console.log(data)
+      if (correct){
+          axios.post(
+          
+          `https://localhost:8080/api/user/commits`, 
+          data
+          )
+        .then((response) => {console.log(response)})
+        }
       }
     
       
