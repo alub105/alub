@@ -8,52 +8,165 @@
 
     <link rel="stylesheet" href="./css/welcome.css" />
     <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <!-- Font Awesome-->
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
-    <div class="main">
-      <h1 class="title">Welcome ALUB</h1>
-      <h3>GitHub Repository 설정</h3>
-
-      <form id="repo-form" class="form flex-column">
-        <div>
-          <input type="radio" id="new-repo" name="repo-setting" value="new-repo" checked="true" />
-          <label for="new-repo">새 레포지토리 생성 </label>
-          <div class="first-row">
-            <div class="first-element">
-              <div class="git-user-name">github.com/kim_ssafy</div>
-              <input type="text" id="repo-name" class="form-control" minlength="1" maxlength="40" />
-              <div class="invalid-feedback" id="repo-duplicate-invalid" style="display: none">
-                이미 존재하는 Repository 입니다
-              </div>
-              <div class="valid-feedback" id="repo-duplicate-valid" style="display: none">
-                생성 가능한 Repository 입니다
+    <div class="web">
+      <div class="app">
+        <div class="container">
+          <header>
+            <h1 class="title">ALUB</h1>
+            <h3 class="middle-title">Git Repository를 설정해 코드를 손쉽게 GitHub에 푸쉬하세요</h3>
+          </header>
+          <main>
+            <div class="app-main my-flex justify-content-center align-items-center" id="loading">
+              <div class="spinner-border text-success" role="status">
+                <span class="sr-only">Loading...</span>
               </div>
             </div>
-            <button type="button" id="repo-check-button" class="repo-name-check">중복 체크</button>
+            <div class="app-main" id="content" style="display: none">
+              <form class="form flex-column">
+                <div class="user" id="user-git"></div>
+                <!------------------------------- 새 repo ----------------------------->
+                <div class="form-check">
+                  <label for="new-repo" class="form-check-label">
+                    <input
+                      type="radio"
+                      id="new-repo"
+                      class="form-check-input"
+                      name="repo-setting"
+                      value="new-repo"
+                    />
+                    새 레포지토리 생성
+                  </label>
+                  <div class="new-grid input-box">
+                    <input
+                      class="git-user-name form-control"
+                      type="text"
+                      placeholder=""
+                      disabled="true"
+                      aria-describedby="inputGroupPrepend2"
+                      required
+                    />
+                    <div class="form-group has-success">
+                      <input
+                        type="text"
+                        id="repo-name"
+                        class="form-control"
+                        minlength="1"
+                        maxlength="40"
+                        placeholder="레포지토리 이름"
+                      />
+                      <div class="valid-feedback" id="repo-duplicate-valid" style="display: none">
+                        생성 가능한 Repository입니다
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        id="repo-duplicate-invalid"
+                        style="display: none"
+                      >
+                        이미 존재하는 Repository 입니다
+                      </div>
+                      <div class="invalid-feedback" id="no-input-invalid" style="display: none">
+                        Repository를 입력해 주세요
+                      </div>
+                      <div class="invalid-feedback" id="regex-invalid" style="display: none">
+                        잘못된 입력값입니다.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="new-button">
+                    <button
+                      type="button"
+                      id="repo-check-button"
+                      class="btn btn-lg btn-outline-primary"
+                    >
+                      중복 체크
+                    </button>
+                    <div id="no-check-invalid" class="invalid-feedback" style="display: none">
+                      중복 체크를 해주세요
+                    </div>
+                  </div>
+                </div>
+                <!------------------------------- 기존 repo ------------------------------->
+                <div class="form-check">
+                  <label for="exist-repo" class="form-check-label">
+                    <div></div>
+                    <input
+                      type="radio"
+                      id="exist-repo"
+                      class="form-check-input"
+                      name="repo-setting"
+                      value="exist-repo"
+                    />
+                    기존 레포지토리 폴더 생성
+                  </label>
+                  <div class="exist-grid input-box">
+                    <input
+                      class="git-user-name form-control"
+                      type="text"
+                      placeholder=""
+                      disabled="true"
+                    />
+                    <select id="exist-repo-names" class="form-select exist-repo-set"></select>
+                    <input
+                      type="text"
+                      id="dir-name"
+                      maxlength="4096"
+                      class="exist-repo-set form-control"
+                      placeholder="디렉토리 이름"
+                    />
+                  </div>
+                </div>
+              </form>
+              <div class="main-footer">
+                <div class="repo-button">
+                  <button
+                    type="button"
+                    id="create-repo-button"
+                    class="repo-btn btn btn-lg btn-primary"
+                  >
+                    Repo 설정하기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </main>
+
+          <footer>
+            <hr class="footer-line" />
+            <span>Git과 스터디 사이트에서 더 다양한 기능을 만나보세요</span>
+            <div class="flex-row">
+              <a href="https://github.com/alub105/alub" target="_blank">
+                <i class="fab fa-github go-site"></i>
+              </a>
+              <a href="https://alub.co.kr" target="_blank">
+                <img class="logo go-site" src="./logo.png" alt="logo" />
+              </a>
+            </div>
+          </footer>
+        </div>
+      </div>
+      <!------- Toast ---------->
+      <div style="position: absolute; top: 3rem; right: 0">
+        <div class="toast" id="my-toast" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <strong class="mr-auto">ALUB</strong>
           </div>
+          <div class="toast-body" id="my-toast-body">성공적으로 Repository 설정을 완료했습니다</div>
         </div>
-        <div>
-          <input type="radio" id="exist-repo" name="repo-setting" value="exist-repo" />
-          <label for="exist-repo">기존 레포지토리 폴더 생성 </label>
-          <div class="second-row">
-            <div class="git-user-name">github.com/kim_ssafy</div>
-            <select
-              id="exist-repo-names"
-              class="form-select exist-repo-set"
-              aria-label="Default select example"
-            ></select>
-            <input type="text" id="dir-name" maxlength="4096" class="exist-repo-set" />
-          </div>
-        </div>
-        <div class="btn">
-          <button type="button" id="create-repo-button" class="repo-btn">Repo 설정하기</button>
-        </div>
-      </form>
+      </div>
     </div>
     <!--Jquery Library file-->
     <script src="./scripts/Jquery3.6.0.min.js"></script>
-    <!-- axios -->
-    <script src="../node_modules/axios/dist/axios.min.js"></script>
+    <!--Bootstrap-->
+    <script src="./scripts/bootstrap.min.js"></script>
     <!--Main Javascript-->
     <script type="text/javascript" src="./scripts/welcome.js"></script>
   </body>

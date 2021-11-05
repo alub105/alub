@@ -24,7 +24,7 @@
 }
 @font-face {
   font-family: Mulish;
-  src: url("/src/font/Mulish/static/Mulish-Bold.ttf");
+  src: url("../font/Mulish/static/Mulish-Bold.ttf");
 }
 
 body {
@@ -37,6 +37,7 @@ body {
   height: 1px;
   margin: 0;
   width: 100%;
+  /* background-image: -webkit-linear-gradient(left, #eee, #777, #eee); */
 }
 
 p {
@@ -270,6 +271,10 @@ p {
   font-size: 0.8rem;
   color: var(--text-black);
   font-weight: bold;
+}
+
+.timer-setting .default-time-set {
+  /* justify-content: space-between; */
 }
 
 .timer-setting .default-time-set input[type="number"]::-webkit-inner-spin-button {
