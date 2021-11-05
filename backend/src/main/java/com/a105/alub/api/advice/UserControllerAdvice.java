@@ -4,6 +4,7 @@ package com.a105.alub.api.advice;
 import static com.a105.alub.common.response.ApiResponseCode.FAIL;
 
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
+import com.a105.alub.common.exception.DirSettingFailException;
 import com.a105.alub.common.exception.RepoNotFoundException;
 import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.common.response.ApiResponseDto;
@@ -20,6 +21,11 @@ public class UserControllerAdvice {
 
   @ExceptionHandler(AlreadyExistingRepoException.class)
   public ApiResponseDto<?> alreadyExistingRepoExceptionHandler(AlreadyExistingRepoException e) {
+    return new ApiResponseDto<>(FAIL, e.getMessage());
+  }
+
+  @ExceptionHandler(DirSettingFailException.class)
+  public ApiResponseDto<?> dirSettingFailExceptionHandler(DirSettingFailException e) {
     return new ApiResponseDto<>(FAIL, e.getMessage());
   }
 
