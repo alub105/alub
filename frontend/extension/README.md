@@ -6,7 +6,7 @@
 
 <br>
 
-### `npm run build`
+### `npm run build:dev`
 
 모듈 설치가 끝나면 프로젝트를 build 한다.
 
