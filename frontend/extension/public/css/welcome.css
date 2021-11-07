@@ -109,13 +109,15 @@ label {
   font-weight: bold;
   font-size: 1.2rem;
   color: var(--text-black);
+}
 
+.user-hover {
   cursor: pointer;
   transition: color 0.2s ease-in-out;
 }
 
-.user:hover {
-  color: var(--background);
+.user-hover:hover {
+  color: var(--text-green) !important;
 }
 
 .form-check {

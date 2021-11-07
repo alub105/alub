@@ -17,18 +17,20 @@ const App = () => {
   const [minute, setMinute] = useState("");
   const [second, setSecond] = useState("");
 
+  const [commitChecked, setCommitChecked] = useState("CUSTOM");
+  const [timerShown, setTimerShown] = useState(true);
+
   useEffect(() => {
+    checkMode();
     getCurrentTabUrl((url) => {
       setUrl(url || "undefined");
     });
-    checkMode();
   }, []);
 
   const checkMode = () => {
     chrome.storage.sync.get("token", function (token) {
       if (Object.keys(token).length !== 0) {
         setAuthMode(false);
-      } else {
         const url = API_BASE_URL + "/api/user/configs";
         fetch(url, {
           method: "GET",
@@ -39,13 +41,61 @@ const App = () => {
         }).then((response) => {
           if (response.ok) {
             response.json().then((data) => {
-              if (data.repoName === "") {
+              if (data.data.repoName === null) {
                 setRepoMode(true);
+              } else {
+                setCommitChecked(data.data.commit);
+                setTimerShown(data.data.timerShown);
               }
             });
           }
         });
       }
+    });
+  };
+
+  // commit mode
+  const handleCommit = (e: any) => {
+    setCommitChecked(e.target.value);
+
+    chrome.storage.sync.get("token", function (token) {
+      const url = API_BASE_URL + "/api/user/configs";
+      fetch(url, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          commit: e.target.value,
+        }),
+      })
+        .then((response) => {})
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+  };
+
+  // timer shown
+  const handleTimerShown = () => {
+    setTimerShown((timerShown) => !timerShown);
+    chrome.storage.sync.get("token", function (token) {
+      const url = API_BASE_URL + "/api/user/configs";
+      fetch(url, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          timer: !timerShown,
+        }),
+      })
+        .then((response) => {})
+        .catch((error) => {
+          console.log(error);
+        });
     });
   };
 
@@ -186,7 +236,9 @@ const App = () => {
                           className="form-check-input"
                           name="commit-setting"
                           id="default"
-                          value="default"
+                          value="DEFAULT"
+                          checked={commitChecked === "DEFAULT"}
+                          onChange={handleCommit}
                         ></input>
                         Default
                       </label>
@@ -201,7 +253,9 @@ const App = () => {
                           className="form-check-input"
                           name="commit-setting"
                           id="custom"
-                          value="custom"
+                          value="CUSTOM"
+                          checked={commitChecked === "CUSTOM"}
+                          onChange={handleCommit}
                         ></input>
                         Custom
                       </label>
@@ -220,7 +274,13 @@ const App = () => {
                     <label className="form-check-label" htmlFor="timer-show">
                       타이머 보이기
                     </label>
-                    <input className="form-check-input" type="checkbox" id="timer-show" />
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="timer-show"
+                      checked={timerShown}
+                      onChange={handleTimerShown}
+                    />
                   </div>
                   <div className="flex-row default-time-set">
                     <span className="timer-show-title">기본 시간 설정</span>

@@ -32,6 +32,18 @@ chrome.storage.sync.get("token", function (token) {
 });
 
 $(document).ready(function () {
+  fetch(API_URL + "configs", {
+    method: "GET",
+    headers: headers,
+  }).then((response) => {
+    if (response.ok) {
+      response.json().then((data) => {
+        console.log(data);
+        console.log("timerShown: ", data.data.timerShown);
+      });
+    }
+  });
+
   // 기존 repo 목록 가져오기
   fetch(API_URL + "repos", {
     method: "GET",
@@ -120,10 +132,12 @@ function getUserRepo() {
           $("#loading").addClass("hide");
           $("#content").css("display", "block");
 
+          let isSet = true;
           // 설정 안했을 때
-          if (data.data.repoName === "") {
+          if (data.data.repoName === null) {
             USER_REPO = "설정한 Repository가 없습니다";
-          } else if (data.data.dirPath === "") {
+            isSet = false;
+          } else if (data.data.dirPath === null) {
             // 새 repo 설정
             USER_REPO = "github.com/" + userName + "/" + data.data.repoName;
 
@@ -144,8 +158,18 @@ function getUserRepo() {
 
             $("#dir-name").attr("placeholder", data.data.dirPath);
           }
-
           $("#user-git").text(USER_REPO);
+
+          if (isSet) {
+            $("#user-git").addClass("user-hover");
+            // repo 이름 클릭 시 깃헙 repo로 이동
+            document.getElementById("user-git").addEventListener("click", function () {
+              const repoUrl = $("#user-git").text();
+              var name = repoUrl.split("/");
+              const url = `https://${name[0]}/${name[1]}/${name[2]}`;
+              chrome.tabs.create({ url: url });
+            });
+          }
         });
       }
     })
@@ -354,11 +378,3 @@ function resetValid() {
 
   $("#no-check-invalid").css("display", "none");
 }
-
-// repo 이름 클릭 시 깃헙 repo로 이동
-$("#user-git").on("click", function () {
-  const repoUrl = $("#user-git").text();
-  var name = repoUrl.split("/");
-  const url = `https://${name[0]}/${name[1]}/${name[2]}`;
-  chrome.tabs.create({ url: url });
-});
