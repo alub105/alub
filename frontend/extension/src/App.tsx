@@ -17,19 +17,28 @@ const App = () => {
   const [minute, setMinute] = useState("");
   const [second, setSecond] = useState("");
 
+  const [commitChecked, setCommitChecked] = useState("CUSTOM");
+  const [timerShown, setTimerShown] = useState(true);
+
+  const [token, setToken] = useState(true);
+  const [repoName, setRepoName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [gitUrl, setGitUrl] = useState("");
+
   useEffect(() => {
+    checkMode();
     getCurrentTabUrl((url) => {
       setUrl(url || "undefined");
     });
-    checkMode();
   }, []);
 
   const checkMode = () => {
     chrome.storage.sync.get("token", function (token) {
       if (Object.keys(token).length !== 0) {
+        setToken(token.token);
+
         setAuthMode(false);
-      } else {
-        const url = API_BASE_URL + "/api/user/configs";
+        let url = API_BASE_URL + "/api/user/configs";
         fetch(url, {
           method: "GET",
           headers: {
@@ -38,15 +47,94 @@ const App = () => {
           },
         }).then((response) => {
           if (response.ok) {
+            console.log(response);
             response.json().then((data) => {
-              if (data.repoName === "") {
+              if (data.data.repoName === null) {
                 setRepoMode(true);
+              } else {
+                // commit mode setting
+                setCommitChecked(data.data.commit);
+                //timer shown setting
+                setTimerShown(data.data.timerShown);
+                // 타이머 setting
+                let time = data.data.timerDefaultTime.split(":");
+                setHour(time[0]);
+                setMinute(time[1]);
+                setSecond(time[2]);
+
+                setRepoName(data.data.repoName);
+                setInitialInfo(data.data.repoName);
               }
             });
           }
         });
       }
     });
+  };
+
+  const setInitialInfo = (repo: any) => {
+    chrome.storage.sync.get("token", function (token) {
+      // user name 가져오기
+      const url = API_BASE_URL + "/api/user/";
+      fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+      }).then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setUserName(data.data.name);
+            let link = `https://github.com/${data.data.name}/${repo}`;
+            setGitUrl(link);
+          });
+        }
+      });
+    });
+  };
+
+  // commit mode
+  const handleCommit = (e: any) => {
+    setCommitChecked(e.target.value);
+
+    const url = API_BASE_URL + "/api/user/configs";
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        commit: e.target.value,
+      }),
+    })
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  // timer shown
+  const handleTimerShown = () => {
+    setTimerShown((timerShown) => !timerShown);
+    console.log(!timerShown);
+
+    const url = API_BASE_URL + "/api/user/configs";
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        timerShown: !timerShown,
+      }),
+    })
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const deleteToken = () => {
@@ -56,6 +144,41 @@ const App = () => {
   };
 
   const setTimer = () => {
+    let h = "";
+    let m = "";
+    let s = "";
+    if (hour === "") {
+      h = "00";
+    } else {
+      h = hour;
+    }
+    if (minute === "") {
+      m = "00";
+    } else {
+      m = minute;
+    }
+    if (second === "") {
+      s = "00";
+    } else {
+      s = second;
+    }
+
+    const url = API_BASE_URL + "/api/user/configs";
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        timerDefaultTime: `${h}:${m}:${s}`,
+      }),
+    })
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
+
     const message: ChromeMessage = {
       from: Sender.React,
       message: { data: { hh: hour, mm: minute, ss: second }, message: "setTimer" },
@@ -166,10 +289,10 @@ const App = () => {
       <div className="app">
         <header className="commit-header flex-row">
           <img src={logo} alt={"logo"} className="logo" />
-          <span>choieunsong</span>
+          <span>{userName}</span>
           <span>/</span>
-          <a href="#" id="git-repo-name" className="dir-name" target="_blank">
-            TIL
+          <a href={gitUrl} id="git-repo-name" className="dir-name" target="_blank">
+            {repoName}
           </a>
         </header>
         <main>
@@ -186,7 +309,9 @@ const App = () => {
                           className="form-check-input"
                           name="commit-setting"
                           id="default"
-                          value="default"
+                          value="DEFAULT"
+                          checked={commitChecked === "DEFAULT"}
+                          onChange={handleCommit}
                         ></input>
                         Default
                       </label>
@@ -201,7 +326,9 @@ const App = () => {
                           className="form-check-input"
                           name="commit-setting"
                           id="custom"
-                          value="custom"
+                          value="CUSTOM"
+                          checked={commitChecked === "CUSTOM"}
+                          onChange={handleCommit}
                         ></input>
                         Custom
                       </label>
@@ -220,7 +347,13 @@ const App = () => {
                     <label className="form-check-label" htmlFor="timer-show">
                       타이머 보이기
                     </label>
-                    <input className="form-check-input" type="checkbox" id="timer-show" />
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="timer-show"
+                      checked={timerShown === true}
+                      onChange={handleTimerShown}
+                    />
                   </div>
                   <div className="flex-row default-time-set">
                     <span className="timer-show-title">기본 시간 설정</span>
@@ -271,7 +404,7 @@ const App = () => {
                 className="btn btn-lg btn-primary"
                 id="git-repo-button"
                 type="button"
-                onClick={() => deleteToken()}
+                onClick={() => clickRepoSetting()}
               >
                 <i className="fab fa-github "></i>
                 <span className="login-button-title">Git Repository 설정</span>

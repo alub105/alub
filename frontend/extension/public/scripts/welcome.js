@@ -33,33 +33,7 @@ chrome.storage.sync.get("token", function (token) {
 
 $(document).ready(function () {
   // 기존 repo 목록 가져오기
-  fetch(API_URL + "repos", {
-    method: "GET",
-    headers: headers,
-  })
-    .then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          var select = document.getElementById("exist-repo-names");
-
-          var el = document.createElement("option");
-          el.textContent = "";
-          el.value = "option";
-          select.appendChild(el);
-          for (var i = 0; i < data.data.length; i++) {
-            var name = data.data[i].name;
-            el = document.createElement("option");
-            el.textContent = name;
-            el.value = "option" + i;
-            select.appendChild(el);
-          }
-          getUserUrl();
-        });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  getExistRepo(getUserUrl);
 
   // 기존 레포 addListener 붙이기
   const exists = document.getElementsByClassName("exist-repo-set");
@@ -84,8 +58,39 @@ $(document).ready(function () {
   }
 });
 
+// 기존 repo 목록 가져오기
+function getExistRepo(callback) {
+  fetch(API_URL + "repos", {
+    method: "GET",
+    headers: headers,
+  })
+    .then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          var select = document.getElementById("exist-repo-names");
+
+          var el = document.createElement("option");
+          el.textContent = "";
+          el.value = "option";
+          select.appendChild(el);
+          for (var i = 0; i < data.data.length; i++) {
+            var name = data.data[i].name;
+            el = document.createElement("option");
+            el.textContent = name;
+            el.value = "option" + i;
+            select.appendChild(el);
+          }
+          callback(getUserRepo);
+        });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
 // 유저 정보 가져오기(url)
-function getUserUrl() {
+function getUserUrl(callback) {
   fetch(API_URL, {
     method: "GET",
     headers: headers,
@@ -98,7 +103,7 @@ function getUserUrl() {
           $(".git-user-name").each(function () {
             $(this).attr("placeholder", USER_GIT);
           });
-          getUserRepo();
+          callback();
         });
       }
     })
@@ -120,10 +125,12 @@ function getUserRepo() {
           $("#loading").addClass("hide");
           $("#content").css("display", "block");
 
+          let isSet = true;
           // 설정 안했을 때
-          if (data.data.repoName === "") {
+          if (data.data.repoName === null) {
             USER_REPO = "설정한 Repository가 없습니다";
-          } else if (data.data.dirPath === "") {
+            isSet = false;
+          } else if (data.data.dirPath === null) {
             // 새 repo 설정
             USER_REPO = "github.com/" + userName + "/" + data.data.repoName;
 
@@ -144,8 +151,18 @@ function getUserRepo() {
 
             $("#dir-name").attr("placeholder", data.data.dirPath);
           }
-
           $("#user-git").text(USER_REPO);
+
+          if (isSet) {
+            $("#user-git").addClass("user-hover");
+            // repo 이름 클릭 시 깃헙 repo로 이동
+            document.getElementById("user-git").addEventListener("click", function () {
+              const repoUrl = $("#user-git").text();
+              var name = repoUrl.split("/");
+              const url = `https://${name[0]}/${name[1]}/${name[2]}`;
+              chrome.tabs.create({ url: url });
+            });
+          }
         });
       }
     })
@@ -336,6 +353,8 @@ document.getElementById("create-repo-button").addEventListener("click", function
           $("#my-toast").toast({ delay: 1500 });
           $("#my-toast").toast({ animation: true });
           $("#my-toast").toast("show");
+
+          getExistRepo(function () {});
         });
       }
     })
@@ -354,11 +373,3 @@ function resetValid() {
 
   $("#no-check-invalid").css("display", "none");
 }
-
-// repo 이름 클릭 시 깃헙 repo로 이동
-$("#user-git").on("click", function () {
-  const repoUrl = $("#user-git").text();
-  var name = repoUrl.split("/");
-  const url = `https://${name[0]}/${name[1]}/${name[2]}`;
-  chrome.tabs.create({ url: url });
-});

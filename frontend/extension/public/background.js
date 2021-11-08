@@ -59,27 +59,24 @@ function authListener(tabId, changeInfo, tab) {
 
 chrome.tabs.onUpdated.addListener(authListener);
 
+// const boj = "https://www.acmicpc.net/";
 
-const boj = "https://www.acmicpc.net/"
+// function reportback(domcontent) {
+//   console.log(domcontent + "complete");
+// }
 
-function reportback(domcontent){
-  console.log(domcontent+"complete")
-}
+// function completeListener(tabId, changeInfo, tab) {
+//   if (changeInfo.status === "complete") {
+//     const currentUrl = tab.url;
+//     // 백준에서
+//     if (currentUrl.startsWith(boj)) {
+//       if (currentUrl.includes("status")) {
+//         console.log("백준 현황판 도착은했음");
 
-function completeListener(tabId, changeInfo, tab) {
-  if (changeInfo.status === "complete") {
-    const currentUrl = tab.url
-    // 백준에서
-    if (currentUrl.startsWith(boj)) {
-        if (currentUrl.includes("status")){
-          console.log("백준 현황판 도착은했음")
+//         chrome.tabs.sendMessage(tabId, { message: "add status table" }, reportback);
+//       }
+//     }
+//   }
+// }
 
-          chrome.tabs.sendMessage(tabId, {message: "add status table"}, reportback)
-        }
-      }
-    }
-  }
-
-
-
-chrome.tabs.onUpdated.addListener(completeListener);
+// chrome.tabs.onUpdated.addListener(completeListener);
