@@ -64,6 +64,8 @@ const App = () => {
                 setSecond(time[2]);
 
                 setRepoName(data.data.repoName);
+                let link = `https://github.com/dlguswjd0268/${data.data.repoName}`;
+                setGitUrl(link);
               }
             });
           }
@@ -86,26 +88,10 @@ const App = () => {
         if (response.ok) {
           response.json().then((data) => {
             setUserName(data.data.name);
-            let link = `https://github.com/${data.data.name}/${repoName}`;
-            setGitUrl(link);
+            // let link = `https://github.com/${data.data.name}/${repoName}`;
           });
         }
       });
-      // let url = API_BASE_URL + "/api/user";
-      // fetch(url, {
-      //   method: "GET",
-      //   headers: {
-      //     Authorization: `Bearer ${token.token}`,
-      //     "Content-Type": "application/json;charset=UTF-8",
-      //   },
-      // }).then((response) => {
-      //   response.json().then((data) => {
-      //     setUserName("18");
-      //     setUserName(data.data.name);
-      //     let gitLink = `https://github.com/choieunsong/${repoName}`;
-      //     setGitUrl(gitLink);
-      //   });
-      // });
     });
   };
 
