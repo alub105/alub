@@ -11,9 +11,9 @@ const validateSender = (
 }
 
 const messagesFromReactAppListener = (
-    message: ChromeMessage,
-    sender: chrome.runtime.MessageSender,
-    response: MessageResponse
+  message: ChromeMessage,
+  sender: chrome.runtime.MessageSender,
+  response: MessageResponse
 ) => {
 
     const isValidated = validateSender(message, sender);
@@ -46,13 +46,12 @@ const messagesFromReactAppListener = (
 }
 
 const main = () => {
-    console.log('[content.ts] Main')
-    /**
-     * Fired when a message is sent from either an extension process or a content script.
-     */
-    chrome.runtime.onMessage.addListener(messagesFromReactAppListener);
-}
-
+  console.log("[content.ts] Main");
+  /**
+   * Fired when a message is sent from either an extension process or a content script.
+   */
+  chrome.runtime.onMessage.addListener(messagesFromReactAppListener);
+};
 
 
 main();

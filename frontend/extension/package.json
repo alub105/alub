@@ -12,6 +12,7 @@
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.0",
     "clipboard": "^2.0.8",
+    "cross-env": "^7.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.3.0",
@@ -21,7 +22,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "craco build",
+    "build:prod": "cross-env REACT_APP_REDIRECT_URL=https://alub.co.kr/oauth/redirect?platform=EXTENSION REACT_APP_BASE_URL=https://alub.co.kr REACT_APP_CLIENT_ID=0c08d538845c22d84b50 craco build ",
+    "build:dev": "cross-env REACT_APP_REDIRECT_URL=http://localhost:3000/oauth/redirect?platform=EXTENSION REACT_APP_BASE_URL=http://localhost:8080 REACT_APP_CLIENT_ID=4e92f22f41639a118b4c craco build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -44,6 +46,7 @@
     ]
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.161"
+    "@types/chrome": "^0.0.161",
+    "webpack-cli": "^4.9.1"
   }
 }

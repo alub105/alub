@@ -1,10 +1,24 @@
 //access token이 있고 set github일 때 바로 welcome page로 이동
-const start_url = "http://localhost:3000/oauth/redirect";
-const api_url = "http://localhost:8080/api/user/authenticate";
+
+var BASE_URL = "";
+var START_URL = "";
+var API_URL = "/api/user/authenticate";
+
+chrome.management.get(chrome.runtime.id, function (data) {
+  // console.log(data);
+  if (data.installType === "development") {
+    BASE_URL = "http://localhost:8080";
+    START_URL = "http://localhost:3000/oauth/redirect";
+  } else {
+    BASE_URL = "https://alub.co.kr";
+    START_URL = "https://alub.co.kr/oauth/redirect";
+  }
+  // console.log("BASE_URL", BASE_URL);
+});
 
 function authListener(tabId, changeInfo, tab) {
   if (changeInfo.status === "complete") {
-    if (tab.url.startsWith(start_url)) {
+    if (tab.url.startsWith(START_URL)) {
       const param = tab.url.substring(tab.url.indexOf("?") + 1, tab.url.length | "undefined");
 
       const params = param.split("&");
@@ -12,7 +26,7 @@ function authListener(tabId, changeInfo, tab) {
       const code = params[1].split("=");
 
       if (platform[1] === "EXTENSION") {
-        fetch(api_url, {
+        fetch(BASE_URL + API_URL, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -45,6 +59,7 @@ function authListener(tabId, changeInfo, tab) {
 
 chrome.tabs.onUpdated.addListener(authListener);
 
+// const boj = "https://www.acmicpc.net/";
 
 const boj = "https://www.acmicpc.net/"
 

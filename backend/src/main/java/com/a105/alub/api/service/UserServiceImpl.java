@@ -233,6 +233,9 @@ public class UserServiceImpl implements UserService {
     } else {
       setExistingGithubRepoToAlubRepo(user, repoName, dirPath);
     }
+
+    user.updateAlubRepo(repoName, dirPath);
+    userRepository.save(user);
   }
 
   /**
@@ -289,7 +292,7 @@ public class UserServiceImpl implements UserService {
     } while (resSize != 0);
 
     githubAllRepos = githubAllRepos.stream()
-        .filter(githubRepo -> githubRepo.getName().equals(repoName))
+        .filter(githubRepo -> githubRepo.getName().equalsIgnoreCase(repoName))
         .collect(Collectors.toList());
 
     int numOfGithubRepo = githubAllRepos.size();
@@ -313,9 +316,6 @@ public class UserServiceImpl implements UserService {
     if (repoContents.size() <= 0) {
       // dirPath/README.md 생성
       createReadmeInRepoDir(user, repoName, dirPath);
-
-      user.updateAlubRepo(repoName, dirPath);
-      userRepository.save(user);
     } else {
       RepoContent firstContent = repoContents.get(0);
       GithubContentType githubContentType = firstContent.getType();
@@ -325,9 +325,6 @@ public class UserServiceImpl implements UserService {
         if (!getReadmeInRepoDir(user, repoName, dirPath).isPresent()) {
           createReadmeInRepoDir(user, repoName, dirPath);
         }
-
-        user.updateAlubRepo(repoName, dirPath);
-        userRepository.save(user);
       } else {
         // repo 설정 불가
         throw new DirSettingFailException();
