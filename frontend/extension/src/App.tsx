@@ -20,8 +20,14 @@ const App = () => {
   const [commitChecked, setCommitChecked] = useState("CUSTOM");
   const [timerShown, setTimerShown] = useState(true);
 
+  const [token, setToken] = useState(true);
+  const [repoName, setRepoName] = useState("");
+  const [userName, setUserName] = useState("dlguswjd0268");
+  const [gitUrl, setGitUrl] = useState("https://github.com/dlguswjd0268/samdasu");
+
   useEffect(() => {
     checkMode();
+    setInitialInfo();
     getCurrentTabUrl((url) => {
       setUrl(url || "undefined");
     });
@@ -30,8 +36,10 @@ const App = () => {
   const checkMode = () => {
     chrome.storage.sync.get("token", function (token) {
       if (Object.keys(token).length !== 0) {
+        setToken(token.token);
+
         setAuthMode(false);
-        const url = API_BASE_URL + "/api/user/configs";
+        let url = API_BASE_URL + "/api/user/configs";
         fetch(url, {
           method: "GET",
           headers: {
@@ -45,15 +53,17 @@ const App = () => {
               if (data.data.repoName === null) {
                 setRepoMode(true);
               } else {
+                // commit mode setting
                 setCommitChecked(data.data.commit);
-
-                let value = data.data.timerShown === "true" ? true : false;
-                setTimerShown(value);
+                //timer shown setting
+                setTimerShown(data.data.timerShown);
                 // 타이머 setting
                 let time = data.data.timerDefaultTime.split(":");
                 setHour(time[0]);
                 setMinute(time[1]);
                 setSecond(time[2]);
+
+                setRepoName(data.data.repoName);
               }
             });
           }
@@ -62,50 +72,84 @@ const App = () => {
     });
   };
 
-  // commit mode
-  const handleCommit = (e: any) => {
-    setCommitChecked(e.target.value);
-
+  const setInitialInfo = () => {
     chrome.storage.sync.get("token", function (token) {
-      const url = API_BASE_URL + "/api/user/configs";
+      // user name 가져오기
+      const url = API_BASE_URL + "/api/user";
       fetch(url, {
-        method: "PATCH",
+        method: "GET",
         headers: {
           Authorization: `Bearer ${token.token}`,
           "Content-Type": "application/json;charset=UTF-8",
         },
-        body: JSON.stringify({
-          commit: e.target.value,
-        }),
-      })
-        .then((response) => {})
-        .catch((error) => {
-          console.log(error);
-        });
+      }).then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setUserName(data.data.name);
+            let link = `https://github.com/${data.data.name}/${repoName}`;
+            setGitUrl(link);
+          });
+        }
+      });
+      // let url = API_BASE_URL + "/api/user";
+      // fetch(url, {
+      //   method: "GET",
+      //   headers: {
+      //     Authorization: `Bearer ${token.token}`,
+      //     "Content-Type": "application/json;charset=UTF-8",
+      //   },
+      // }).then((response) => {
+      //   response.json().then((data) => {
+      //     setUserName("18");
+      //     setUserName(data.data.name);
+      //     let gitLink = `https://github.com/choieunsong/${repoName}`;
+      //     setGitUrl(gitLink);
+      //   });
+      // });
     });
+  };
+
+  // commit mode
+  const handleCommit = (e: any) => {
+    setCommitChecked(e.target.value);
+
+    const url = API_BASE_URL + "/api/user/configs";
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        commit: e.target.value,
+      }),
+    })
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // timer shown
   const handleTimerShown = () => {
     setTimerShown((timerShown) => !timerShown);
-    console.log(timerShown);
-    chrome.storage.sync.get("token", function (token) {
-      const url = API_BASE_URL + "/api/user/configs";
-      fetch(url, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token.token}`,
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify({
-          timer: !timerShown,
-        }),
-      })
-        .then((response) => {})
-        .catch((error) => {
-          console.log(error);
-        });
-    });
+    console.log(!timerShown);
+
+    const url = API_BASE_URL + "/api/user/configs";
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        timerShown: !timerShown,
+      }),
+    })
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const deleteToken = () => {
@@ -115,36 +159,40 @@ const App = () => {
   };
 
   const setTimer = () => {
-    chrome.storage.sync.get("token", function (token) {
-      let h = "";
-      let m = "";
-      let s = "";
-      if (hour === "") {
-        h = "00";
-      }
-      if (minute === "") {
-        m = "00";
-      }
-      if (second === "") {
-        s = "00";
-      }
+    let h = "";
+    let m = "";
+    let s = "";
+    if (hour === "") {
+      h = "00";
+    } else {
+      h = hour;
+    }
+    if (minute === "") {
+      m = "00";
+    } else {
+      m = minute;
+    }
+    if (second === "") {
+      s = "00";
+    } else {
+      s = second;
+    }
 
-      const url = API_BASE_URL + "/api/user/configs";
-      fetch(url, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token.token}`,
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify({
-          timerDefaultTime: `${h}:${m}:${s}`,
-        }),
-      })
-        .then((response) => {})
-        .catch((error) => {
-          console.log(error);
-        });
-    });
+    const url = API_BASE_URL + "/api/user/configs";
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        timerDefaultTime: `${h}:${m}:${s}`,
+      }),
+    })
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
 
     const message: ChromeMessage = {
       from: Sender.React,
@@ -256,10 +304,10 @@ const App = () => {
       <div className="app">
         <header className="commit-header flex-row">
           <img src={logo} alt={"logo"} className="logo" />
-          <span>choieunsong</span>
+          <span>{userName}</span>
           <span>/</span>
-          <a href="#" id="git-repo-name" className="dir-name" target="_blank">
-            TIL
+          <a href={gitUrl} id="git-repo-name" className="dir-name" target="_blank">
+            {repoName}
           </a>
         </header>
         <main>

@@ -24,6 +24,10 @@ const messagesFromReactAppListener = (
   if (isValidated && message.message === "copy") {
     // copyCode();
   }
+  if (isValidated && message.message === "userInfo") {
+    console.log(message.message.data);
+    response("data");
+  }
 
   if (isValidated && message.message.message === "setTimer") {
     const data = message.message.data;
