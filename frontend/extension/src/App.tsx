@@ -23,7 +23,7 @@ const App = () => {
   const [token, setToken] = useState(true);
   const [repoName, setRepoName] = useState("");
   const [userName, setUserName] = useState("dlguswjd0268");
-  const [gitUrl, setGitUrl] = useState("https://github.com/dlguswjd0268/samdasu");
+  const [gitUrl, setGitUrl] = useState("https://github.com/dlguswjd0258/");
 
   useEffect(() => {
     checkMode();
@@ -64,7 +64,7 @@ const App = () => {
                 setSecond(time[2]);
 
                 setRepoName(data.data.repoName);
-                let link = `https://github.com/dlguswjd0268/${data.data.repoName}`;
+                let link = `https://github.com/dlguswjd0258/${data.data.repoName}`;
                 setGitUrl(link);
               }
             });
