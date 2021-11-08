@@ -54,18 +54,6 @@ function authListener(tabId, changeInfo, tab) {
           });
       }
     }
-
-    // if (tab.url.includes("www.acmicpc.net/status")) {
-    //   console.log("start with url");
-
-    //   var elements = document.getElementsByClassName("result-mine");
-    //   console.log(elements);
-    //   for (let i = 0; i < elements.length; i++) {
-    //     console.log(elements[i]);
-    //     let childElement = elements[i].querySelector(".result-text");
-    //     console.log(childElement);
-    //   }
-    // }
   }
 }
 

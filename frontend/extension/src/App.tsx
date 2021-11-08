@@ -22,12 +22,11 @@ const App = () => {
 
   const [token, setToken] = useState(true);
   const [repoName, setRepoName] = useState("");
-  const [userName, setUserName] = useState("dlguswjd0268");
-  const [gitUrl, setGitUrl] = useState("https://github.com/dlguswjd0258/");
+  const [userName, setUserName] = useState("");
+  const [gitUrl, setGitUrl] = useState("");
 
   useEffect(() => {
     checkMode();
-    setInitialInfo();
     getCurrentTabUrl((url) => {
       setUrl(url || "undefined");
     });
@@ -64,8 +63,7 @@ const App = () => {
                 setSecond(time[2]);
 
                 setRepoName(data.data.repoName);
-                let link = `https://github.com/dlguswjd0258/${data.data.repoName}`;
-                setGitUrl(link);
+                setInitialInfo(data.data.repoName);
               }
             });
           }
@@ -74,10 +72,10 @@ const App = () => {
     });
   };
 
-  const setInitialInfo = () => {
+  const setInitialInfo = (repo: any) => {
     chrome.storage.sync.get("token", function (token) {
       // user name 가져오기
-      const url = API_BASE_URL + "/api/user";
+      const url = API_BASE_URL + "/api/user/";
       fetch(url, {
         method: "GET",
         headers: {
@@ -88,7 +86,8 @@ const App = () => {
         if (response.ok) {
           response.json().then((data) => {
             setUserName(data.data.name);
-            // let link = `https://github.com/${data.data.name}/${repoName}`;
+            let link = `https://github.com/${data.data.name}/${repo}`;
+            setGitUrl(link);
           });
         }
       });
@@ -405,7 +404,7 @@ const App = () => {
                 className="btn btn-lg btn-primary"
                 id="git-repo-button"
                 type="button"
-                onClick={() => deleteToken()}
+                onClick={() => clickRepoSetting()}
               >
                 <i className="fab fa-github "></i>
                 <span className="login-button-title">Git Repository 설정</span>

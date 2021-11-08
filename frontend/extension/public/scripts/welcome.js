@@ -32,47 +32,8 @@ chrome.storage.sync.get("token", function (token) {
 });
 
 $(document).ready(function () {
-  fetch(API_URL, {
-    method: "GET",
-    headers: headers,
-  }).then((response) => {
-    console.log(response);
-    if (response.ok) {
-      response.json().then((data) => {
-        console.log(data);
-        // console.log(data.data.name);
-      });
-    }
-  });
-
   // 기존 repo 목록 가져오기
-  fetch(API_URL + "repos", {
-    method: "GET",
-    headers: headers,
-  })
-    .then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          var select = document.getElementById("exist-repo-names");
-
-          var el = document.createElement("option");
-          el.textContent = "";
-          el.value = "option";
-          select.appendChild(el);
-          for (var i = 0; i < data.data.length; i++) {
-            var name = data.data[i].name;
-            el = document.createElement("option");
-            el.textContent = name;
-            el.value = "option" + i;
-            select.appendChild(el);
-          }
-          getUserUrl();
-        });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  getExistRepo(getUserUrl);
 
   // 기존 레포 addListener 붙이기
   const exists = document.getElementsByClassName("exist-repo-set");
@@ -97,8 +58,39 @@ $(document).ready(function () {
   }
 });
 
+// 기존 repo 목록 가져오기
+function getExistRepo(callback) {
+  fetch(API_URL + "repos", {
+    method: "GET",
+    headers: headers,
+  })
+    .then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          var select = document.getElementById("exist-repo-names");
+
+          var el = document.createElement("option");
+          el.textContent = "";
+          el.value = "option";
+          select.appendChild(el);
+          for (var i = 0; i < data.data.length; i++) {
+            var name = data.data[i].name;
+            el = document.createElement("option");
+            el.textContent = name;
+            el.value = "option" + i;
+            select.appendChild(el);
+          }
+          callback(getUserRepo);
+        });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
 // 유저 정보 가져오기(url)
-function getUserUrl() {
+function getUserUrl(callback) {
   fetch(API_URL, {
     method: "GET",
     headers: headers,
@@ -111,7 +103,7 @@ function getUserUrl() {
           $(".git-user-name").each(function () {
             $(this).attr("placeholder", USER_GIT);
           });
-          getUserRepo();
+          callback();
         });
       }
     })
@@ -361,6 +353,8 @@ document.getElementById("create-repo-button").addEventListener("click", function
           $("#my-toast").toast({ delay: 1500 });
           $("#my-toast").toast({ animation: true });
           $("#my-toast").toast("show");
+
+          getExistRepo(function () {});
         });
       }
     })
