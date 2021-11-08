@@ -40,12 +40,20 @@ const App = () => {
           },
         }).then((response) => {
           if (response.ok) {
+            console.log(response);
             response.json().then((data) => {
               if (data.data.repoName === null) {
                 setRepoMode(true);
               } else {
                 setCommitChecked(data.data.commit);
-                setTimerShown(data.data.timerShown);
+
+                let value = data.data.timerShown === "true" ? true : false;
+                setTimerShown(value);
+                // 타이머 setting
+                let time = data.data.timerDefaultTime.split(":");
+                setHour(time[0]);
+                setMinute(time[1]);
+                setSecond(time[2]);
               }
             });
           }
@@ -80,6 +88,7 @@ const App = () => {
   // timer shown
   const handleTimerShown = () => {
     setTimerShown((timerShown) => !timerShown);
+    console.log(timerShown);
     chrome.storage.sync.get("token", function (token) {
       const url = API_BASE_URL + "/api/user/configs";
       fetch(url, {
@@ -106,6 +115,37 @@ const App = () => {
   };
 
   const setTimer = () => {
+    chrome.storage.sync.get("token", function (token) {
+      let h = "";
+      let m = "";
+      let s = "";
+      if (hour === "") {
+        h = "00";
+      }
+      if (minute === "") {
+        m = "00";
+      }
+      if (second === "") {
+        s = "00";
+      }
+
+      const url = API_BASE_URL + "/api/user/configs";
+      fetch(url, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          timerDefaultTime: `${h}:${m}:${s}`,
+        }),
+      })
+        .then((response) => {})
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+
     const message: ChromeMessage = {
       from: Sender.React,
       message: { data: { hh: hour, mm: minute, ss: second }, message: "setTimer" },
@@ -278,7 +318,7 @@ const App = () => {
                       className="form-check-input"
                       type="checkbox"
                       id="timer-show"
-                      checked={timerShown}
+                      checked={timerShown === true}
                       onChange={handleTimerShown}
                     />
                   </div>

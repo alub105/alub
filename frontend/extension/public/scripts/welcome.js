@@ -32,17 +32,48 @@ chrome.storage.sync.get("token", function (token) {
 });
 
 $(document).ready(function () {
-  fetch(API_URL + "configs", {
-    method: "GET",
-    headers: headers,
-  }).then((response) => {
-    if (response.ok) {
-      response.json().then((data) => {
-        console.log(data);
-        console.log("timerShown: ", data.data.timerShown);
-      });
-    }
-  });
+  // let h = "";
+  // let m = "";
+  // let s = "";
+  // if (h === "") {
+  //   h = "00";
+  // }
+  // if (m === "") {
+  //   m = "50";
+  // }
+  // if (s === "") {
+  //   s = "00";
+  // }
+
+  // const url = API_URL + "configs";
+  // fetch(url, {
+  //   method: "PATCH",
+  //   headers: headers,
+  //   body: JSON.stringify({
+  //     timerDefaultTime: `${h}:${m}:${s}`,
+  //   }),
+  // })
+  //   .then((response) => {
+  //     response.json().then((data) => {
+  //       console.log(data);
+  //     });
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
+
+  // fetch(url, {
+  //   method: "GET",
+  //   headers: headers,
+  // })
+  //   .then((response) => {
+  //     response.json().then((data) => {
+  //       console.log(data);
+  //     });
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
 
   // 기존 repo 목록 가져오기
   fetch(API_URL + "repos", {

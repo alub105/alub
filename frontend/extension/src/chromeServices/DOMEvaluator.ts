@@ -1,5 +1,5 @@
 import { ChromeMessage, Sender, getCurrentTabUrl } from "../types";
-import copyCode from "./copyCode";
+// import copyCode from "./copyCode";
 import addStatusTable from "./status-table.js";
 import createTimer from "./createTimer.js";
 
@@ -22,7 +22,7 @@ const messagesFromReactAppListener = (
   const isValidated = validateSender(message, sender);
 
   if (isValidated && message.message === "copy") {
-    copyCode();
+    // copyCode();
   }
 
   if (isValidated && message.message.message === "setTimer") {
@@ -50,6 +50,6 @@ const main = () => {
 
 main();
 
-if (currentUrl.includes("acmicpc.net/source")) {
-  copyCode();
-}
+// if (currentUrl.includes("acmicpc.net/source")) {
+//   copyCode();
+// }
