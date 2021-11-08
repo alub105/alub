@@ -1,8 +1,6 @@
 import { ChromeMessage, Sender, getCurrentTabUrl } from "../types";
 import copyCode from "./copyCode";
-import addStatusTable from "./status-table.js"
-import createTimer from "./createTimer.js"
-
+import createTimer from "./createTimer";
 type MessageResponse = (response?: any) => void
 const currentUrl = window.location.href
 const validateSender = (
@@ -17,16 +15,14 @@ const messagesFromReactAppListener = (
     sender: chrome.runtime.MessageSender,
     response: MessageResponse
 ) => {
-    if (message.message === "add status table") {
-        addStatusTable();
-        response("테이블에 버튼추가 끝")
-    }
 
     const isValidated = validateSender(message, sender);
     
-
-    if (isValidated && message.message === "copy"){
-        copyCode();
+    if (message.message.message === "add status table") {
+        
+        console.log("메세지는감.")
+        response("애드댓")
+        
     }
 
     if (isValidated && message.message.message === "setTimer") {
@@ -34,7 +30,7 @@ const messagesFromReactAppListener = (
         const hh = parseInt(data.hh)
         const mm = parseInt(data.mm)
         const ss = parseInt(data.ss)
-        createTimer(hh,mm,ss)
+        // createTimer(hh,mm,ss)
         console.log("메세지는감.")
         response("타이머 셋팅 완료")
         
@@ -46,6 +42,7 @@ const messagesFromReactAppListener = (
     }
 
 
+    
 }
 
 const main = () => {
@@ -57,10 +54,13 @@ const main = () => {
 }
 
 
+
 main();
 
 if (currentUrl.includes("acmicpc.net/source")){
-
+    console.log("카피되긴함?")
     copyCode();
 }
+
+
 

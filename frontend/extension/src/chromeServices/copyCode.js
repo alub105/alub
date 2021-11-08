@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const copyCode = () => {
+function copyCode () {
   console.log(process.env.REACT_APP_SERVER_URL)
   const userId = document.querySelector(".loginbar .username")?.innerHTML
   const solvedUserId = document.querySelector('.table-striped')?.childNodes[1]?.childNodes[0]?.childNodes[1]?.textContent
@@ -46,7 +46,7 @@ const copyCode = () => {
       if (correct){
           axios.post(
           
-          `https://localhost:8080/api/user/commits`, 
+          `${SERVER_URL}/api/user/commits`, 
           data
           )
         .then((response) => {console.log(response)})
