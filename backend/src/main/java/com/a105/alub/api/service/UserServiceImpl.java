@@ -1,10 +1,28 @@
 package com.a105.alub.api.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import com.a105.alub.api.request.CommitReq;
 import com.a105.alub.api.request.ConfigsReq;
+import com.a105.alub.api.request.GitHubCommitReq;
 import com.a105.alub.api.request.GithubTokenReq;
 import com.a105.alub.api.request.LoginReq;
 import com.a105.alub.api.request.RepoCreateReq;
 import com.a105.alub.api.request.RepoSetReq;
+import com.a105.alub.api.response.CommitRes;
 import com.a105.alub.api.response.ConfigsRes;
 import com.a105.alub.api.response.GithubContentType;
 import com.a105.alub.api.response.GithubRepo;
@@ -15,31 +33,22 @@ import com.a105.alub.api.response.LoginRes;
 import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.api.response.Readme;
 import com.a105.alub.api.response.RepoContent;
+import com.a105.alub.api.response.GithubRepoContentRes;
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
+import com.a105.alub.common.exception.CommitFileNameException;
 import com.a105.alub.common.exception.DirSettingFailException;
 import com.a105.alub.common.exception.RepoNotFoundException;
 import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.config.GithubConfig;
 import com.a105.alub.domain.entity.User;
+import com.a105.alub.domain.enums.CommitType;
 import com.a105.alub.domain.enums.Platform;
 import com.a105.alub.domain.repository.UserRepository;
 import com.a105.alub.security.GitHubAuthenticate;
 import com.a105.alub.security.UserPrincipal;
 import com.google.common.net.HttpHeaders;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -396,6 +405,100 @@ public class UserServiceImpl implements UserService {
         .onErrorResume(WebClientResponseException.NotFound.class, notFound -> Mono.empty())
         .blockOptional();
     return readme;
+  }
+
+  @Override
+  public CommitRes commit(Long id, CommitReq commitReq) {
+    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    String url = String.format("/repos/%s/%s/contents/%s/%s/%s", user.getName(), user.getRepoName(),
+        user.getDirPath(), commitReq.getSite(), commitReq.getProblemNum());
+
+    GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq);
+    log.info(gitHubCommitReq.toString());
+
+    try {
+      Long cnt = getCommitCnt(url, user.getGithubAccessToken(), commitReq.getProblemNum());
+      String fileName = getFileName(commitReq, cnt);
+
+      url += "/" + fileName;
+      log.info("url: {}", url);
+      githubApiClient.put().uri(url).bodyValue(gitHubCommitReq)
+          .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
+          .onStatus(status -> status == HttpStatus.NOT_FOUND,
+              clientResponse -> clientResponse.createException()
+                  .flatMap(it -> Mono.error(new RepoNotFoundException())))
+          .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+              clientResponse -> clientResponse.bodyToMono(String.class)
+                  .map(body -> new RuntimeException(body)))
+          .toEntity(String.class).block();
+
+      log.info("Commit complete: {}", url);
+      return new CommitRes(url);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+
+  }
+
+  /**
+   * code를 통해 github repo에서 파일명 최댓값 받아오기
+   *
+   * @param repo github repo, repo 내부 dir 경로
+   * @return 최댓값+1
+   */
+  private Long getCommitCnt(String url, String token, String problemNum) {
+    Long cnt = 1L;
+    try {
+
+      List<GithubRepoContentRes> response = githubApiClient.get().uri(url)
+          .header(HttpHeaders.AUTHORIZATION, "token " + token).retrieve()
+          .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+              clientResponse -> clientResponse.bodyToMono(String.class)
+                  .map(body -> new RuntimeException(body)))
+          .bodyToMono(new ParameterizedTypeReference<List<GithubRepoContentRes>>() {}).block();
+
+      Pattern pattern = Pattern.compile("^" + problemNum + "_\\d+\\b");
+      String maxFileName = response.stream().filter(entry -> {
+        Matcher matcher = pattern.matcher(entry.getName());
+        return matcher.find();
+      }).max((entry1, entry2) -> {
+        Matcher matcher1 = pattern.matcher(entry1.getName());
+        Matcher matcher2 = pattern.matcher(entry2.getName());
+        matcher1.find();
+        matcher2.find();
+        StringTokenizer st1 = new StringTokenizer(matcher1.group(), "_");
+        StringTokenizer st2 = new StringTokenizer(matcher2.group(), "_");
+        st1.nextToken();
+        st2.nextToken();
+        return Long.parseLong(st1.nextToken()) > Long.parseLong(st2.nextToken()) ? 1 : -1;
+      }).get().getName();
+
+      Matcher matcher = pattern.matcher(maxFileName);
+      matcher.find();
+      StringTokenizer st = new StringTokenizer(matcher.group(), "_");
+      st.nextToken();
+      cnt = Long.parseLong(st.nextToken()) + 1L;
+    } catch (Exception e) {
+      // 파일이 없는 경우 첫 번째 커밋이기 때문에 아무것도 하지 않고 1을 return
+    }
+    return cnt;
+  }
+
+  private String getFileName(CommitReq commitReq, Long cnt) {
+    String fileName = "";
+
+    if (commitReq.getCommit() == CommitType.CUSTOM) {
+      if (commitReq.getFileName() == null) {
+        throw new CommitFileNameException("filaName이 잘못 되었습니다.");
+      }
+      fileName = commitReq.getFileName();
+    } else {
+      fileName = commitReq.getProblemNum() + "_" + cnt;
+    }
+    fileName += "." + commitReq.getLanguage();
+
+    return fileName;
   }
 
 }
