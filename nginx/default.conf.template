@@ -1,5 +1,5 @@
 upstream backend {
-    server backend:80;
+    server backend:8080;
 }
 
 server {
