@@ -8,3 +8,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+github:
+  clientId: ${GITHUB_CLIENT_ID}
+  clientSecret: ${GITHUB_CLIENT_SECRET}
+
+app:
+  tokenSecret: ${JWT_SECRET}
+  tokenExpirationExtension: 31556952000
+  tokenExpirationWeb: 1209601000
