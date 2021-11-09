@@ -33,6 +33,8 @@ public class Study extends BaseTimeEntity {
   @JoinColumn(name = "study_channel_id")
   private StudyChannel studyChannel;
 
+  private String studyName;
+
   private LocalDateTime startTime;
 
   private LocalDateTime endTime;

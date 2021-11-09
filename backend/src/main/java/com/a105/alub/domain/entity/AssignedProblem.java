@@ -33,11 +33,11 @@ public class AssignedProblem extends BaseTimeEntity {
   private Study study;
 
   private String problemNum;
-  
+
   private String problemTitle;
-  
+
   private String problemSite;
-  
+
   private String problemLevel;
 
 }

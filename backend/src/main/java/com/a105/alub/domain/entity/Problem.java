@@ -1,5 +1,6 @@
 package com.a105.alub.domain.entity;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -19,9 +20,8 @@ import lombok.Setter;
 @DynamicUpdate
 public class Problem {
 
-  private Long num;
-
-  private String site;
+  @EmbeddedId
+  private ProblemId problemId;
 
   private String title;
 

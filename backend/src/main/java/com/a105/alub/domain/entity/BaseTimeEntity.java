@@ -14,10 +14,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class) // 해당 클래스에 Auditing 기능을 포함
 public abstract class BaseTimeEntity {
 
-    @CreatedDate // Entity가 생성되어 저장될 때 시간이 자동 저장
-    private LocalDateTime createdDate;
+  @CreatedDate // Entity가 생성되어 저장될 때 시간이 자동 저장
+  private LocalDateTime createdDate;
 
-    @LastModifiedDate // Entity가 생성되어 저장될 때 시간이 자동 저장
-    private LocalDateTime modifiedDate;
+  @LastModifiedDate // Entity가 생성되어 저장될 때 시간이 자동 저장
+  private LocalDateTime modifiedDate;
 
 }

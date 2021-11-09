@@ -32,30 +32,30 @@ public class User extends BaseTimeEntity {
   private Long id;
 
   private String name;
-  
+
   private String email;
 
   private String imageUrl;
-  
+
   @Enumerated(EnumType.STRING)
   private AuthProvider provider;
 
   private Long providerId;
-  
+
   private String repoName;
-  
+
   private String dirPath;
-  
+
   @Enumerated(EnumType.STRING)
   @ColumnDefault("'DEFAULT'")
   private CommitType commit;
-  
+
   @ColumnDefault("true")
   private Boolean timerShown;
-  
+
   @ColumnDefault("'00:00:00'")
   private String timerDefaultTime;
-  
+
   private String githubAccessToken;
 
   public void updateAlubRepo(String repoName, String dirPath) {
