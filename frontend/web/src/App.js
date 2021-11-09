@@ -1,16 +1,21 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, BrowserRouter as Router, Switch, Link } from "react-router-dom";
 
 import "./App.css";
-import Home from "./component/Home";
-import Authenticate from "./component/Authenticate";
+import "./static/css/bootstrap.min.css";
+import ChannelTemplate from "./component/ChannelTemplate/ChannelTemplate";
+import Authenticate from "./component/Authenticate/Authenticate";
+import NotFound from "./component/error/NotFound";
 
 function App() {
   return (
-    <div className="App">
-      <Route path="/" exact={true} component={Home}></Route>
-      <Route path="/oauth/redirect" component={Authenticate} />
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/" exact={true} component={ChannelTemplate} />
+        <Route path="/oauth/redirect" component={Authenticate} />
+        <Route component={NotFound} />
+      </Switch>
+    </Router>
   );
 }
 
