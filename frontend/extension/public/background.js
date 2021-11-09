@@ -73,7 +73,7 @@ function addStatusTable () {
   const statusTable = document.getElementById("status-table")
 
   const commitColumn = document.createElement("th")
-  commitColumn.innerHTML = "Alub-commit"
+  commitColumn.innerHTML = "Commit"
   // commit header 추가
   const commitRow = document.createElement("td")
 
@@ -105,7 +105,7 @@ function addStatusTable () {
                   commitForm.action = `https://acmicpc.net/source/${answerNumber}`
                   const commitButton = document.createElement("button")
                   commitButton.innerHTML = "Commit"
-
+                  commitButton.setAttribute("class", "btn")
                   commitForm.append(commitButton)
                   // commit하는 버튼을 row에 알맞게 추가.
                   newButton.appendChild(commitForm)
@@ -128,6 +128,70 @@ function addStatusTable () {
 }
 
 
+function copyCode (BASE_URL) {
+  const userId = document.querySelector(".loginbar .username")?.innerHTML
+  const solvedUserId = document.querySelector('.table-striped')?.childNodes[1]?.childNodes[0]?.childNodes[1]?.textContent
+  const resultTable = document.querySelector('.table-striped')
+  const correct = (resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("맞") || resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("100"))
+    && userId===solvedUserId
+  const problemNumber = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent
+  const problemName = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent
+  const memory = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent
+  const timeConsumed =resultTable?.childNodes[1]?.childNodes[0]?.childNodes[6]?.textContent
+  const answerCode = document.getElementsByName("source")[0]?.innerText
+
+  let codeLang = ''
+  let site = ''
+  const lang = document.querySelector(".table-striped")?.childNodes[1]?.childNodes[0]?.childNodes[7]?.textContent
+  if (typeof(lang) === 'string'){
+    if(lang.includes('Py')){codeLang = 'py'}
+    if(lang.includes('Java')){codeLang = 'java'}
+    if(lang.includes('C')){codeLang = 'C'}
+    if(lang.includes('Ruby')){codeLang = 'rbw'}
+    if(lang.includes('Rust')){codeLang = 'rs'}
+    if(lang.includes('Go')){codeLang = 'go'}
+    if(lang.includes('node')){codeLang = 'js'}
+    if(lang.includes('Text')){codeLang = 'txt'}
+    if(lang.includes('Swift')){codeLang = 'swift'}
+  } 
+  const url = window.location.href
+  if (url.includes("acmicpc.net")){site = "BOJ"};
+  if (url.includes("programmers")){site = "PROGRAMMERS"};
+  console.log(BASE_URL)
+  chrome.storage.sync.get("token", function(token) {
+      const data = {
+              srcCode: answerCode,
+              commit: "DEFAULT",
+              language: codeLang,
+              runningTime: timeConsumed,
+              runningMemory: memory,
+              problemName: problemName,
+              problemNum: problemNumber,
+              site: site,
+            }
+    
+      if (correct){
+        fetch(BASE_URL + "/api/user/commits", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          body: JSON.stringify(
+            data
+          ),
+        })
+          .then((response) => {
+            console.log(response)
+          })
+          .catch((err) => {
+            console.log(err);
+        });
+      }
+    })   
+  
+}
+
 
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
@@ -135,13 +199,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const currentUrl = tab.url
     // 백준에서
     if (currentUrl.startsWith(boj)) {
-      if (currentUrl.includes("status")){
-        await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          func: addStatusTable
-        })
-        console.log("백준 현황판 도착은했음 async function으로")
-      }
+      await chrome.storage.sync.get("token", function (response) { 
+        if (response.token !== null){
+          if (currentUrl.includes("status")){
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              func: addStatusTable
+            })
+          }
+          if (currentUrl.includes("source")){
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              func: copyCode,
+              args: [BASE_URL]
+            })
+          }
+        }})
     }
   }
-});
+})

@@ -46,7 +46,7 @@ function copyCode () {
       if (correct){
           axios.post(
           
-          `${SERVER_URL}/api/user/commits`, 
+          `https://localhost:8080/api/user/commits`, 
           data
           )
         .then((response) => {console.log(response)})
