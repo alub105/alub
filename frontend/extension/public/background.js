@@ -63,6 +63,20 @@ chrome.tabs.onUpdated.addListener(authListener);
 
 const boj = "https://www.acmicpc.net/"
 
+function getConfig(BASE_URL, token) {
+    console.log(token)
+
+    fetch(BASE_URL + "/api/user/configs", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    }).then((response) => {
+        console.log(response);
+    });
+  
+}
 
 function addStatusTable () {
 
@@ -199,8 +213,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const currentUrl = tab.url
     // 백준에서
     if (currentUrl.startsWith(boj)) {
-      await chrome.storage.sync.get("token", function (response) { 
-        if (response.token !== null){
+      await chrome.storage.sync.get("token", function (token) { 
+        if (token.token !== null){
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: getConfig,
+            args: [BASE_URL, token.token]
+          })
           if (currentUrl.includes("status")){
             chrome.scripting.executeScript({
               target: { tabId: tab.id },
