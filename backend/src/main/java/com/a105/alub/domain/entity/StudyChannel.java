@@ -26,40 +26,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @DynamicInsert
 @DynamicUpdate
-public class User extends BaseTimeEntity {
+public class StudyChannel extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String name;
 
-  private String email;
-
-  private String imageUrl;
-
-  @Enumerated(EnumType.STRING)
-  private AuthProvider provider;
-
-  private Long providerId;
-
-  private String repoName;
-
-  private String dirPath;
-
-  @Enumerated(EnumType.STRING)
-  @ColumnDefault("'DEFAULT'")
-  private CommitType commit;
+  private String hostId;
 
   @ColumnDefault("true")
-  private Boolean timerShown;
+  private Boolean enabled;
 
-  @ColumnDefault("'00:00:00'")
-  private String timerDefaultTime;
-
-  private String githubAccessToken;
-
-  public void updateAlubRepo(String repoName, String dirPath) {
-    this.repoName = repoName;
-    this.dirPath = dirPath;
-  }
 }
