@@ -3,8 +3,6 @@
   flex-direction: column;
 }
 
-/*--------- Global ----------*/
-
 .landing .site-background {
   width: 100vw;
   height: 523px;
@@ -70,8 +68,8 @@
 
 .landing .title-box .sub-title {
   margin-top: 1.5rem;
+  line-height: 1.8rem;
   font-size: 1.1rem;
-  line-height: 2.1rem;
 }
 
 .landing .site-background .button-box {
@@ -202,5 +200,8 @@
   background-color: var(--background);
 }
 
-.landing footer .footer h1 {
+.landing .site-background .button-box button i {
+  padding: 10px;
 }
+
+/*-------------------- --------------*/
