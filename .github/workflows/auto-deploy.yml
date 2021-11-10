@@ -1,0 +1,130 @@
+name: build and deploy
+
+on:
+  push:
+    branches:
+      - '**'
+        #- develop
+  pull_request:
+    branches:
+      - '**'
+        #- develop
+
+env:
+  ROOT_DIR: ~/alub
+  BACKEND_IMAGE: "${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/backend"
+  NGINX_IMAGE: "${{ secrets.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/nginx"
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Pull docker/dockerfile for docker buildkit
+        run: docker pull docker/dockerfile:1
+
+      - name: Build and export backend
+        uses: docker/build-push-action@v2
+        with:
+          context: ./backend
+          tags: ${{ env.BACKEND_IMAGE }}
+          target: prod
+          outputs: type=docker,dest=/tmp/backend.tar
+
+      - name: Build and export nginx
+        uses: docker/build-push-action@v2
+        with:
+          context: ./frontend/web
+          tags: ${{ env.NGINX_IMAGE }}
+          target: prod
+          outputs: type=docker,dest=/tmp/nginx.tar
+
+      - name: Upload images
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v2
+        with:
+          name: images
+          path: |
+            /tmp/backend.tar
+            /tmp/nginx.tar
+          retention-days: 1
+
+  deploy:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: build-images
+    steps:
+      - name: Delete previous artifacts
+        uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          expire-in: 0
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Download images
+        uses: actions/download-artifact@v2
+        with:
+          name: images
+          path: /tmp
+
+      - name: Load image
+        run: |
+          docker load --input /tmp/backend.tar
+          docker load --input /tmp/nginx.tar
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ secrets.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ secrets.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Publish latest images
+        run: |
+          docker push ${{ env.BACKEND_IMAGE }}:latest
+          docker push ${{ env.NGINX_IMAGE }}:latest
+
+      # https://github.com/appleboy/scp-action
+      - name: Copy files via ssh
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./docker-compose.yml, nginx"
+          target: ${{ env.ROOT_DIR }}
+
+      #  https://github.com/appleboy/ssh-action
+      - name: Execute remote ssh docker compose commands to run container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ env.ROOT_DIR }}
+            touch registry-password
+            echo ${{ secrets.REGISTRY_PASSWORD }} > registry-password
+            docker login ${{ secrets.REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin < registry-password
+            rm registry-password
+            docker-compose pull
+            docker-compose up -d
+            docker system prune -f
+            docker logout ${{ secrets.REGISTRY }}

@@ -123,3 +123,29 @@ docker compose를 통해 application을 실행합니다.
 ```sh
 docker-compose up -d
 ```
+
+
+## 자동 배포
+[auto-deploy.yml](.github/workflows/auto-deploy.yml)에 의해 자동으로 배포가 이루어 집니다.
+
+### github secrets 설정
+프로젝트의 `Settings > Secrets`에서 다음 항목에 대한 secrets 등록이 필요합니다.
+```env
+HOST : 10.11.12.13
+REGISTRY : repo.treescale.com
+REGISTRY_PASSWORD : registrypass
+REGISTRY_USERNAME : registryuser
+SSH_PORT : 22
+SSH_PRIVATE_KEY : -----BEGIN OPENSSH PRIVATE KEY----- ~~
+SSH_USERNAME : sshuser
+```
+
+### 과정
+- build-images
+  - bild images
+  - upload artifacts(images) to share between jobs
+- deploy
+  - download artifacts(built images)
+  - login remote registry
+  - copy files using ssh(scp)
+  - execute docker compose using ssh
