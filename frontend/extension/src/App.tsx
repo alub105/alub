@@ -213,7 +213,7 @@ const App = () => {
 
   const clickRepoSetting = () => {
     const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
-    chrome.tabs.update({ url: welcome_url });
+    chrome.tabs.create({ url: welcome_url });
   };
 
   if (authMode) {

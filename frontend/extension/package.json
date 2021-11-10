@@ -23,8 +23,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build:prod": "cross-env REACT_APP_REDIRECT_URL=https://alub.co.kr/oauth/redirect?platform=EXTENSION REACT_APP_BASE_URL=https://alub.co.kr REACT_APP_CLIENT_ID=0c08d538845c22d84b50 craco build ",
-    "build:dev": "cross-env REACT_APP_REDIRECT_URL=http://localhost:3000/oauth/redirect?platform=EXTENSION REACT_APP_BASE_URL=http://localhost:8080 REACT_APP_CLIENT_ID=4e92f22f41639a118b4c craco build",
+    "build:prod": "cross-env REACT_APP_REDIRECT_URL=https://alub.co.kr/oauth/redirect REACT_APP_BASE_URL=https://alub.co.kr REACT_APP_CLIENT_ID=0c08d538845c22d84b50 craco build ",
+    "build:dev": "cross-env REACT_APP_REDIRECT_URL=http://localhost:3000/oauth/redirect REACT_APP_BASE_URL=http://localhost:8080 REACT_APP_CLIENT_ID=4e92f22f41639a118b4c craco build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

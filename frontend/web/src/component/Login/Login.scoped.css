@@ -1,0 +1,51 @@
+.login {
+  background: var(--background-linear);
+  width: 100vw;
+  height: 100vh;
+  font-family: var(--IBM);
+}
+
+.login .container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  padding-top: 8vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login header {
+  text-align: center;
+  margin-bottom: 3vh;
+}
+
+.login .logo {
+  width: 70px;
+  height: 70px;
+}
+
+.login header .logo-title {
+  font-family: var(--Mulish);
+  color: var(--white);
+
+  font-size: 1.4rem;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+}
+
+.login .app-main {
+  background-color: var(--white);
+  width: 456px;
+  height: 512px;
+
+  border-radius: 16px;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.25);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.login .title {
+  font-size: 1.7rem;
+  margin-top: 30px;
+  color: var(--text-black);
+}
