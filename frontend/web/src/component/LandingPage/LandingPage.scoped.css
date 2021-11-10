@@ -1,9 +1,8 @@
+
 .landing flex-column {
   display: flex;
   flex-direction: column;
 }
-
-/*--------- Global ----------*/
 
 .landing .site-background {
   width: 100vw;
@@ -70,8 +69,8 @@
 
 .landing .title-box .sub-title {
   margin-top: 1.5rem;
-  font-size: 1.1rem;
-  line-height: 2.1rem;
+  font-size: 1rem;
+
 }
 
 .landing .site-background .button-box {
@@ -204,3 +203,4 @@
 
 .landing footer .footer h1 {
 }
+

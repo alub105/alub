@@ -8,6 +8,7 @@ import baekjoon from "../../static/image/baekjoon.png";
 import github from "../../static/image/github.png";
 import programmers from "../../static/image/programmers.png";
 
+
 function LandingPage() {
   return (
     <div className="landing">
