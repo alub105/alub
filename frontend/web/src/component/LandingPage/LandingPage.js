@@ -5,10 +5,31 @@ import ellipse_white from "../../static/image/Ellipse-white.svg";
 import logo from "../../static/image/logo.png";
 import meeting from "../../static/image/meeting.png";
 import baekjoon from "../../static/image/baekjoon.png";
-import github from "../../static/image/github.png";
 import programmers from "../../static/image/programmers.png";
+import comparison from "../../static/image/comparison.jpg";
+
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { OAUTH_REDIRECT_URI, CLIENT_ID } from "../../config/index";
 
 function LandingPage() {
+  const { token: storeToken } = useSelector((state) => state.user);
+  const [isLogin, setIsLogin] = useState(false);
+
+  useEffect(() => {
+    if (storeToken === "") {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true);
+    }
+  }, []);
+
+  // authenticate button click
+  const gitLogin = () => {
+    const newUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${OAUTH_REDIRECT_URI}&scope=repo`;
+    window.open(newUrl, "_blank").focus();
+  };
+
   return (
     <div className="landing">
       <main>
@@ -19,24 +40,30 @@ function LandingPage() {
             <a href="#">
               <img src={logo} alt="logo" className="logo" />
             </a>
+            <button type="button" className="btn btn-outline-light btn-lg start-button">
+              ALUB 스터디 시작하기
+            </button>
             <h1 className="title">
               <span className="logo-title">ALUB</span>에 오신 것을 환영합니다
             </h1>
             <div className="title-box">
               <h3 className="sub-title">
-                ALUB은 GitHub Repository를 손쉽게 연동해주고 백준과 프로그래머스 문제를 자동으로
-                커밋하는 Extension입니다. ALUB 스터디 사이트는 이런 Extension에 기반해 문제집
-                사이트에서 SUCCESS한 코드를 바로 가져와 보여줍니다.
+                ALUB 스터디는 백준과 프로그래머스 사이트에 특화된 온라인 코딩 스터디 사이트입니다.
+                ALUB Extension을 설치하면 더 간편하게 스터디 할 수 있어요! 지금 시작해 볼까요?
               </h3>
             </div>
             <div>
               <div className="button-box">
-                <button type="button" class="btn btn-dark btn-lg">
-                  <i class="fab fa-chrome" />
+                <button type="button" className="btn btn-dark btn-lg">
+                  <i className="fab fa-chrome" />
                   Extension 설치하기
                 </button>
-                <button type="button" class="btn btn-outline-light btn-lg">
-                  <i class="fab fa-github" />
+                <button
+                  type="button "
+                  className="btn btn-outline-light btn-lg"
+                  onClick={() => gitLogin()}
+                >
+                  <i className="fab fa-github" />
                   GitHub 로그인
                 </button>
               </div>
@@ -73,18 +100,21 @@ function LandingPage() {
             <div>
               <img src={baekjoon} alt="baekjoon" className="baekjoon" />
             </div>
-            <div>
-              <img src={github} alt="github" className="github" />
+            <div style={{ "text-align": "center" }}>
+              <i className="fab fa-github fa-4x" />
             </div>
           </div>
         </section>
         <section className="section3">
-          <div className="image-box " />
+          <div className="image-box ">
+            <img src={comparison} alt="compare" className="compare" />
+          </div>
           <div className="flex-column text-box">
-            <h1>백준, 프로그래머스에 특화된 스터디</h1>
+            <h1>쉽고 보기 편한 코드 비교</h1>
             <p>
-              백준, 프로그래머스의 문제를 검색해 문제집을 만들 수 있어요. 그야말로 개발자를 위한
-              스터디 아닌가요?
+              스터디 하면서 코드를 한번에 비교하고 싶지 않나요? ALUB 스터디에서는 멤버의 코드를
+              한번에 비교할 수 있습니다. <br /> 백준, 프로그래머스에서 제출만 하면 Git
+              레포지토리에서 코드 연동까지 해준다니! 이보다 편할 수 없어요!
             </p>
           </div>
         </section>
@@ -92,7 +122,23 @@ function LandingPage() {
         {/* -----x-- descript -x-------- */}
       </main>
       <footer>
-        <div className="footer">{/* <h1>footer</h1> */}</div>
+        <div className="footer">
+          <div className="footer-box">
+            <p>© 2021 ALUB. All rights reserved.</p>
+            <p>Git과 Email을 통해 자유롭게 이슈를 올려보세요</p>
+            <div className="flex-row">
+              <a href="https://github.com/alub105/alub" target="_blank">
+                <i className="fab fa-github " />
+              </a>
+              <a
+                href="https://mail.google.com/mail/u/0/?fs=1&to=alub105105@gmail.com&body=BODY&tf=cm"
+                target="_blank"
+              >
+                <i className="fas fa-envelope " />
+              </a>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   );
