@@ -1,6 +1,6 @@
 # Alub
 
-### 프로젝트 기획 
+## 프로젝트 기획 
 
 1. 크롬 extension
 
@@ -34,3 +34,92 @@
 
       - 플러그인에서 로그인 하면 스터디 사이트에서도 자동 로그인 되게
       - 반대도 마찬가지
+
+## Dockerization 방법
+docker buildkit을 위해 `docker/dockerfile:1` 이미지를 미리 pull 합니다.
+```sh
+docker pull docker/dockerfile:1
+```
+
+<br>
+
+backend와 frontend를 dockerizing합니다.
+```sh
+DOCKER_BUILDKIT=1 docker build -t ${REGISTRY}/alub/backend:${VERSION} --target prod ./backend
+DOCKER_BUILDKIT=1 docker build -t ${REGISTRY}/alub/nginx:${VERSION} --target prod ./frontend/web
+```
+
+## Container registry로의 push
+
+push할 Container registry에 login합니다.
+```sh
+docker login ${REGISTRY}
+Username: 
+Password: 
+```
+
+<br>
+
+Container registry에 dockerizing한 이미지를 push합니다.
+```sh
+docker push ${REGISTRY}/alub/backend:${VERSION}
+docker push ${REGISTRY}/alub/nginx:${VERSION}
+```
+
+## app 서버 구축 및 app 실행 방법
+먼저, Docker와 Docker Compose가 설치되어 있어야 합니다.
+
+<br>
+
+root directory를 생성 및 이동합니다(root directory를 `~/alub`으로 하겠습니다).
+```sh
+mkdir ~/alub
+cd ~/alub
+```
+
+<br>
+
+project의 다음 파일을 root directory로 복사합니다.
+- [docker-compose.yml](./docker-compose.yml)
+- [init-letsencrypt.sh](./init-letsencrypt.sh)
+- [nginx/default.conf.template](nginx/default.conf.template)
+
+
+<br>
+
+docker compose와 certbot을 실행하기 위해서는 `.env` 파일이 필요합니다. `.env`의 항목은 다음과 같습니다.
+```env
+REGISTRY=repo.treescale.com
+APP_DOMAIN=my-app.com
+LETSENCRYPT_EMAIL=example@email.com
+
+# mysql
+MYSQL_USER=myuser
+MYSQL_PASSWORD=mypassword
+MYSQL_ROOT_PASSWORD=myrootpassword
+MYSQL_DATABASE=mydb
+
+# backend
+GITHUB_CLIENT_ID=1q2w3e4r
+GITHUB_CLIENT_SECRET=1q2w3e4r1q2w3e4r
+SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+JWT_SECRET=1q2w3e4r
+
+# mysql, backend, nginx
+TZ=Asia/Seoul
+```
+
+<br>
+
+**root** 권한으로 [init-letsencrypt.sh](./init-letsencrypt.sh)을 실행시켜 certbot에 의해 SSL/TLS 인증서를 생성하도록 해야 합니다.
+```sh
+sudo ./init-letsencrypt.sh
+```
+
+<br>
+
+docker compose를 통해 application을 실행합니다.
+```sh
+docker-compose up -d
+```
