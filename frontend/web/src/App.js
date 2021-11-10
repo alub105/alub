@@ -14,7 +14,8 @@ function App() {
     <Router>
       <main>
         <Switch>
-          <Route path="/" exact={true} component={ChannelTemplate} />
+          <Route path="/" exact={true} component={LandingPage} />
+          <Route path="/channels" exact={true} component={ChannelTemplate} />
           <Route path="/oauth/redirect" component={Authenticate} />
           <Route path="/login" component={Login} />
           <Route component={NotFound} />
