@@ -43,16 +43,6 @@ public class UserSpecs {
           break;
         default:
           break;
-//        case TAG:
-//          predicate.add(builder.like(
-//              root.get(key.value), searchKeyword.get(key)
-//          ));
-//          break;
-//        case LIKESGREATERTHAN:
-//          predicate.add(builder.greaterThan(
-//              root.get(key.value), Integer.valueOf(searchKeyword.get(key).toString())
-//          ));
-//          break;
       }
     }
     return predicate;
