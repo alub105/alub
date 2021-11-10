@@ -2,14 +2,23 @@ package com.a105.alub.domain.entity;
 
 import java.io.Serializable;
 import javax.persistence.Embeddable;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Data
+@Getter
+@ToString
 @Embeddable
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserStudyChannelId implements Serializable {
 
-  private final Long userId;
+  private Long userId;
 
-  private final Long studyChannelId;
+  private Long studyChannelId;
 
 }
