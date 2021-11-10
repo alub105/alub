@@ -1,6 +1,6 @@
-var BASE_URL = "";
-var START_URL = "";
-var API_URL = "";
+let BASE_URL = "";
+let START_URL = "";
+let API_URL = "";
 
 var USER_GIT = "";
 var USER_REPO = "";
@@ -12,12 +12,12 @@ var headers;
 var repoRegex = /^[a-zA-Z0-9_.-]*$/;
 var dirRegex = /[/]{2,}/;
 
-chrome.management.get(chrome.runtime.id, function (data) {
-  // console.log(data);
-  if (data.installType === "development") {
+chrome.storage.sync.get("mode", function (mode) {
+  console.log(mode.mode);
+  if (mode.mode === "dev") {
     BASE_URL = "http://localhost:8080";
     START_URL = "http://localhost:3000/oauth/redirect";
-  } else {
+  } else if (mode.mode === "prod") {
     BASE_URL = "https://alub.co.kr";
     START_URL = "https://alub.co.kr/oauth/redirect";
   }

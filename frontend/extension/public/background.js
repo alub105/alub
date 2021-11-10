@@ -1,23 +1,21 @@
 //access token이 있고 set github일 때 바로 welcome page로 이동
-
-var BASE_URL = "";
-var START_URL = "";
-var API_URL = "/api/user/authenticate";
-
-chrome.management.get(chrome.runtime.id, function (data) {
-  // console.log(data);
-  if (data.installType === "development") {
-    BASE_URL = "http://localhost:8080";
-    START_URL = "http://localhost:3000/oauth/redirect";
-  } else {
-    BASE_URL = "https://alub.co.kr";
-    START_URL = "https://alub.co.kr/oauth/redirect";
-  }
-  // console.log("BASE_URL", BASE_URL);
-});
+let BASE_URL = "";
+let START_URL = "";
+let API_URL = "/api/user/authenticate";
 
 function authListener(tabId, changeInfo, tab) {
   if (changeInfo.status === "complete") {
+    console.log(tab.url);
+    if (tab.url.startsWith("http://localhost:3000")) {
+      BASE_URL = "http://localhost:8080";
+      START_URL = "http://localhost:3000/oauth/redirect";
+      chrome.storage.sync.set({ mode: "dev" });
+    } else if (tab.url.startsWith("https://alub.co.kr")) {
+      chrome.storage.sync.set({ mode: "prod" });
+      BASE_URL = "https://alub.co.kr";
+      START_URL = "https://alub.co.kr/oauth/redirect";
+    }
+
     if (tab.url.startsWith(START_URL)) {
       const param = tab.url.substring(tab.url.indexOf("?") + 1, tab.url.length | "undefined");
 
