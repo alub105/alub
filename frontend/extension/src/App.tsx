@@ -13,9 +13,9 @@ const App = () => {
   const [authMode, setAuthMode] = useState(true);
   const [repoMode, setRepoMode] = useState(false);
 
-  const [hour, setHour] = useState(0);
-  const [minute, setMinute] = useState(0);
-  const [second, setSecond] = useState(0);
+  const [hour, setHour] = useState("");
+  const [minute, setMinute] = useState("");
+  const [second, setSecond] = useState("");
 
   const [commitChecked, setCommitChecked] = useState("CUSTOM");
   const [timerShown, setTimerShown] = useState(true);
@@ -146,24 +146,9 @@ const App = () => {
   };
 
   const setTimer = () => {
-    let h = "";
-    let m = "";
-    let s = "";
-    if (hour === 0) {
-      h = "00";
-    } else {
-      h = String(hour);
-    }
-    if (minute === 0) {
-      m = "00";
-    } else {
-      m = String(minute);
-    }
-    if (second === 0) {
-      s = "00";
-    } else {
-      s = String(second);
-    }
+    let h = String(hour).padStart(2, "0");
+    let m = String(minute).padStart(2, "0");
+    let s = String(second).padStart(2, "0");
 
     const url = API_BASE_URL + "/api/user/configs";
     fetch(url, {
@@ -195,15 +180,17 @@ const App = () => {
   };
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     let { value, min, max } = event.target;
+    let result = String(Math.max(Number(min), Math.min(Number(max), Number(value)))).padStart(
+      2,
+      "0"
+    );
     if (event.target.id === "hour") {
-      setHour(Number(value));
+      setHour(result);
     }
     if (event.target.id === "minute") {
-      let result = Math.max(Number(min), Math.min(Number(max), Number(value)));
       setMinute(result);
     }
     if (event.target.id === "second") {
-      let result = Math.max(Number(min), Math.min(Number(max), Number(value)));
       setSecond(result);
     }
   };
@@ -368,6 +355,8 @@ const App = () => {
                         className="form-control form-control-sm"
                         id="hour"
                         placeholder="hh"
+                        min="0"
+                        max="99"
                         value={hour}
                         onChange={onChangeInput}
                       />

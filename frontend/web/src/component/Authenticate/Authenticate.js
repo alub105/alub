@@ -48,6 +48,11 @@ const Authenticate = () => {
     <div className="authenticate">
       <div className="container">
         <h1 className="title">Authenticate</h1>
+        <div className="d-flex justify-content-center loading">
+          <div className="spinner-border text-light spinner-style" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
       </div>
     </div>
   );
