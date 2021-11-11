@@ -3,12 +3,10 @@ name: build and deploy
 on:
   push:
     branches:
-      - '**'
-        #- develop
+      - develop
   pull_request:
     branches:
-      - '**'
-        #- develop
+      - develop
 
 env:
   ROOT_DIR: ~/alub
