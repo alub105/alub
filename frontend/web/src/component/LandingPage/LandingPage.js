@@ -9,25 +9,44 @@ import programmers from "../../static/image/programmers.png";
 import comparison from "../../static/image/comparison.jpg";
 
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { OAUTH_REDIRECT_URI, CLIENT_ID } from "../../config/index";
+import { useHistory } from "react-router";
+
+import AOS from "aos";
+import "aos/dist/aos.css";
+
+import * as actions from "../../modules/actions/user";
 
 function LandingPage() {
   const { token: storeToken } = useSelector((state) => state.user);
   const [isLogin, setIsLogin] = useState(false);
 
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   useEffect(() => {
-    if (storeToken === "") {
+    AOS.init();
+
+    if (!storeToken) {
       setIsLogin(false);
     } else {
       setIsLogin(true);
     }
-  }, []);
+  }, [storeToken]);
 
   // authenticate button click
   const gitLogin = () => {
     const newUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${OAUTH_REDIRECT_URI}&scope=repo`;
-    window.open(newUrl, "_blank").focus();
+    window.open(newUrl, "_self").focus();
+  };
+
+  const logout = () => {
+    dispatch(actions.setToken(""));
+  };
+
+  const goChannel = () => {
+    history.push("/channel");
   };
 
   return (
@@ -36,12 +55,32 @@ function LandingPage() {
         {/* -------- header ---------- */}
         <section>
           <div className="site-background">
-            <img src={background_ui} className="background-ui" />
+            <img
+              src={background_ui}
+              className="background-ui"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            />
             <a href="#">
               <img src={logo} alt="logo" className="logo" />
             </a>
-            <button type="button" className="btn btn-outline-light btn-lg start-button">
-              ALUB 스터디 시작하기
+            <button
+              type="button"
+              className="btn btn-outline-light btn-lg login-button"
+              onClick={() => gitLogin()}
+              style={{ display: isLogin ? "none" : "block" }}
+            >
+              <i className="fab fa-github" />
+              GitHub 로그인
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-light btn-lg login-button"
+              onClick={() => logout()}
+              style={{ display: isLogin ? "block" : "none" }}
+            >
+              <i className="fab fa-github" />
+              로그아웃
             </button>
             <h1 className="title">
               <span className="logo-title">ALUB</span>에 오신 것을 환영합니다
@@ -61,10 +100,9 @@ function LandingPage() {
                 <button
                   type="button "
                   className="btn btn-outline-light btn-lg"
-                  onClick={() => gitLogin()}
+                  onClick={() => goChannel()}
                 >
-                  <i className="fab fa-github" />
-                  GitHub 로그인
+                  ALUB 스터디 시작하기
                 </button>
               </div>
             </div>
@@ -73,7 +111,7 @@ function LandingPage() {
         </section>
         {/* -----x-- header -x-------- */}
         {/* -------- descript ---------- */}
-        <section className="section1">
+        <section className="section1" data-aos="fade-up" data-aos-delay="100">
           <div className="image-box">
             <img src={meeting} alt="meeting" className="meeting" />
           </div>
@@ -85,12 +123,12 @@ function LandingPage() {
             </p>
           </div>
         </section>
-        <section className="section2">
+        <section className="section2" data-aos="fade-up" data-aos-delay="100">
           <div className="flex-column text-box">
             <h1>백준, 프로그래머스에 특화된 스터디</h1>
             <p>
-              백준, 프로그래머스의 문제를 검색해 문제집을 만들 수 있어요. 그야말로 개발자를 위한
-              스터디 아닌가요?
+              백준, 프로그래머스의 문제를 검색해 문제집을 만들 수 있어요. 사이트에서 문제를 제출하면
+              바로 코드를 불러오기까지! 그야말로 개발자를 위한 스터디 아닌가요?
             </p>
           </div>
           <div className="image-box ">
@@ -100,12 +138,12 @@ function LandingPage() {
             <div>
               <img src={baekjoon} alt="baekjoon" className="baekjoon" />
             </div>
-            <div style={{ "text-align": "center" }}>
+            <div style={{ textAlign: "center" }}>
               <i className="fab fa-github fa-4x" />
             </div>
           </div>
         </section>
-        <section className="section3">
+        <section className="section3" data-aos="fade-up" data-aos-delay="100">
           <div className="image-box ">
             <img src={comparison} alt="compare" className="compare" />
           </div>
@@ -113,8 +151,7 @@ function LandingPage() {
             <h1>쉽고 보기 편한 코드 비교</h1>
             <p>
               스터디 하면서 코드를 한번에 비교하고 싶지 않나요? ALUB 스터디에서는 멤버의 코드를
-              한번에 비교할 수 있습니다. <br /> 백준, 프로그래머스에서 제출만 하면 Git
-              레포지토리에서 코드 연동까지 해준다니! 이보다 편할 수 없어요!
+              한곳에서 비교하고, 댓글을 달면 GitHub 이슈까지 생성됩니다!
             </p>
           </div>
         </section>

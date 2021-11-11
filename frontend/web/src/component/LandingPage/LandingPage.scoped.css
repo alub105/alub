@@ -8,26 +8,25 @@
   height: 523px;
   background: var(--text-blue);
   overflow: hidden;
-  z-index: 1;
+  z-index: 3;
 }
 
 .landing .background-ui {
   background-size: contain;
-  height: 425px;
+  /* height: 56vh; */
+  width: 50vw;
+  max-width: 650px;
   position: absolute;
   right: 0;
   top: 147px;
-  z-index: 1;
+  z-index: 2;
 }
 
 .landing .ellipse {
-  position: absolute;
-  background-size: contain;
-  max-width: 100vw;
-  height: 211.7px;
-  top: calc(523px - 105.85px);
+  max-width: 100%;
+  height: auto;
   background-position: center;
-  z-index: 0;
+  z-index: 1;
 }
 
 .landing .title-box {
@@ -50,12 +49,16 @@
   box-shadow: 3px 3px 6px #296137;
 }
 
-.landing .site-background .start-button {
+.landing .site-background .login-button {
   font-weight: bold;
   position: absolute;
   top: 25px;
   right: 25px;
-  font-size: 1rem;
+  font-size: 1.1rem;
+}
+
+.landing .site-background .login-button i {
+  padding: 0 10px;
 }
 
 .landing .title {
@@ -88,6 +91,7 @@
   margin-top: 78px;
   z-index: 1000;
   position: relative;
+  width: 45%;
 }
 
 .landing .site-background .button-box button {
@@ -98,14 +102,14 @@
 }
 
 .landing .site-background .button-box button i {
-  padding: 10px;
+  padding-right: 10px;
 }
 
 /*-------------------- --------------*/
 
 .landing .section1 {
   width: 100vw;
-  height: 63vh;
+  height: 48vh;
   background-color: var(--white);
 
   display: grid;
@@ -113,7 +117,7 @@
 }
 
 .landing .section1 .image-box {
-  padding-top: 115px;
+  padding-top: 50px;
   margin: 0 auto;
 }
 
@@ -125,7 +129,7 @@
 .landing .section1 .text-box {
   margin: 0 auto;
   align-items: center;
-  padding: 200px 150px 0 0;
+  padding: 130px 150px 0 0;
 }
 
 .landing section .text-box h1 {
@@ -143,7 +147,7 @@
 /*------------------- Section2------------------*/
 .landing .section2 {
   width: 100vw;
-  height: 50vh;
+  height: 48vh;
   background-color: var(--background);
 
   display: grid;
@@ -184,7 +188,7 @@
 
 .landing .section3 {
   width: 100vw;
-  height: 50vh;
+  height: 48vh;
   background-color: var(--white);
 
   display: grid;
@@ -215,8 +219,6 @@
   background-size: contain;
   position: absolute;
   max-width: 100vw;
-  height: 211.7px;
-  margin-top: -106.35px;
   background-position: center;
   z-index: 0;
 }

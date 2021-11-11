@@ -2,7 +2,15 @@ import React from "react";
 import "./Authenticate.scoped.css";
 import { API_BASE_URL } from "../../config/index";
 
+import { useHistory } from "react-router-dom";
+
+import { useDispatch } from "react-redux";
+import * as actions from "../../modules/actions/user";
+
 const Authenticate = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const url = window.location.href;
   const start_url = url.split("?");
   const params = start_url[1].split("&");
@@ -10,8 +18,8 @@ const Authenticate = () => {
   const code = params[1].split("=");
 
   if (platform[1] === "WEB") {
-    console.log("WEB!");
     const api_url = API_BASE_URL + "/api/user/authenticate";
+
     fetch(api_url, {
       method: "POST",
       headers: {
@@ -27,6 +35,8 @@ const Authenticate = () => {
         if (response.ok) {
           response.json().then((data) => {
             //token 저장
+            dispatch(actions.setToken(data.data.token));
+            history.push("/");
           });
         }
       })

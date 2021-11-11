@@ -10,7 +10,7 @@
 
   --background: #f4f4f4;
   /* --background-linear: linear-gradient(to bottom, #e9ecef, #b3c7db); */
-  --background-linear: linear-gradient(60deg, rgba(84, 58, 183, 1) 0%, rgba(0, 172, 193, 1) 100%);
+  --background-linear: linear-gradient(120deg, rgba(0, 172, 193, 1) 0, rgba(84, 58, 183, 1) 100%);
 
   --IBM: "IBM", cursive;
   --Mulish: "Mulish", cursive;

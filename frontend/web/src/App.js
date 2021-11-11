@@ -7,7 +7,6 @@ import ChannelTemplate from "./component/ChannelTemplate/ChannelTemplate";
 import LandingPage from "./component/LandingPage/LandingPage";
 import Authenticate from "./component/Authenticate/Authenticate";
 import NotFound from "./component/error/NotFound";
-import Login from "./component/Login/Login.js";
 
 function App() {
   return (
@@ -15,9 +14,8 @@ function App() {
       <main>
         <Switch>
           <Route path="/" exact={true} component={LandingPage} />
-          <Route path="/channels" exact={true} component={ChannelTemplate} />
+          <Route path="/channel" exact={true} component={ChannelTemplate} />
           <Route path="/oauth/redirect" component={Authenticate} />
-          <Route path="/login" component={Login} />
           <Route component={NotFound} />
         </Switch>
       </main>
