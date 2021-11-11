@@ -8,9 +8,11 @@ import com.a105.alub.api.request.ProblemTerms;
 import com.a105.alub.api.response.ProblemsRes;
 import com.a105.alub.api.response.solvedac.ProblemItem;
 import com.a105.alub.api.response.solvedac.SolvedacSearchRes;
+import com.a105.alub.common.exception.ProblemNotFoundException;
 import com.a105.alub.domain.entity.Problem;
 import com.a105.alub.domain.enums.BojLevel;
 import com.a105.alub.domain.enums.Site;
+import com.a105.alub.domain.repository.ProblemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ProblemsServiceImpl implements ProblemsService {
 
+  private final ProblemRepository problemRepository;
   private final WebClient solvedacApiClient;
 
   @Override
@@ -30,13 +33,21 @@ public class ProblemsServiceImpl implements ProblemsService {
       SolvedacSearchRes solvedacSearchRes = getBojSearch(terms.getKeyword());
       log.info("search problems on BOJ: {}", solvedacSearchRes);
       for (ProblemItem item : solvedacSearchRes.getItems()) {
-        problemsResList.add(
-            ProblemsRes.builder().num(item.getProblemId()).title(item.getTitleKo())
-            .site(site).level(BojLevel.values()[item.getLevel()].toString()).build()
-        );
+        problemsResList.add(ProblemsRes.builder().num(item.getProblemId()).title(item.getTitleKo())
+            .site(site).level(BojLevel.values()[item.getLevel()].toString()).build());
       }
     } else if (site == Site.PROGRAMMERS) {
       List<Problem> problemList = getProgrammersSearch(terms.getKeyword());
+      for (Problem problem : problemList) {
+        problemsResList.add(
+            ProblemsRes.builder().num(problem.getProblemId().getNum()).title(problem.getTitle())
+                .site(problem.getProblemId().getSite()).level(problem.getLevel()).build()
+        );
+      }
+    }
+    
+    if(problemsResList.isEmpty()) {
+      throw new ProblemNotFoundException();
     }
 
     return problemsResList;
@@ -51,7 +62,6 @@ public class ProblemsServiceImpl implements ProblemsService {
   }
 
   private List<Problem> getProgrammersSearch(String keyword) {
-
-    return null;
+    return problemRepository.findByTitleContaining(keyword);
   }
 }
