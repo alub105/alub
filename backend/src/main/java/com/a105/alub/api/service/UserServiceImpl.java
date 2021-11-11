@@ -38,6 +38,7 @@ import com.a105.alub.common.exception.AlreadyExistingRepoException;
 import com.a105.alub.common.exception.CommitFileNameException;
 import com.a105.alub.common.exception.DirSettingFailException;
 import com.a105.alub.common.exception.RepoNotFoundException;
+import com.a105.alub.common.exception.TimerFormatException;
 import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.config.GithubConfig;
 import com.a105.alub.domain.entity.User;
@@ -114,12 +115,23 @@ public class UserServiceImpl implements UserService {
     if (configsReq.getCommit() != null) {
       user.setCommit(configsReq.getCommit());
     } else if (configsReq.getTimerDefaultTime() != null) { // 기본 시간 설정
-      user.setTimerDefaultTime(configsReq.getTimerDefaultTime());
+      String time = checkTimeFormat(configsReq.getTimerDefaultTime());
+      user.setTimerDefaultTime(time);
     } else { // 타이머 보일지 여부 설정
       user.setTimerShown(configsReq.isTimerShown());
     }
 
     userRepository.save(user);
+  }
+
+  private String checkTimeFormat(String time) {
+    final String REGEX = "([0-9]){2}(:[0-5][0-9]){2}";
+    
+    if(!time.matches(REGEX)) {
+      throw new TimerFormatException("입력한 형식이 올바르지 않습니다.");
+    }
+    
+    return time;
   }
 
   @Override
