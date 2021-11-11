@@ -169,7 +169,7 @@ label {
 #repo-check-button {
   font-size: 0.9rem;
   font-weight: bold;
-  width: 70%;
+  width: 80%;
 }
 
 .exist-grid {
@@ -185,7 +185,7 @@ label {
 }
 
 #create-repo-button {
-  width: 70%;
+  width: 75%;
   font-size: 0.9rem;
   font-weight: bold;
 }
