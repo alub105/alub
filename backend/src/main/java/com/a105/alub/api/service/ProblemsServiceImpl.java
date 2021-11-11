@@ -8,7 +8,6 @@ import com.a105.alub.api.request.ProblemTerms;
 import com.a105.alub.api.response.ProblemsRes;
 import com.a105.alub.api.response.solvedac.ProblemItem;
 import com.a105.alub.api.response.solvedac.SolvedacSearchRes;
-import com.a105.alub.common.exception.ProblemNotFoundException;
 import com.a105.alub.domain.entity.Problem;
 import com.a105.alub.domain.enums.BojLevel;
 import com.a105.alub.domain.enums.Site;
@@ -44,10 +43,6 @@ public class ProblemsServiceImpl implements ProblemsService {
                 .site(problem.getProblemId().getSite()).level(problem.getLevel()).build()
         );
       }
-    }
-    
-    if(problemsResList.isEmpty()) {
-      throw new ProblemNotFoundException();
     }
 
     return problemsResList;
