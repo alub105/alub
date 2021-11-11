@@ -107,7 +107,7 @@ function LandingPage() {
               </div>
             </div>
           </div>
-          <img src={ellipse_blue} className="ellipse" />
+          <img src={ellipse_blue} className="ellipse" alt="elipse-blue" />
         </section>
         {/* -----x-- header -x-------- */}
         {/* -------- descript ---------- */}
@@ -155,7 +155,7 @@ function LandingPage() {
             </p>
           </div>
         </section>
-        <img src={ellipse_white} className="ellipse-white" />
+        <img src={ellipse_white} className="ellipse-white" alt="ellipse-white" />
         {/* -----x-- descript -x-------- */}
       </main>
       <footer>
