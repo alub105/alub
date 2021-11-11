@@ -1,16 +1,15 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Redirect } from "react-router";
+import { useHistory } from "react-router";
 
 const ChannelTemplate = () => {
   const { token: storeToken } = useSelector((state) => state.user);
-
+  const history = useHistory();
   useEffect(() => {
-    if (storeToken === "") {
-      console.log("no auth");
-      <Redirect to="/login" />;
+    if (!storeToken) {
+      history.push("/");
     }
-  }, []);
+  }, [storeToken]);
   return (
     <div>
       <h1>Channel</h1>

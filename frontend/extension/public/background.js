@@ -5,7 +5,6 @@ let API_URL = "/api/user/authenticate";
 
 function authListener(tabId, changeInfo, tab) {
   if (changeInfo.status === "complete") {
-    console.log(tab.url);
     if (tab.url.startsWith("http://localhost:3000")) {
       BASE_URL = "http://localhost:8080";
       START_URL = "http://localhost:3000/oauth/redirect";
@@ -186,7 +185,16 @@ function copyCode(BASE_URL) {
   if (url.includes("programmers")) {
     site = "PROGRAMMERS";
   }
-  console.log(BASE_URL);
+  chrome.storage.sync.get("mode", function (mode) {
+    console.log(mode.mode);
+    if (mode.mode === "dev") {
+      BASE_URL = "http://localhost:8080";
+    } else if (mode.mode === "prod") {
+      BASE_URL = "https://alub.co.kr";
+    }
+    console.log(BASE_URL);
+  });
+
   chrome.storage.sync.get("token", function (token) {
     const data = {
       srcCode: answerCode,
