@@ -22,6 +22,7 @@ import com.a105.alub.api.response.GithubRepoRes;
 import com.a105.alub.api.response.LoginRes;
 import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.api.service.UserService;
+import com.a105.alub.common.exception.WrongRepoParamException;
 import com.a105.alub.common.response.ApiResponseDto;
 import com.a105.alub.domain.enums.Site;
 import com.a105.alub.security.CurrentUser;
@@ -29,6 +30,7 @@ import com.a105.alub.security.UserPrincipal;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import springfox.documentation.annotations.ApiIgnore;
@@ -38,7 +40,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
-
+  private static final Pattern DIR_PATH_ANTI_PATTERN = Pattern.compile("//+");
   private final UserService userService;
 
   @ApiOperation(value = "github authenticate", notes = "github 사용자 인증을 합니다.",
@@ -107,6 +109,11 @@ public class UserController {
   public ApiResponseDto<String> setAlubRepo(@RequestBody RepoSetReq repoSetReq,
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
     log.info("PUT /repos - request : {}, userId : {}", repoSetReq, userPrincipal.getId());
+    repoSetReq.setDirPath(repoSetReq.getDirPath().trim());
+    if (!matchesRepoNamePattern(repoSetReq.getRepoName())
+        || !matchesDirPathPattern(repoSetReq.getDirPath())) {
+      throw new WrongRepoParamException();
+    }
 
     userService.setAlubRepo(userPrincipal.getId(), repoSetReq);
     return ApiResponseDto.DEFAULT_SUCCESS;
@@ -116,6 +123,9 @@ public class UserController {
   public ApiResponseDto<GithubRepoRes> getGithubRepo(@PathVariable String repoName,
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
     log.info("GET /repos/{} - userId : {}", repoName, userPrincipal.getId());
+    if (!matchesRepoNamePattern(repoName)) {
+      throw new WrongRepoParamException();
+    }
 
     GithubRepoRes githubRepoRes = userService.getGithubRepo(userPrincipal.getId(), repoName);
     log.info("GET /repos/{} - userId : {}, response : {}", repoName, userPrincipal.getId(),
@@ -143,4 +153,12 @@ public class UserController {
     return ApiResponseDto.success(commitRes);
   }
 
+  private boolean matchesRepoNamePattern(String repoName) {
+    return repoName.matches("([A-Za-z0-9-_.]+)");
+  }
+
+  private boolean matchesDirPathPattern(String dirPath) {
+    return !dirPath.startsWith("/") && !dirPath.endsWith("/")
+        && !DIR_PATH_ANTI_PATTERN.matcher(dirPath).find();
+  }
 }

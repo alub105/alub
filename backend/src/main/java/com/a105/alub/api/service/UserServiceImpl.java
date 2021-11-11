@@ -54,6 +54,8 @@ import com.a105.alub.domain.repository.UserRepository;
 import com.a105.alub.security.GitHubAuthenticate;
 import com.a105.alub.security.UserPrincipal;
 import com.google.common.net.HttpHeaders;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -344,7 +346,7 @@ public class UserServiceImpl implements UserService {
       GithubContentType githubContentType = firstContent.getType();
       String contentFullName = firstContent.getPath();
 
-      if (!contentFullName.equals(dirPath) && githubContentType == GithubContentType.FILE) {
+      if (!contentFullName.equals(dirPath)) {
         if (!getReadmeInRepoDir(user, repoName, dirPath).isPresent()) {
           createReadmeInRepoDir(user, repoName, dirPath);
         }
@@ -367,12 +369,18 @@ public class UserServiceImpl implements UserService {
     String readmeContent = "# Alub \r\n원 클릭을 통한 문제 풀이 코드 업로드";
     Readme readme = new Readme("Create README.md by Alub", readmeContent);
 
-    // dirPath가 root("")일 경우를 위해 String.format() 사용
-    String url = String
-        .format("/repos/%s/%s/contents/%s/README.md", user.getName(), repoName, dirPath);
+    StringBuilder uri = new StringBuilder("/repos/{userName}/{repoName}/contents");
+    Map<String, String> uriPathVariables = new HashMap<>();
+    uriPathVariables.put("userName", user.getName());
+    uriPathVariables.put("repoName", repoName);
+    if (dirPath != null && !dirPath.equals("")) {
+      uri.append("/{dirPath}");
+      uriPathVariables.put("dirPath", dirPath);
+    }
+    uri.append("/README.md");
 
     RepoContent repoContents = githubApiClient.put()
-        .uri(url)
+        .uri(uri.toString(), uriPathVariables)
         .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken())
         .bodyValue(readme)
         .retrieve()
@@ -393,9 +401,18 @@ public class UserServiceImpl implements UserService {
    * @return
    */
   private List<RepoContent> getRepoContents(User user, String repoName, String dirPath) {
+
+    StringBuilder uri = new StringBuilder("/repos/{userName}/{repoName}/contents");
+    Map<String, String> uriPathVariables = new HashMap<>();
+    uriPathVariables.put("userName", user.getName());
+    uriPathVariables.put("repoName", repoName);
+    if (dirPath != null && !dirPath.equals("")) {
+      uri.append("/{dirPath}");
+      uriPathVariables.put("dirPath", dirPath);
+    }
+
     List<RepoContent> repoContents = githubApiClient.get()
-        .uri("/repos/{userName}/{repoName}/contents/{dirPath}",
-            user.getName(), repoName, dirPath)
+        .uri(uri.toString(), uriPathVariables)
         .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken())
         .retrieve()
         .onStatus(status -> (status.is4xxClientError() && status != HttpStatus.NOT_FOUND)
