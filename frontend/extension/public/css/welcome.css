@@ -12,7 +12,7 @@
 
   --background: #e9ecef;
   /* --background-linear: linear-gradient(to bottom, #e9ecef, #b3c7db); */
-  --background-linear: linear-gradient(60deg, rgba(84, 58, 183, 1) 0%, rgba(0, 172, 193, 1) 100%);
+  --background-linear: linear-gradient(120deg, rgba(0, 172, 193, 1) 0, rgba(84, 58, 183, 1) 100%);
 
   --IBM: "IBM", cursive;
   --Mulish: "Mulish", cursive;
@@ -169,7 +169,7 @@ label {
 #repo-check-button {
   font-size: 0.9rem;
   font-weight: bold;
-  width: 70%;
+  width: 80%;
 }
 
 .exist-grid {
@@ -185,7 +185,7 @@ label {
 }
 
 #create-repo-button {
-  width: 70%;
+  width: 75%;
   font-size: 0.9rem;
   font-weight: bold;
 }

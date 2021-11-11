@@ -15,12 +15,21 @@
   position: relative;
 }
 
+.authenticate .container .loading {
+  margin-top: 30vh;
+}
+
+.authenticate .container .spinner-style {
+  width: 3rem;
+  height: 3rem;
+}
+
 .authenticate .title {
   font-family: var(--Mulish);
-  font-size: 6em;
+  font-size: 5em;
   font-weight: 100;
   position: relative;
-  top: 30vh;
+  top: 20vh;
   text-shadow: #0062cc 1px 1px, #0062cc 2px 2px, #0062cc 3px 3px, #0062cd 4px 4px, #0062cd 5px 5px,
     #0062cd 6px 6px, #0062cd 7px 7px, #0062ce 8px 8px, #0063ce 9px 9px, #0063ce 10px 10px,
     #0063ce 11px 11px, #0063cf 12px 12px, #0063cf 13px 13px, #0063cf 14px 14px, #0063cf 15px 15px,

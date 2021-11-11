@@ -18,6 +18,11 @@ public class UserControllerAdvice {
     return new ApiResponseDto<>(FAIL, e.getMessage());
   }
 
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ApiResponseDto<?> illegalArgumentExceptionHandler(IllegalArgumentException e) {
+    return new ApiResponseDto<>(FAIL, e.getMessage());
+  }
+
   @ExceptionHandler(AlreadyExistingRepoException.class)
   public ApiResponseDto<?> alreadyExistingRepoExceptionHandler(AlreadyExistingRepoException e) {
     return new ApiResponseDto<>(FAIL, e.getMessage());
