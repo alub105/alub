@@ -8,7 +8,7 @@ import com.a105.alub.api.response.StudyChannelRes;
 public interface StudyChannelService {
   void createChannel(Long userId, StudyChannelCreateReq channelCreateReq);
 
-  StudyChannelRes getChannel(Long userId, Long channelId);
+  StudyChannelRes getChannel(Long channelId);
 
   void modifyChannel(Long userId, Long channelId, StudyChannelModifyReq channelModifyReq);
 

@@ -17,13 +17,15 @@ public class StudyChannelRes {
 
   public StudyChannelRes(StudyChannel studyChannel, User host,
       List<UserStudyChannel> userStudyChannelList) {
-    
+
     this.name = studyChannel.getName();
     this.host = new StudyChannelUserDto(host);
 
     List<StudyChannelUserDto> userList = new LinkedList<StudyChannelUserDto>();
     userStudyChannelList.stream().forEach(userStudyChannel -> {
-      userList.add(new StudyChannelUserDto(userStudyChannel.getUser()));
+      if (userStudyChannel.getUserStudyChannelId().getUserId() != studyChannel.getHostId()) {
+        userList.add(new StudyChannelUserDto(userStudyChannel.getUser()));
+      }
     });
     this.member = userList;
   }

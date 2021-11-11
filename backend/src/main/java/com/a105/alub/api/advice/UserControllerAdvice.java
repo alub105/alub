@@ -5,11 +5,9 @@ import static com.a105.alub.common.response.ApiResponseCode.FAIL;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
-import com.a105.alub.common.exception.StudyChannelNotFoundException;
 import com.a105.alub.common.exception.DirSettingFailException;
 import com.a105.alub.common.exception.RepoNotFoundException;
 import com.a105.alub.common.exception.UserNotFoundException;
-import com.a105.alub.common.exception.UserStudyChannelNotFoundException;
 import com.a105.alub.common.response.ApiResponseDto;
 
 @RestControllerAdvice
@@ -37,17 +35,6 @@ public class UserControllerAdvice {
 
   @ExceptionHandler(UserNotFoundException.class)
   public ApiResponseDto<?> userNotFoundExceptionHandler(UserNotFoundException e) {
-    return new ApiResponseDto<>(FAIL, e.getMessage());
-  }
-
-  @ExceptionHandler(StudyChannelNotFoundException.class)
-  public ApiResponseDto<?> channelNotFoundExceptionHandler(StudyChannelNotFoundException e) {
-    return new ApiResponseDto<>(FAIL, e.getMessage());
-  }
-
-  @ExceptionHandler(UserStudyChannelNotFoundException.class)
-  public ApiResponseDto<?> userStudyChannelNotFoundExceptionHandler(
-      UserStudyChannelNotFoundException e) {
     return new ApiResponseDto<>(FAIL, e.getMessage());
   }
 

@@ -29,35 +29,37 @@ public class StudyChannelController {
   private final StudyChannelService studyChannelService;
 
   @PostMapping("")
-  public ApiResponseDto<String> createChannel(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+  public ApiResponseDto<String> createStudyChannel(
+      @ApiIgnore @CurrentUser UserPrincipal userPrincipal,
       @RequestBody StudyChannelCreateReq channelCreateReq) {
     studyChannelService.createChannel(userPrincipal.getId(), channelCreateReq);
     return ApiResponseDto.DEFAULT_SUCCESS;
   }
 
   @GetMapping("/{channelId}")
-  public ApiResponseDto<StudyChannelRes> getChannel(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-      @PathVariable Long channelId) {
-    StudyChannelRes channelRes = studyChannelService.getChannel(userPrincipal.getId(), channelId);
+  public ApiResponseDto<StudyChannelRes> getStudyChannel(
+      @ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable Long channelId) {
+    StudyChannelRes channelRes = studyChannelService.getChannel(channelId);
     return ApiResponseDto.success(channelRes);
   }
 
   @PutMapping("/{channelId}")
-  public ApiResponseDto<String> modifyChannel(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-      @PathVariable Long channelId, @RequestBody StudyChannelModifyReq channelModifyReq) {
+  public ApiResponseDto<String> modifyStudyChannel(
+      @ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable Long channelId,
+      @RequestBody StudyChannelModifyReq channelModifyReq) {
     studyChannelService.modifyChannel(userPrincipal.getId(), channelId, channelModifyReq);
     return ApiResponseDto.DEFAULT_SUCCESS;
   }
 
   @DeleteMapping("/{channelId}")
-  public ApiResponseDto<String> deleteChannel(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-      @PathVariable Long channelId) {
+  public ApiResponseDto<String> deleteStudyChannel(
+      @ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable Long channelId) {
     studyChannelService.deleteChannel(userPrincipal.getId(), channelId);
     return ApiResponseDto.DEFAULT_SUCCESS;
   }
 
   @GetMapping("//mychannels")
-  public ApiResponseDto<StudyChannelListRes> getChannelList(
+  public ApiResponseDto<StudyChannelListRes> getStudyChannelList(
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
     StudyChannelListRes channelListRes = studyChannelService.getChannelList(userPrincipal.getId());
     return ApiResponseDto.success(channelListRes);
