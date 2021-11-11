@@ -58,7 +58,7 @@ public class StudyChannelController {
     return ApiResponseDto.DEFAULT_SUCCESS;
   }
 
-  @GetMapping("//mychannels")
+  @GetMapping("/mychannels")
   public ApiResponseDto<StudyChannelListRes> getStudyChannelList(
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
     StudyChannelListRes channelListRes = studyChannelService.getChannelList(userPrincipal.getId());
