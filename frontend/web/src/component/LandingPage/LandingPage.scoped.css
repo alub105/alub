@@ -1,3 +1,7 @@
+:root {
+  --landing-section-height: 53vh;
+}
+
 .landing flex-column {
   display: flex;
   flex-direction: column;
@@ -26,6 +30,7 @@
   max-width: 100%;
   height: auto;
   background-position: center;
+  margin-top: -1px;
   z-index: 1;
 }
 
@@ -109,7 +114,7 @@
 
 .landing .section1 {
   width: 100vw;
-  height: 48vh;
+  height: var(--landing-section-height);
   background-color: var(--white);
 
   display: grid;
@@ -147,7 +152,7 @@
 /*------------------- Section2------------------*/
 .landing .section2 {
   width: 100vw;
-  height: 48vh;
+  height: var(--landing-section-height);
   background-color: var(--background);
 
   display: grid;
@@ -188,7 +193,7 @@
 
 .landing .section3 {
   width: 100vw;
-  height: 48vh;
+  height: var(--landing-section-height);
   background-color: var(--white);
 
   display: grid;
