@@ -43,4 +43,5 @@ public class UserControllerAdvice {
   public ApiResponseDto<?> userNotFoundExceptionHandler(UserNotFoundException e) {
     return new ApiResponseDto<>(FAIL, e.getMessage());
   }
+
 }
