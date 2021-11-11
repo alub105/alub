@@ -125,30 +125,13 @@ public class UserServiceImpl implements UserService {
   }
 
   private String checkTimeFormat(String time) {
-    StringTokenizer st = new StringTokenizer(time, ":");
-    int hh,mm,ss;
-    try {
-      hh = Integer.parseInt(st.nextToken());
-      mm = Integer.parseInt(st.nextToken());
-      ss = Integer.parseInt(st.nextToken());
-      
-      if(hh < 0 || hh > 99) {
-        throw new TimerFormatException("0시간 미만 혹은 100시간 이상으로 설정할 수 없습니다.");
-      }
-      
-      if(mm < 0 || mm > 60) {
-        throw new TimerFormatException("0분 미만 혹은 60분 이상으로 설정할 수 없습니다.");
-      }
-      
-      if(ss < 0 || ss > 60) {
-        throw new TimerFormatException("0초 미만 혹은 60초 이상으로 설정할 수 없습니다.");
-      }
-      
-    } catch (NumberFormatException e) {
-      throw new NumberFormatException("입력한 형식이 올바르지 않습니다.");
+    final String REGEX = "([0-9]){2}(:[0-5][0-9]){2}";
+    
+    if(!time.matches(REGEX)) {
+      throw new TimerFormatException("입력한 형식이 올바르지 않습니다.");
     }
     
-    return String.format("%02d:%02d:%02d", hh, mm, ss);
+    return time;
   }
 
   @Override

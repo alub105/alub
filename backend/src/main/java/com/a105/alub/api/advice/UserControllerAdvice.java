@@ -43,9 +43,4 @@ public class UserControllerAdvice {
   public ApiResponseDto<?> userNotFoundExceptionHandler(UserNotFoundException e) {
     return new ApiResponseDto<>(FAIL, e.getMessage());
   }
-
-  @ExceptionHandler(TimerFormatException.class)
-  public ApiResponseDto<?> timerFormatExceptionHandler(TimerFormatException e) {
-    return new ApiResponseDto<>(FAIL, e.getMessage());
-  }
 }
