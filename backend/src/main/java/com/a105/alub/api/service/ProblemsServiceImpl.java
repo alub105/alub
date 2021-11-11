@@ -8,6 +8,10 @@ import com.a105.alub.api.request.ProblemTerms;
 import com.a105.alub.api.response.ProblemsRes;
 import com.a105.alub.api.response.solvedac.ProblemItem;
 import com.a105.alub.api.response.solvedac.SolvedacSearchRes;
+<<<<<<< HEAD
+=======
+import com.a105.alub.common.exception.ProblemNotFoundException;
+>>>>>>> ac3a775bbe495c552b498598e99d0b5180f1eec4
 import com.a105.alub.domain.entity.Problem;
 import com.a105.alub.domain.enums.BojLevel;
 import com.a105.alub.domain.enums.Site;
@@ -44,6 +48,13 @@ public class ProblemsServiceImpl implements ProblemsService {
         );
       }
     }
+<<<<<<< HEAD
+=======
+    
+    if(problemsResList.isEmpty()) {
+      throw new ProblemNotFoundException();
+    }
+>>>>>>> ac3a775bbe495c552b498598e99d0b5180f1eec4
 
     return problemsResList;
   }
