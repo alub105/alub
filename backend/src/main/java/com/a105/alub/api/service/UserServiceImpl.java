@@ -38,6 +38,7 @@ import com.a105.alub.common.exception.AlreadyExistingRepoException;
 import com.a105.alub.common.exception.CommitFileNameException;
 import com.a105.alub.common.exception.DirSettingFailException;
 import com.a105.alub.common.exception.RepoNotFoundException;
+import com.a105.alub.common.exception.TimerFormatException;
 import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.config.GithubConfig;
 import com.a105.alub.domain.entity.User;
@@ -114,12 +115,40 @@ public class UserServiceImpl implements UserService {
     if (configsReq.getCommit() != null) {
       user.setCommit(configsReq.getCommit());
     } else if (configsReq.getTimerDefaultTime() != null) { // 기본 시간 설정
-      user.setTimerDefaultTime(configsReq.getTimerDefaultTime());
+      String time = checkTimeFormat(configsReq.getTimerDefaultTime());
+      user.setTimerDefaultTime(time);
     } else { // 타이머 보일지 여부 설정
       user.setTimerShown(configsReq.isTimerShown());
     }
 
     userRepository.save(user);
+  }
+
+  private String checkTimeFormat(String time) {
+    StringTokenizer st = new StringTokenizer(time, ":");
+    int hh,mm,ss;
+    try {
+      hh = Integer.parseInt(st.nextToken());
+      mm = Integer.parseInt(st.nextToken());
+      ss = Integer.parseInt(st.nextToken());
+      
+      if(hh < 0 || hh > 99) {
+        throw new TimerFormatException("0시간 미만 혹은 100시간 이상으로 설정할 수 없습니다.");
+      }
+      
+      if(mm < 0 || mm > 60) {
+        throw new TimerFormatException("0분 미만 혹은 60분 이상으로 설정할 수 없습니다.");
+      }
+      
+      if(ss < 0 || ss > 60) {
+        throw new TimerFormatException("0초 미만 혹은 60초 이상으로 설정할 수 없습니다.");
+      }
+      
+    } catch (NumberFormatException e) {
+      throw new NumberFormatException("입력한 형식이 올바르지 않습니다.");
+    }
+    
+    return String.format("%02d:%02d:%02d", hh, mm, ss);
   }
 
   @Override
