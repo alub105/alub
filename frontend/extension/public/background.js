@@ -3,6 +3,11 @@ let BASE_URL = "";
 let START_URL = "";
 let API_URL = "/api/user/authenticate";
 
+function notificateAlarm() {
+  console.log("move to notificate function");
+  console.log(chrome.notifications);
+}
+
 function authListener(tabId, changeInfo, tab) {
   if (changeInfo.status === "complete") {
     if (tab.url.startsWith("http://localhost:3000")) {
@@ -15,8 +20,9 @@ function authListener(tabId, changeInfo, tab) {
       START_URL = "https://alub.co.kr/oauth/redirect";
     }
 
-    if (tab.url.startsWith(START_URL)) {
+    if (START_URL !== "" && tab.url.startsWith(START_URL)) {
       const param = tab.url.substring(tab.url.indexOf("?") + 1, tab.url.length | "undefined");
+      console.log("param ", param);
 
       const params = param.split("&");
       const platform = params[0].split("=");
@@ -186,13 +192,11 @@ function copyCode(BASE_URL) {
     site = "PROGRAMMERS";
   }
   chrome.storage.sync.get("mode", function (mode) {
-    console.log(mode.mode);
     if (mode.mode === "dev") {
       BASE_URL = "http://localhost:8080";
     } else if (mode.mode === "prod") {
       BASE_URL = "https://alub.co.kr";
     }
-    console.log(BASE_URL);
   });
 
   chrome.storage.sync.get("token", function (token) {
@@ -217,7 +221,48 @@ function copyCode(BASE_URL) {
         body: JSON.stringify(data),
       })
         .then((response) => {
-          console.log(response);
+          if (response.ok) {
+            response.json().then((data) => {
+              const body = document.querySelector(".wrapper");
+              const element = `<div style=' position: fixed; top: 25px; right: 0; z-index: 100' id='alub-noti'>
+              <div
+                style='
+                  width: 350px;
+                  height: 130px;
+                  display: flex;
+                  flex-direction: column;
+                  '
+                  >
+                  <div style=' background-color: #edf0f6; height: 30%; width: 100%; border-radius: 6px 6px 0 0 !important; padding: 5px; font-size: 20px;'>
+                  <strong style='padding: 20px; color: #20c997;'>ALUB</strong>
+                  </div>
+                  <div
+                  style='
+                  background-color: rgba(0,0,0, 0.7);
+                  height: 80%;
+                  width: 100%;
+                  font-size: 12px;
+                  padding: 20px 15px;
+                  margin: 0 auto;
+                  text-align: center;
+                  line-height: 24px;
+                  color: white;
+                  border-radius: 0 0 6px 6px !important;
+                  '
+                  
+                >
+                  ${data.data.filePath}에 성공적으로 커밋을 완료하였습니다.
+                </div>
+              </div>
+            </div>`;
+              const template = document.createElement("div");
+              template.innerHTML = element;
+              body.appendChild(template);
+              setTimeout(() => {
+                document.querySelector("#alub-noti").remove();
+              }, 3000);
+            });
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -225,6 +270,10 @@ function copyCode(BASE_URL) {
     }
   });
 }
+
+chrome.notifications.onClicked.addListener(function (notificationId) {
+  chrome.tabs.create({ url: notificationId });
+});
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
