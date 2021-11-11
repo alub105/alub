@@ -13,9 +13,9 @@ const App = () => {
   const [authMode, setAuthMode] = useState(true);
   const [repoMode, setRepoMode] = useState(false);
 
-  const [hour, setHour] = useState("");
-  const [minute, setMinute] = useState("");
-  const [second, setSecond] = useState("");
+  const [hour, setHour] = useState(0);
+  const [minute, setMinute] = useState(0);
+  const [second, setSecond] = useState(0);
 
   const [commitChecked, setCommitChecked] = useState("CUSTOM");
   const [timerShown, setTimerShown] = useState(true);
@@ -66,6 +66,8 @@ const App = () => {
                 setInitialInfo(data.data.repoName);
               }
             });
+          } else {
+            deleteToken();
           }
         });
       }
@@ -147,20 +149,20 @@ const App = () => {
     let h = "";
     let m = "";
     let s = "";
-    if (hour === "") {
+    if (hour === 0) {
       h = "00";
     } else {
-      h = hour;
+      h = String(hour);
     }
-    if (minute === "") {
+    if (minute === 0) {
       m = "00";
     } else {
-      m = minute;
+      m = String(minute);
     }
-    if (second === "") {
+    if (second === 0) {
       s = "00";
     } else {
-      s = second;
+      s = String(second);
     }
 
     const url = API_BASE_URL + "/api/user/configs";
@@ -192,14 +194,17 @@ const App = () => {
     });
   };
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let { value, min, max } = event.target;
     if (event.target.id === "hour") {
-      setHour(event.target.value);
+      setHour(Number(value));
     }
     if (event.target.id === "minute") {
-      setMinute(event.target.value);
+      let result = Math.max(Number(min), Math.min(Number(max), Number(value)));
+      setMinute(result);
     }
     if (event.target.id === "second") {
-      setSecond(event.target.value);
+      let result = Math.max(Number(min), Math.min(Number(max), Number(value)));
+      setSecond(result);
     }
   };
 
@@ -373,7 +378,7 @@ const App = () => {
                         id="minute"
                         placeholder="mm"
                         min="0"
-                        max="60"
+                        max="59"
                         value={minute}
                         onChange={onChangeInput}
                       />
@@ -384,7 +389,7 @@ const App = () => {
                         id="second"
                         placeholder="ss"
                         min="0"
-                        max="60"
+                        max="59"
                         value={second}
                         onChange={onChangeInput}
                       />
