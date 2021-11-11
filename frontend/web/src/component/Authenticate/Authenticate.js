@@ -36,7 +36,7 @@ const Authenticate = () => {
           response.json().then((data) => {
             //token 저장
             dispatch(actions.setToken(data.data.token));
-            history.push("/");
+            history.push("/channel");
           });
         }
       })

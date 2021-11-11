@@ -28,6 +28,7 @@ function LandingPage() {
   useEffect(() => {
     AOS.init();
 
+    console.log(storeToken);
     if (!storeToken) {
       setIsLogin(false);
     } else {
