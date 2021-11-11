@@ -53,9 +53,12 @@ const App = () => {
                 setRepoMode(true);
               } else {
                 // commit mode setting
+                chrome.storage.sync.set({repoName:data.data.repoName},function () {})
                 setCommitChecked(data.data.commit);
+                chrome.storage.sync.set({commitConfig:data.data.commit},function () {})
                 //timer shown setting
                 setTimerShown(data.data.timerShown);
+                chrome.storage.sync.set({timerShown:data.data.timershown},function () {})
                 // 타이머 setting
                 let time = data.data.timerDefaultTime.split(":");
                 setHour(time[0]);
@@ -119,7 +122,7 @@ const App = () => {
   const handleTimerShown = () => {
     setTimerShown((timerShown) => !timerShown);
     console.log(!timerShown);
-
+    chrome.storage.sync.set({timerShown:!timerShown},function () {})
     const url = API_BASE_URL + "/api/user/configs";
     fetch(url, {
       method: "PATCH",
@@ -131,7 +134,7 @@ const App = () => {
         timerShown: !timerShown,
       }),
     })
-      .then((response) => {})
+      .then((response) => {console.log(response)})
       .catch((error) => {
         console.log(error);
       });
@@ -144,6 +147,18 @@ const App = () => {
   };
 
   const setTimer = () => {
+    const message: ChromeMessage = {
+      from: Sender.React,
+      message: { data: { hh: hour, mm: minute, ss: second }, message: "setTimer" },
+    };
+
+    getCurrentTabUId((id) => {
+      id &&
+        chrome.tabs.sendMessage(id, message, (response) => {
+          setResponseFromContent(response);
+        });
+    });
+
     let h = "";
     let m = "";
     let s = "";
@@ -174,22 +189,16 @@ const App = () => {
         timerDefaultTime: `${h}:${m}:${s}`,
       }),
     })
-      .then((response) => {})
+      .then(() => {
+        
+        
+      })
+
       .catch((error) => {
-        console.log(error);
+        
+
       });
 
-    const message: ChromeMessage = {
-      from: Sender.React,
-      message: { data: { hh: hour, mm: minute, ss: second }, message: "setTimer" },
-    };
-
-    getCurrentTabUId((id) => {
-      id &&
-        chrome.tabs.sendMessage(id, message, (response) => {
-          setResponseFromContent(response);
-        });
-    });
   };
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.id === "hour") {
@@ -355,6 +364,8 @@ const App = () => {
                       onChange={handleTimerShown}
                     />
                   </div>
+                </form>
+                <form onSubmit={setTimer}>
                   <div className="flex-row default-time-set">
                     <span className="timer-show-title">기본 시간 설정</span>
                     <div className="flex-row">
@@ -373,7 +384,7 @@ const App = () => {
                         id="minute"
                         placeholder="mm"
                         min="0"
-                        max="60"
+                        max="59"
                         value={minute}
                         onChange={onChangeInput}
                       />
@@ -384,14 +395,13 @@ const App = () => {
                         id="second"
                         placeholder="ss"
                         min="0"
-                        max="60"
+                        max="59"
                         value={second}
                         onChange={onChangeInput}
                       />
                       <button
-                        type="button"
+                        type="submit"
                         className="btn btn-outline-primary timer-setting-button"
-                        onClick={setTimer}
                       >
                         설정
                       </button>

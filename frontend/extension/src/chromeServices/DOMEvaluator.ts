@@ -15,14 +15,13 @@ const messagesFromReactAppListener = (
   sender: chrome.runtime.MessageSender,
   response: MessageResponse
 ) => {
-
+    console.log(message, sender)
     const isValidated = validateSender(message, sender);
     
-    if (message.message.message === "add status table") {
+    if (isValidated && message.message.message === "setTimerCatch") {
         
-        console.log("메세지는감.")
-        response("애드댓")
-        
+        console.log("catch로보낸메세지")
+        response('timer...')
     }
 
     if (isValidated && message.message.message === "setTimer") {
@@ -31,9 +30,8 @@ const messagesFromReactAppListener = (
         const mm = parseInt(data.mm)
         const ss = parseInt(data.ss)
         // createTimer(hh,mm,ss)
-        console.log("메세지는감.")
-        response("타이머 셋팅 완료")
-        
+        console.log("then으로 보낸 메세지는감.")
+        response('timer...')
     }
 
     if (isValidated && message.message=== "alarm") {
