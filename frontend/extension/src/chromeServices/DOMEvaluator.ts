@@ -49,6 +49,7 @@ const main = () => {
   console.log(API_URL);
 };
 
+
 main();
 
 if (currentUrl.includes("acmicpc.net/source")) {
