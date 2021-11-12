@@ -66,6 +66,8 @@ const App = () => {
                 setInitialInfo(data.data.repoName);
               }
             });
+          } else {
+            deleteToken();
           }
         });
       }
@@ -144,24 +146,9 @@ const App = () => {
   };
 
   const setTimer = () => {
-    let h = "";
-    let m = "";
-    let s = "";
-    if (hour === "") {
-      h = "00";
-    } else {
-      h = hour;
-    }
-    if (minute === "") {
-      m = "00";
-    } else {
-      m = minute;
-    }
-    if (second === "") {
-      s = "00";
-    } else {
-      s = second;
-    }
+    let h = String(hour).padStart(2, "0");
+    let m = String(minute).padStart(2, "0");
+    let s = String(second).padStart(2, "0");
 
     const url = API_BASE_URL + "/api/user/configs";
     fetch(url, {
@@ -192,14 +179,19 @@ const App = () => {
     });
   };
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let { value, min, max } = event.target;
+    let result = String(Math.max(Number(min), Math.min(Number(max), Number(value)))).padStart(
+      2,
+      "0"
+    );
     if (event.target.id === "hour") {
-      setHour(event.target.value);
+      setHour(result);
     }
     if (event.target.id === "minute") {
-      setMinute(event.target.value);
+      setMinute(result);
     }
     if (event.target.id === "second") {
-      setSecond(event.target.value);
+      setSecond(result);
     }
   };
 
@@ -213,7 +205,7 @@ const App = () => {
 
   const clickRepoSetting = () => {
     const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
-    chrome.tabs.update({ url: welcome_url });
+    chrome.tabs.create({ url: welcome_url });
   };
 
   if (authMode) {
@@ -363,6 +355,8 @@ const App = () => {
                         className="form-control form-control-sm"
                         id="hour"
                         placeholder="hh"
+                        min="0"
+                        max="99"
                         value={hour}
                         onChange={onChangeInput}
                       />
@@ -373,7 +367,7 @@ const App = () => {
                         id="minute"
                         placeholder="mm"
                         min="0"
-                        max="60"
+                        max="59"
                         value={minute}
                         onChange={onChangeInput}
                       />
@@ -384,7 +378,7 @@ const App = () => {
                         id="second"
                         placeholder="ss"
                         min="0"
-                        max="60"
+                        max="59"
                         value={second}
                         onChange={onChangeInput}
                       />
