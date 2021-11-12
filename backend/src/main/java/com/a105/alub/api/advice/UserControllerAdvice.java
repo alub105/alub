@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
 import com.a105.alub.common.exception.DirSettingFailException;
+import com.a105.alub.common.exception.FileNotFoundException;
 import com.a105.alub.common.exception.RepoNotFoundException;
-import com.a105.alub.common.exception.TimerFormatException;
 import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.common.response.ApiResponseDto;
 
@@ -41,6 +41,11 @@ public class UserControllerAdvice {
 
   @ExceptionHandler(UserNotFoundException.class)
   public ApiResponseDto<?> userNotFoundExceptionHandler(UserNotFoundException e) {
+    return new ApiResponseDto<>(FAIL, e.getMessage());
+  }
+
+  @ExceptionHandler(FileNotFoundException.class)
+  public ApiResponseDto<?> fileNotFoundExceptionHandler(FileNotFoundException e) {
     return new ApiResponseDto<>(FAIL, e.getMessage());
   }
 
