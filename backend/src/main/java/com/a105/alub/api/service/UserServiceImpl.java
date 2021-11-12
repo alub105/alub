@@ -431,6 +431,13 @@ public class UserServiceImpl implements UserService {
     return readme;
   }
 
+  /**
+   * github repo 내부의 특정 파일 조회
+   * 
+   * @param id 요청한 user의 id
+   * @param fileGetReq Get의 FilePath들을 모은 요청
+   * @return
+   */
   @Override
   public FileGetRes getFile(Long id, FileGetReq fileGetReq) {
     User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
@@ -450,6 +457,13 @@ public class UserServiceImpl implements UserService {
 
   }
 
+  /**
+   * github repo의 지정된 경로에 file commit
+   * 
+   * @param id 요청한 user의 id
+   * @param commitReq Post의 reqBody
+   * @return
+   */
   @Override
   public CommitRes commit(Long id, CommitReq commitReq) {
     User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
@@ -468,6 +482,14 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  /**
+   * github repo의 지정된 경로에 default commit
+   * 
+   * @param user 요청한 user
+   * @param commitReq Post의 reqBody
+   * @param url github 요청을 보낼 url
+   * @return commit 완료된 path
+   */
   private CommitRes defaultCommit(User user, CommitReq commitReq, String url) {
 
     Long cnt = getCommitCnt(url, user.getGithubAccessToken(), commitReq.getProblemNum());
@@ -497,6 +519,15 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  /**
+   * github repo의 지정된 경로에 custom commit
+   * 파일이 있으면 덮어쓰기
+   * 
+   * @param user 요청한 user
+   * @param commitReq Post의 reqBody
+   * @param url github 요청을 보낼 url
+   * @return commit 완료된 path
+   */
   private CommitRes customCommit(User user, CommitReq commitReq, String url) {
     String fileName = commitReq.getFileName() + "." + commitReq.getLanguage();
     url += "/" + fileName;
@@ -529,7 +560,7 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
-   * code를 통해 github repo에서 파일 받아오기
+   * github repo 내부의 특정 파일 조회
    *
    * @param user 요청한 유저
    * @param url github api 요청을 위한 주소
