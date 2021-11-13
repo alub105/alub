@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* eslint-disable */
 import React, { useState, useRef } from "react";
 import "./SideBarStudy.scoped.scss";
@@ -54,6 +55,21 @@ const SideBarStudy = () => {
           </div>
         </nav>
       </animated.div>
+=======
+import React from "react";
+import "./SideBarStudy.scoped.css";
+
+const SideBarStudy = () => {
+  return (
+    <div className="sidebar-study">
+      <div className="wrapper">
+        <nav className="nav">
+          <div>hello</div>
+          <div>hello</div>
+          <div>hello</div>
+        </nav>
+      </div>
+>>>>>>> 7bb454397d2a39399ee31713e5a57bff7cbc44a4
     </div>
   );
 };

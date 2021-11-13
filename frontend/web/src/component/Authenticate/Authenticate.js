@@ -36,7 +36,7 @@ const Authenticate = () => {
           response.json().then((data) => {
             //token 저장
             dispatch(actions.setToken(data.data.token));
-            history.push("/");
+            history.push("/channel");
           });
         }
       })
@@ -48,6 +48,11 @@ const Authenticate = () => {
     <div className="authenticate">
       <div className="container">
         <h1 className="title">Authenticate</h1>
+        <div className="d-flex justify-content-center loading">
+          <div className="spinner-border text-light spinner-style" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
       </div>
     </div>
   );

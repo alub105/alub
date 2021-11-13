@@ -1,13 +1,21 @@
+<<<<<<< HEAD
 /* eslint-disable */
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { API_BASE_URL } from "../../config/index";
+=======
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+>>>>>>> 7bb454397d2a39399ee31713e5a57bff7cbc44a4
 
 import SideBarChannel from "../SideBar/SideBarChannel";
 import SideBarStudy from "../SideBar/SideBarStudy";
 
+<<<<<<< HEAD
 import * as userActions from "../../modules/actions/user";
 
 const Channel = () => {
@@ -35,6 +43,18 @@ const Channel = () => {
       });
     }
   }, [storeToken]);
+=======
+const Channel = () => {
+  const { token: storeToken } = useSelector((state) => state.user);
+  const history = useHistory();
+  useEffect(() => {
+    console.log(storeToken);
+    if (!storeToken || storeToken === "") {
+      console.log("no token ", storeToken);
+      history.push("/");
+    }
+  }, []);
+>>>>>>> 7bb454397d2a39399ee31713e5a57bff7cbc44a4
 
   return (
     <div className="channel">

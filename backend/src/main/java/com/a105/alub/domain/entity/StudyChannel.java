@@ -33,7 +33,7 @@ public class StudyChannel extends BaseTimeEntity {
 
   private String name;
 
-  private String hostId;
+  private Long hostId;
 
   @ColumnDefault("true")
   private Boolean enabled;
