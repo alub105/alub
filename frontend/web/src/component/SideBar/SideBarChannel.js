@@ -102,6 +102,7 @@ const SideBarChannel = () => {
       </div>
       {/* 스터디 생성 모달 */}
       <ChannelCreateModal show={modalShow} onHide={() => setModalShow(false)} />
+
     </div>
   );
 };
