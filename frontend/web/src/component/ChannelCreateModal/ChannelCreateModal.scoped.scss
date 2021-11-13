@@ -1,126 +1,135 @@
-$modalHeight: 357px;
-$nameHeight: 70px;
+.my-modal {
+  $modalHeight: 357px;
+  $nameHeight: 70px;
 
-.modal-dialog {
-  max-width: 562px;
-}
-.modal-header {
-  border: none;
-}
-.modal-body {
-  height: $modalHeight;
-}
-
-.btn-close {
-  position: absolute !important;
-  color: red !important;
-}
-
-.my-modal-header {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 30px 10px;
-  text-align: center;
-  font-family: var(--IBM);
-
-  p {
-    font-family: var(--IBM);
-    font-size: 0.9rem;
-    margin: 0;
+  .modal-dialog {
+    max-width: 562px;
+  }
+  .modal-header {
+    border: none;
+  }
+  .modal-body {
+    height: $modalHeight;
   }
 
-  .close-icon {
-    color: var(--text-light-gray);
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    cursor: pointer;
-  }
-}
-
-.my-modal-body {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  padding-top: 0;
-  font-family: var(--IBM);
-  gap: 22px;
-
-  .name {
-    width: 100%;
-    height: $nameHeight;
-    display: grid;
-    grid-template-columns: 25% 75%;
-    align-items: center;
-
-    label {
-      font-weight: bold;
-    }
+  .btn-close {
+    position: absolute !important;
+    color: red !important;
   }
 
-  .member {
-    width: 100%;
-    height: calc($modalHeight - $nameHeight);
+  .my-modal-header {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    text-align: left;
-    padding-left: 30px;
+    padding: 30px 10px;
+    text-align: center;
+    font-family: var(--IBM);
 
-    h4 {
-      font-size: 1.1rem;
+    p {
+      font-family: var(--IBM);
+      font-size: 0.9rem;
+      margin: 0;
     }
 
-    .result {
+    .close-icon {
+      color: var(--text-light-gray);
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+    }
+  }
+
+  .my-modal-body {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding-top: 0;
+    font-family: var(--IBM);
+    gap: 22px;
+
+    .name {
       width: 100%;
-      height: 209px;
-      background-color: var(--background);
-      border-radius: 6px;
+      height: $nameHeight;
+      display: grid;
+      grid-template-columns: 25% 75%;
+      align-items: center;
+
+      label {
+        font-weight: bold;
+      }
+    }
+
+    .member {
+      width: 100%;
+      height: calc($modalHeight - $nameHeight);
       display: flex;
       flex-direction: column;
-      overflow-y: scroll;
+      gap: 4px;
+      text-align: left;
+      padding-left: 30px;
 
-      p {
-        margin: 0;
-        padding: 0 10px;
-        font-family: var(--IBM);
+      h4 {
+        font-size: 1.1rem;
       }
 
-      .member-item {
-        width: 98%;
-        padding: 6px;
-        font-size: 1.1rem;
-        color: var(--text-black);
-        align-items: center;
+      .result {
+        width: 100%;
+        height: 209px;
+        background-color: var(--background);
         border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
 
-        display: grid;
-        grid-template-columns: 6.4fr 1fr;
-        gap: 8px;
+        p {
+          margin: 0;
+          padding: 0 10px;
+          font-family: var(--IBM);
+          font-weight: bold;
+          color: var(--text-black-light);
+        }
 
-        button {
+        .member-item {
+          width: 98%;
+          padding: 6px;
+          font-size: 1.1rem;
+          color: var(--text-black);
+          align-items: center;
           border-radius: 6px;
-          padding: 3px 0;
-          width: 3.5rem;
-        }
 
-        &:hover {
-          background-color: var(--background-light);
+          display: grid;
+          grid-template-columns: 6.4fr 1fr;
+          gap: 8px;
+
+          button {
+            border-radius: 6px;
+            padding: 3px 0;
+            width: 3.5rem;
+          }
+
+          &:hover {
+            background-color: var(--background-light);
+          }
         }
+      }
+
+      .search {
+        width: 100%;
+        height: 209px;
       }
     }
   }
-}
 
-.my-modal-footer {
-  display: flex;
-  justify-content: center;
+  .my-modal-footer {
+    display: flex;
+    justify-content: center;
 
-  .btn {
-    width: 10rem;
-    padding: 5px 0 !important;
-    font-family: var(--IBM);
-    font-weight: bold;
+    .btn {
+      width: 10rem;
+      padding: 5px 0 !important;
+      font-family: var(--IBM);
+      font-weight: bold;
+    }
   }
 }
