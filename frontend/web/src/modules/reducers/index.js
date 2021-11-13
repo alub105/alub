@@ -9,7 +9,6 @@ const persistConfig = {
   key: "root",
   storage,
 };
-const rootReducer = combineReducers({ user });
 
 const rootReducer = combineReducers({ user, study });
 
