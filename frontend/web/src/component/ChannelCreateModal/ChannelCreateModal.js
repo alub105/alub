@@ -76,7 +76,7 @@ const ChannelCreateModal = (props) => {
               );
             })}
           </div>
-          <div className="search" style={{ display: memberName?.length > 0 ? "block" : "none" }}>
+          <div className="result" style={{ display: memberName?.length > 0 ? "block" : "none" }}>
             <h4>검색 결과가 없습니다</h4>
           </div>
         </div>
