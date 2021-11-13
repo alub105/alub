@@ -165,17 +165,9 @@
 }
 
 .landing .section2 .image-box {
-<<<<<<< develop
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
-=======
   margin: 0 auto;
   justify-content: center;
   display: flex;
->>>>>>> local
 }
 
 .landing .section2 .programmers {
