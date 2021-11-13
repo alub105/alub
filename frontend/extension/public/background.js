@@ -41,10 +41,7 @@ function authListener(tabId, changeInfo, tab) {
             if (response.ok) {
               response.json().then((data) => {
                 chrome.storage.sync.set({ token: data.data.token }, function () {
-                  chrome.storage.sync.get("token", function (token) {
-                    const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
-                    chrome.tabs.update({ url: welcome_url });
-                  });
+                  
                 });
               });
             }
@@ -58,8 +55,6 @@ function authListener(tabId, changeInfo, tab) {
 }
 
 chrome.tabs.onUpdated.addListener(authListener);
-
-// const boj = "https://www.acmicpc.net/";
 
 const boj = "https://www.acmicpc.net/"
 
@@ -305,15 +300,174 @@ function copyCode (BASE_URL) {
   })
 }
 
+// timer만드는 부분
 
 
+function createTimer(h, m, s) {
+  const component = document.createElement('div')
+  component.id = "component"
+  const componentHeader = document.createElement("div")
+  componentHeader.id = "componentHeader"
+  componentHeader.innerText = "Timer 이동"
+  component.appendChild(componentHeader)
+
+  component.style.position = 'absolute'
+  component.style.zIndex = 9
+  component.style.backgroundColor = '#f1f1f1'
+  component.style.border = '1px solid #d3d3d3'
+  component.style.textAlign = 'center'
+  component.style.top = '570px'
+  component.style.left = '1620px'
+  
+  componentHeader.style.padding = '5px'
+  componentHeader.style.cursor = 'move'
+  componentHeader.style.zIndex = 10
+  componentHeader.style.backgroundColor = '#2196F3'
+  componentHeader.style.color = '#fff'
+  componentHeader.style.fontSize = "15px"
+
+  const timeComponent = document.createElement('p')
+  timeComponent.style.fontSize = "20px"
+  timeComponent.innerText = `${h} : ${m} : ${s}`
+  component.appendChild(timeComponent)
+  const stopPauseButton = document.createElement('button')
+  stopPauseButton.innerText = "시작"
+  const stopButton = document.createElement('button')
+  stopButton.innerText = "중단"
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  var timerRunning = false
+  function startPauseTimer () {
+    if (timerRunning){
+      timerRunning = false
+      stopPauseButton.innerText = "시작"
+    } else {
+      increment(h,m,s)
+      timerRunning = true
+      stopPauseButton.innerText = "일시정지"
+    }
+  }
+  function stopTimer () {
+
+  }
+  function increment (h,m,s) {
+    var time = 0
+    
+    time = setInterval((hour, min, sec) => {
+      if (sec > 0) {sec = sec - 1}
+      if (sec === 0) {
+        if (min === 0) {
+          if(hour === 0) {
+            clearInterval(time);
+          }
+          else {
+            hour = hour -1
+            minute = 59
+            second = 59;
+          }
+        } else {
+          minute = minute - 1;
+          second = second - 1;
+          }
+      }
+    }, 1000);
+  }
+  
+
+      // if present, the header is where you move the DIV from:
+    componentHeader.onmousedown = dragMouseDown;
+      // otherwise, move the DIV from anywhere inside the DIV:
+    // component.onmousedown = dragMouseDown;
+    
+  
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+      }
+  
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        component.style.top = (component.offsetTop - pos2) + "px";
+        component.style.left = (component.offsetLeft - pos1) + "px";
+      }
+  
+      function closeDragElement() {
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+
+  document.querySelector('.container.content')?.appendChild(component)
+}
+
+
+var hour = 0
+var minute = 0
+var second = 30
+chrome.storage.sync.get("hour", (response) => {hour = parseInt(response.hour)})
+chrome.storage.sync.get("minute", (response) => {minute = parseInt(response.minute)})
+chrome.storage.sync.get("second", (response) => {second = parseInt(response.second)})
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     const currentUrl = tab.url
     // 백준에서
     if (currentUrl.startsWith(boj)) {
       await chrome.storage.sync.get("token", function (response) { 
+        
         if (Object.keys(response).length !== 0){
+          // userconfig 자동으로 가져옴.
+          let url = BASE_URL + "/api/user/configs";
+          fetch(url, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${response.token}`,
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          }).then((response) => {
+            if (response.ok) {
+              response.json().then((data) => {
+                if (data.data.repoName === null) {
+                  setRepoMode(true);
+                } else {
+                  // commit mode setting
+                  //timer shown setting
+                  chrome.storage.sync.set({timerShown:data.data.timershown, repoName:data.data.repoName, commitConfig:data.data.commit},function () {})
+                  // 타이머 setting
+                  let time = data.data.timerDefaultTime.split(":");
+                  chrome.storage.sync.set({hour:time[0], minute:time[1], second:time[2]},function () {})
+                }
+              });
+            }
+          });
+          
+          if (currentUrl.includes("problem") || currentUrl.includes("submit")) {
+            chrome.storage.sync.get("timerShown", function(response){
+              if (Object.keys(response).length !== 0){
+                // chrome.storage.sync.get("hour", (response) => {hour = response.hour })
+                // chrome.storage.sync.get("minute", (response) => {minute = response.minute })
+                // chrome.storage.sync.get("second", (response) => {second = response.second })
+                chrome.scripting.executeScript({
+                  target: { tabId: tab.id },
+                  func: createTimer,
+                  args: [hour, minute, second]
+                })
+              }
+            })
+          }
+
+          // 제출현황판에서는 commit하는것 초기화 + commit버튼추가
           if (currentUrl.includes("status")){
             chrome.storage.sync.set({commitNow:false}, ()=>{})
             chrome.scripting.executeScript({
@@ -321,6 +475,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               func: addStatusTable,
             })
           }
+
+          // 소스코드페이지에서는 copycode 함수 실행
           if (currentUrl.includes("source")){
             chrome.scripting.executeScript({
               target: { tabId: tab.id },
@@ -332,3 +488,4 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     }
   }
 })
+

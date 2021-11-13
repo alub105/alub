@@ -53,17 +53,16 @@ const App = () => {
                 setRepoMode(true);
               } else {
                 // commit mode setting
-                chrome.storage.sync.set({repoName:data.data.repoName},function () {})
                 setCommitChecked(data.data.commit);
-                chrome.storage.sync.set({commitConfig:data.data.commit},function () {})
                 //timer shown setting
                 setTimerShown(data.data.timerShown);
-                chrome.storage.sync.set({timerShown:data.data.timershown},function () {})
+                chrome.storage.sync.set({timerShown:data.data.timershown, repoName:data.data.repoName, commitConfig:data.data.commit},function () {})
                 // 타이머 setting
                 let time = data.data.timerDefaultTime.split(":");
                 setHour(time[0]);
                 setMinute(time[1]);
                 setSecond(time[2]);
+                chrome.storage.sync.set({hour:time[0], minute:time[1], second:time[2]},function () {})
 
                 setRepoName(data.data.repoName);
                 setInitialInfo(data.data.repoName);
@@ -112,7 +111,9 @@ const App = () => {
         commit: e.target.value,
       }),
     })
-      .then((response) => {})
+      .then((response) => {
+        chrome.storage.sync.set({commitConfig: e.target.value},function () {})
+      })
       .catch((error) => {
         console.log(error);
       });
@@ -190,7 +191,9 @@ const App = () => {
       }),
     })
       .then(() => {
-        
+        setHour(h)
+        setMinute(m)
+        setSecond(s)
         
       })
 
