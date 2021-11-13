@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* eslint-disable */
 import React, { useEffect } from "react";
 import "./SideBarChannel.scoped.scss";
@@ -32,18 +31,10 @@ const SideBarChannel = () => {
     setModalShow(true);
   };
 
-=======
-import React from "react";
-import "./SideBarChannel.scoped.css";
-// import {logo} from ""
-
-const SideBarChannel = () => {
->>>>>>> 7bb454397d2a39399ee31713e5a57bff7cbc44a4
   return (
     <div className="sidebar-channel">
       <div className="wrapper">
         <nav className="nav">
-<<<<<<< HEAD
           {/* --------------- 프로필 ---------------  */}
           <OverlayTrigger
             delay={{ hide: 5, show: 5 }}
@@ -111,11 +102,6 @@ const SideBarChannel = () => {
       </div>
       {/* 스터디 생성 모달 */}
       <ChannelCreateModal show={modalShow} onHide={() => setModalShow(false)} />
-=======
-          <div className="home" />
-        </nav>
-      </div>
->>>>>>> 7bb454397d2a39399ee31713e5a57bff7cbc44a4
     </div>
   );
 };
