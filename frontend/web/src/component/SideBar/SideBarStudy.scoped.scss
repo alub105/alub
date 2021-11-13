@@ -1,0 +1,95 @@
+/* eslint-disable */
+$studyWidth: 232px;
+$profile-color: #0270e6;
+$profile-hover-color: #0158b6;
+
+.sidebar-study {
+  .close-icon {
+    position: absolute;
+    color: var(--white);
+    left: calc(#{$studyWidth} + var(--nav-width) - 23px);
+    top: 10px;
+    z-index: 2;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .hamburger-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 30%;
+    background-color: var(--text-blue);
+    position: absolute;
+    left: calc(var(--nav-width) + 10px);
+    top: 10px;
+    z-index: 2;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: var(--white);
+      border-radius: 50%;
+      border: 1px solid var(--text-green);
+
+      > .open-icon {
+        color: var(--text-green);
+      }
+    }
+
+    .open-icon {
+      position: relative;
+      color: var(--white);
+      left: 10px;
+      top: 4px;
+      z-index: 2;
+      cursor: pointer;
+    }
+  }
+
+  .wrapper {
+    position: fixed;
+    top: 0;
+    left: var(--nav-width);
+    width: $studyWidth;
+    height: 100vh;
+    background-color: var(--text-blue);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    font-family: var(--IBM);
+    padding-top: 14px;
+  }
+
+  .nav {
+    margin-top: 15px;
+    height: 100%;
+    width: $studyWidth;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: flex-start;
+    overflow: hidden;
+    // gap: 15px;
+    text-align: centers;
+    color: var(--white);
+    font-weight: bold;
+  }
+
+  .study {
+    width: $studyWidth;
+    padding: 7px 0;
+    cursor: pointer;
+
+    & .collapss {
+      display: flex;
+      flex-direction: row;
+    }
+
+    &:hover {
+      background-color: $profile-hover-color;
+    }
+
+    > div,
+    span {
+      margin-left: 15px;
+    }
+  }
+}

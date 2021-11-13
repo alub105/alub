@@ -8,9 +8,9 @@ import { Provider } from "react-redux";
 import { persistStore } from "redux-persist";
 
 import create from "./modules/store";
-import reducers from "./modules/reducers";
+import rootReducers from "./modules/reducers";
 
-const store = create(reducers);
+const store = create(rootReducers);
 const persistor = persistStore(store);
 
 ReactDOM.render(
