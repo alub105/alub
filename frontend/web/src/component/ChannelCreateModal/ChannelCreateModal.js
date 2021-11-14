@@ -18,6 +18,7 @@ const ChannelCreateModal = (props) => {
   });
   const { channelName, memberName } = inputs;
 
+
   const onChange = (e) => {
     const { value, name } = e.target;
     setInputs({
@@ -25,6 +26,7 @@ const ChannelCreateModal = (props) => {
       [name]: value,
     });
   };
+
 
   const searchMember = (e) => {
     if (e.key === "Enter") {
@@ -99,6 +101,7 @@ const ChannelCreateModal = (props) => {
     // props.onHide();
   };
 
+
   return (
     <Modal
       {...props}
@@ -139,6 +142,7 @@ const ChannelCreateModal = (props) => {
               name="memberName"
               value={memberName || ""}
               onChange={onChange}
+
               onKeyPress={searchMember}
             />
             <button
@@ -188,6 +192,7 @@ const ChannelCreateModal = (props) => {
       </Modal.Body>
       <Modal.Footer className="my-modal-footer">
         <button type="button" className="btn btn-success btn-lg" onClick={() => submit()}>
+
           완료
         </button>
       </Modal.Footer>
