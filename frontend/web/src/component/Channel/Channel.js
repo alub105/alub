@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { API_BASE_URL } from "../../config/index";
 
 import SideBarChannel from "../SideBar/SideBarChannel";
@@ -26,13 +26,17 @@ const Channel = () => {
           Authorization: `Bearer ${storeToken}`,
           "Content-Type": "application/json;charset=UTF-8",
         },
-      }).then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            dispatch(userActions.setUserInfo(data.data));
-          });
-        }
-      });
+      })
+        .then((response) => {
+          if (response.ok) {
+            response.json().then((data) => {
+              dispatch(userActions.setUserInfo(data.data));
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, [storeToken]);
 

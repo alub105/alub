@@ -4,10 +4,8 @@ import ellipse_blue from "../../static/image/Ellipse-blue.svg";
 import ellipse_white from "../../static/image/Ellipse-white.svg";
 import logo from "../../static/image/logo.png";
 import meeting from "../../static/image/meeting.png";
-import baekjoon from "../../static/image/baekjoon.png";
-import programmers from "../../static/image/programmers.png";
+import section2 from "../../static/image/section2.png";
 import comparison from "../../static/image/comparison.jpg";
-
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { OAUTH_REDIRECT_URI, CLIENT_ID } from "../../config/index";
@@ -134,13 +132,7 @@ function LandingPage() {
           </div>
           <div className="image-box ">
             <div>
-              <img src={programmers} alt="programmers" className="programmers" />
-            </div>
-            <div>
-              <img src={baekjoon} alt="baekjoon" className="baekjoon" />
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <i className="fab fa-github fa-4x" />
+              <img src={section2} alt="section2" className="section2" />
             </div>
           </div>
         </section>

@@ -115,6 +115,7 @@
 .landing .section1 {
   width: 100vw;
   height: var(--landing-section-height);
+  min-height: 300px;
   background-color: var(--white);
 
   display: grid;
@@ -123,6 +124,7 @@
 
 .landing .section1 .image-box {
   margin: 0 auto;
+  align-items: center;
 }
 
 .landing .section1 .meeting {
@@ -153,7 +155,7 @@
   width: 100vw;
   height: var(--landing-section-height);
   background-color: var(--background);
-
+  min-height: 300px;
   display: grid;
   grid-template-columns: 40% 60%;
 }
@@ -170,20 +172,9 @@
   display: flex;
 }
 
-.landing .section2 .programmers {
+.landing .section2 .image-box .section2 {
   display: block;
   width: 100%;
-}
-
-.landing .section2 .baekjoon {
-  display: block;
-  width: 100%;
-}
-
-.landing .section2 .github {
-  display: block;
-  width: 100%;
-  max-width: 250px;
 }
 
 /*------------ Section3-----------------*/
@@ -192,7 +183,7 @@
   width: 100vw;
   height: var(--landing-section-height);
   background-color: var(--white);
-
+  min-height: 300px;
   display: grid;
   grid-template-columns: 60% 40%;
   position: relative;
@@ -203,11 +194,14 @@
   margin: 0 auto;
   justify-content: center;
   display: flex;
+  width: 100%;
 }
 
 .landing .compare {
-  max-width: 534px;
+  max-width: 750px;
   object-fit: contain;
+  width: 70%;
+  height: 100%;
 }
 
 .landing .section3 .text-box {

@@ -69,6 +69,19 @@
       text-align: left;
       padding-left: 30px;
 
+      .member-name {
+        display: grid;
+        grid-template-columns: 85% 15%;
+        gap: 4px;
+
+        button {
+          padding: 0px;
+          border-radius: 6px;
+          font-weight: bold;
+          font-family: var(--IBM);
+        }
+      }
+
       h4 {
         font-size: 1.1rem;
       }
@@ -100,7 +113,7 @@
         }
 
         .member-item {
-          width: 98%;
+          width: 100%;
           padding: 6px;
           font-size: 1.1rem;
           color: var(--text-black);
@@ -108,7 +121,7 @@
           border-radius: 6px;
 
           display: grid;
-          grid-template-columns: 6.4fr 1fr;
+          grid-template-columns: 7fr 1fr;
           gap: 8px;
           text-align: left !important;
 
