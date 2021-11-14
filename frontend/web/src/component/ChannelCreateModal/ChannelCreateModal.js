@@ -1,16 +1,19 @@
 /* eslint-disable */
 import { React, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Modal } from "react-bootstrap";
 import "./ChannelCreateModal.scoped.scss";
 import { API_BASE_URL } from "../../config/index";
 
+import * as studyActions from "../../modules/actions/study";
+
 const ChannelCreateModal = (props) => {
   const { token: storeToken } = useSelector((state) => state.user);
   const [members, setMembers] = useState([]);
-
   // 검색한 멤버 결과 목록
   const [memberList, setMemberList] = useState([]);
+
+  const dispatch = useDispatch();
 
   const [inputs, setInputs] = useState({
     channelName: "",
@@ -93,10 +96,11 @@ const ChannelCreateModal = (props) => {
           console.log(data);
           const channelId = data.data?.id;
           console.log(channelId);
+          dispatch(studyActions.setChannelList({ id: channelId, name: channelName }));
+          props.onHide();
         });
       }
     });
-    // props.onHide();
   };
 
   return (
@@ -104,8 +108,8 @@ const ChannelCreateModal = (props) => {
       {...props}
       aria-labelledby="contained-modal-title-vcenter"
       centered
-      // backdrop="static"
-      // keyboard={false}
+      backdrop="static"
+      keyboard={false}
       className="my-modal"
     >
       <Modal.Header className="my-modal-header">
@@ -187,7 +191,20 @@ const ChannelCreateModal = (props) => {
         </div>
       </Modal.Body>
       <Modal.Footer className="my-modal-footer">
-        <button type="button" className="btn btn-success btn-lg" onClick={() => submit()}>
+        <button
+          type="button"
+          className="btn btn-success btn-lg"
+          style={{ display: channelName.length > 0 ? "block" : "none" }}
+          onClick={() => submit()}
+        >
+          완료
+        </button>
+        <button
+          type="button"
+          className="btn btn-success btn-lg disabled"
+          style={{ display: channelName.length > 0 ? "none" : "block" }}
+          onClick={() => submit()}
+        >
           완료
         </button>
       </Modal.Footer>

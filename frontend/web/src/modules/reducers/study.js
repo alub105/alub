@@ -2,12 +2,7 @@ import * as studyActions from "../actions/study";
 
 const initialState = {
   selectedChannel: -1,
-  channelList: [
-    {
-      id: 10,
-      name: "alub",
-    },
-  ],
+  channelList: [],
 };
 
 const reducers = (state = initialState, action) => {
@@ -18,10 +13,12 @@ const reducers = (state = initialState, action) => {
         selectedChannel: action.payload,
       };
     case studyActions.SET_CHANNEL_LIST:
-      return {
-        channelList: state.channelList.concat(action.payload),
-        selectedChannel: action.payload.id,
-      };
+      if (!state.channelList.find((channel) => action.payload.id === channel.id)) {
+        return {
+          channelList: state.channelList.concat(action.payload),
+          selectedChannel: action.payload.id,
+        };
+      }
     default:
       return state;
   }

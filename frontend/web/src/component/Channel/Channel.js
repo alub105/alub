@@ -9,6 +9,7 @@ import SideBarChannel from "../SideBar/SideBarChannel";
 import SideBarStudy from "../SideBar/SideBarStudy";
 
 import * as userActions from "../../modules/actions/user";
+import * as studyActions from "../../modules/actions/study";
 
 const Channel = () => {
   const { token: storeToken } = useSelector((state) => state.user);
@@ -31,6 +32,27 @@ const Channel = () => {
           if (response.ok) {
             response.json().then((data) => {
               dispatch(userActions.setUserInfo(data.data));
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      //내 채널 리스트 가져오기
+      fetch(API_BASE_URL + "/api/channels/mychannels", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${storeToken}`,
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            response.json().then((data) => {
+              data.data.channel.map((channel) => {
+                dispatch(studyActions.setChannelList(channel));
+              });
             });
           }
         })

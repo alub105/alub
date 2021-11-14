@@ -12,18 +12,20 @@ $imgSize: 50px;
 }
 
 .sidebar-channel {
-  position: relative;
+  position: fixed;
 
   .wrapper {
     position: fixed;
     top: 0;
     left: 0;
     width: var(--nav-width);
-    height: 100vh;
+    height: 100%;
     background-color: var(--nav-color);
     display: flex;
     align-items: center;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    flex-wrap: nowrap;
+    overflow-y: scroll;
   }
 
   .nav {
@@ -34,9 +36,9 @@ $imgSize: 50px;
     flex-direction: column;
     justify-content: start;
     align-items: center;
-    overflow: hidden;
     gap: 18px;
     text-align: centers;
+    flex-wrap: nowrap;
 
     .image-box {
       width: $imgSize;
