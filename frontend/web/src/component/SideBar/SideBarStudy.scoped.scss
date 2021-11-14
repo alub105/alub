@@ -62,7 +62,7 @@
   .nav {
     margin-top: 15px;
     height: 96%;
-    width: $studyWidth;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -71,7 +71,8 @@
     color: var(--white);
     overflow-y: scroll;
     flex-wrap: nowrap;
-    // font-weight: bold;
+    // position: relative;
+
     // hover effect를 위한 class
     .item {
       background-color: var(--text-blue);
