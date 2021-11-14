@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
+import com.a105.alub.api.response.StudyChannelCreateRes;
 import com.a105.alub.api.response.StudyChannelListRes;
 import com.a105.alub.api.response.StudyChannelRes;
 import com.a105.alub.common.exception.NotHostException;
@@ -33,7 +34,7 @@ public class StudyChannelServiceImpl implements StudyChannelService {
 
   @Override
   @Transactional
-  public void createChannel(Long userId, StudyChannelCreateReq channelCreateReq) {
+  public StudyChannelCreateRes createChannel(Long userId, StudyChannelCreateReq channelCreateReq) {
 
     isUser(channelCreateReq.getMemberId());
 
@@ -47,6 +48,7 @@ public class StudyChannelServiceImpl implements StudyChannelService {
 
     log.info("Created All User Study Channel");
 
+    return new StudyChannelCreateRes(studyChannel.getId());
   }
 
   @Override
