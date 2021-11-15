@@ -49,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.16.0",
     "babel-plugin-react-scoped-css": "^1.1.1"
   }
 }
