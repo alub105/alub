@@ -122,7 +122,6 @@
 }
 
 .landing .section1 .image-box {
-  padding-top: 50px;
   margin: 0 auto;
 }
 
@@ -166,11 +165,9 @@
 }
 
 .landing .section2 .image-box {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
+  margin: 0 auto;
+  justify-content: center;
+  display: flex;
 }
 
 .landing .section2 .programmers {
@@ -206,7 +203,6 @@
   margin: 0 auto;
   justify-content: center;
   display: flex;
-  padding-top: 45px;
 }
 
 .landing .compare {

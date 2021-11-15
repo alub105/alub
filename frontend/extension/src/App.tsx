@@ -111,7 +111,11 @@ const App = () => {
         commit: e.target.value,
       }),
     })
-      .then((response) => {})
+      .then((response) => {
+        if (response.ok) {
+          chrome.storage.sync.set({ commitConfig: e.target.value });
+        }
+      })
       .catch((error) => {
         console.log(error);
       });
