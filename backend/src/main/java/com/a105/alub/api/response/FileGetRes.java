@@ -1,7 +1,6 @@
 package com.a105.alub.api.response;
 
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 public class FileGetRes {
