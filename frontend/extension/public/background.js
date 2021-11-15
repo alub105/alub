@@ -3,11 +3,6 @@ let BASE_URL = "";
 let START_URL = "";
 let API_URL = "/api/user/authenticate";
 
-function notificateAlarm() {
-  console.log("move to notificate function");
-  console.log(chrome.notifications);
-}
-
 function authListener(tabId, changeInfo, tab) {
   if (changeInfo.status === "complete") {
     if (tab.url.startsWith("http://localhost:3000")) {
@@ -451,7 +446,4 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   }
 })
 
-chrome.notifications.onClicked.addListener(function (notificationId) {
-  chrome.tabs.create({ url: notificationId });
-});
 
