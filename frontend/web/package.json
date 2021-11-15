@@ -21,6 +21,7 @@
     "react-spring": "^9.3.0",
     "redux": "^4.1.2",
     "redux-persist": "^6.0.0",
+    "styled-components": "^5.3.3",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
@@ -48,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.16.0",
     "babel-plugin-react-scoped-css": "^1.1.1"
   }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
+import com.a105.alub.api.response.StudyChannelCreateRes;
 import com.a105.alub.api.response.StudyChannelListRes;
 import com.a105.alub.api.response.StudyChannelRes;
 import com.a105.alub.api.service.StudyChannelService;
@@ -29,11 +30,12 @@ public class StudyChannelController {
   private final StudyChannelService studyChannelService;
 
   @PostMapping("")
-  public ApiResponseDto<String> createStudyChannel(
+  public ApiResponseDto<StudyChannelCreateRes> createStudyChannel(
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal,
       @RequestBody StudyChannelCreateReq channelCreateReq) {
-    studyChannelService.createChannel(userPrincipal.getId(), channelCreateReq);
-    return ApiResponseDto.DEFAULT_SUCCESS;
+    StudyChannelCreateRes studyChannelCreateRes =
+        studyChannelService.createChannel(userPrincipal.getId(), channelCreateReq);
+    return ApiResponseDto.success(studyChannelCreateRes);
   }
 
   @GetMapping("/{channelId}")

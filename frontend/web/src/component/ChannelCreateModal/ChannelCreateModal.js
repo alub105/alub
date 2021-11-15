@@ -1,18 +1,25 @@
 /* eslint-disable */
-import { React, useEffect, useMemo, useState } from "react";
+import { React, useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Modal } from "react-bootstrap";
 import "./ChannelCreateModal.scoped.scss";
+import { API_BASE_URL } from "../../config/index";
+
+import * as studyActions from "../../modules/actions/study";
 
 const ChannelCreateModal = (props) => {
-  const members = [{ id: 1, name: "choieunsong" }, { id: 2, name: "dlguswjd0258" }];
+  const { token: storeToken } = useSelector((state) => state.user);
+  const [members, setMembers] = useState([]);
+  // 검색한 멤버 결과 목록
+  const [memberList, setMemberList] = useState([]);
+
+  const dispatch = useDispatch();
 
   const [inputs, setInputs] = useState({
-    name: "",
-    value: "",
+    channelName: "",
+    memberName: "",
   });
   const { channelName, memberName } = inputs;
-
-  useEffect(() => {}, []);
 
   const onChange = (e) => {
     const { value, name } = e.target;
@@ -22,13 +29,87 @@ const ChannelCreateModal = (props) => {
     });
   };
 
+  const searchMember = (e) => {
+    if (e.key === "Enter") {
+      searchMemberApi();
+    }
+  };
+
+  const searchMemberApi = () => {
+    fetch(API_BASE_URL + "/api/users/searches", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${storeToken}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        terms: {
+          name: memberName,
+        },
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setMemberList(
+              memberList.concat(
+                data.data.filter((member) => !memberList.find((f) => f.id === member.id))
+              )
+            );
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const onRemove = (id) => {
+    setMembers(members.filter((member) => member.id !== id));
+  };
+
+  const addMember = (member) => {
+    setMembers(members.concat(member));
+    setInputs({
+      ...inputs,
+      memberName: "",
+    });
+  };
+
+  const submit = () => {
+    let idList = members.map((member) => member.id);
+    console.log(storeToken);
+    fetch(API_BASE_URL + "/api/channels/", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${storeToken}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        name: channelName,
+        memberId: idList,
+      }),
+    }).then((response) => {
+      if (response.ok) {
+        console.log(response);
+        response.json().then((data) => {
+          console.log(data);
+          const channelId = data.data?.id;
+          console.log(channelId);
+          dispatch(studyActions.setChannelList({ id: channelId, name: channelName }));
+          props.onHide();
+        });
+      }
+    });
+  };
+
   return (
     <Modal
       {...props}
       aria-labelledby="contained-modal-title-vcenter"
       centered
-      // backdrop="static"
-      // keyboard={false}
+      backdrop="static"
+      keyboard={false}
       className="my-modal"
     >
       <Modal.Header className="my-modal-header">
@@ -62,14 +143,26 @@ const ChannelCreateModal = (props) => {
               name="memberName"
               value={memberName || ""}
               onChange={onChange}
+              onKeyPress={searchMember}
             />
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => searchMemberApi()}
+            >
+              검색
+            </button>
           </div>
           <div className="result" style={{ display: memberName?.length > 0 ? "none" : "block" }}>
             {members.map((data, index) => {
               return (
                 <div className="member-item" key={index}>
                   <p>{data.name}</p>
-                  <button type="button" className="btn btn-danger">
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => onRemove(data.id)}
+                  >
                     취소
                   </button>
                 </div>
@@ -77,12 +170,41 @@ const ChannelCreateModal = (props) => {
             })}
           </div>
           <div className="result" style={{ display: memberName?.length > 0 ? "block" : "none" }}>
-            <h4>검색 결과가 없습니다</h4>
+            <h4 style={{ display: memberList?.length > 0 ? "none" : "block" }}>
+              검색 결과가 없습니다
+            </h4>
+            {memberList.map((member, index) => {
+              return (
+                <div className="member-item" key={index}>
+                  <p>{member.name}</p>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={() => addMember(member)}
+                  >
+                    초대
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       </Modal.Body>
       <Modal.Footer className="my-modal-footer">
-        <button type="button" className="btn btn-success btn-lg" onClick={props.onHide}>
+        <button
+          type="button"
+          className="btn btn-success btn-lg"
+          style={{ display: channelName.length > 0 ? "block" : "none" }}
+          onClick={() => submit()}
+        >
+          완료
+        </button>
+        <button
+          type="button"
+          className="btn btn-success btn-lg disabled"
+          style={{ display: channelName.length > 0 ? "none" : "block" }}
+          onClick={() => submit()}
+        >
           완료
         </button>
       </Modal.Footer>

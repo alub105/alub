@@ -8,6 +8,7 @@ import * as studyActions from "../../modules/actions/study";
 const ChannelComponent = ({ info }) => {
   const dispatch = useDispatch();
   const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
+  // console.log(info);
 
   const selectChannel = () => {
     dispatch(studyActions.setSelectedChannel(info.id));
