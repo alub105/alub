@@ -1,7 +1,9 @@
 package com.a105.alub.api.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -441,12 +443,25 @@ public class UserServiceImpl implements UserService {
   @Override
   public FileGetRes getFile(Long id, FileGetReq fileGetReq) {
     User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    StringBuilder uri = new StringBuilder("/repos/{userName}/{repoName}/contents");
+
+    Map<String, String> uriPathVariables = new HashMap<>();
+    uriPathVariables.put("userName", user.getName());
+    uriPathVariables.put("repoName", user.getRepoName());
     String dirPath = user.getDirPath() == null ? "" : user.getDirPath();
-    String url =
-        String.format("/repos/%s/%s/contents/%s/%s/%s/%s", user.getName(), user.getRepoName(),
-            dirPath, fileGetReq.getSite(), fileGetReq.getProblemNum(), fileGetReq.getFileName());
+    if (!dirPath.equals("")) {
+      uri.append("/{dirPath}");
+      uriPathVariables.put("dirPath", dirPath);
+    }
+    uri.append("/{site}");
+    uriPathVariables.put("site", fileGetReq.getSite().toString());
+    uri.append("/{problemNum}");
+    uriPathVariables.put("problemNum", fileGetReq.getProblemNum());
+    uri.append("/{fileName}");
+    uriPathVariables.put("fileName", fileGetReq.getFileName());
+
     try {
-      GithubFileContentRes githubFileContentRes = getFile(user, url);
+      GithubFileContentRes githubFileContentRes = getFile(user, uri, uriPathVariables);
       FileGetRes fileGetRes = new FileGetRes(githubFileContentRes);
       log.info("Get File Contes: {}", fileGetRes);
 
@@ -467,15 +482,26 @@ public class UserServiceImpl implements UserService {
   @Override
   public CommitRes commit(Long id, CommitReq commitReq) {
     User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    StringBuilder uri = new StringBuilder("/repos/{userName}/{repoName}/contents");
+
+    Map<String, String> uriPathVariables = new HashMap<>();
+    uriPathVariables.put("userName", user.getName());
+    uriPathVariables.put("repoName", user.getRepoName());
     String dirPath = user.getDirPath() == null ? "" : user.getDirPath();
-    String url = String.format("/repos/%s/%s/contents/%s/%s/%s", user.getName(), user.getRepoName(),
-        dirPath, commitReq.getSite(), commitReq.getProblemNum());
+    if (!dirPath.equals("")) {
+      uri.append("/{dirPath}");
+      uriPathVariables.put("dirPath", dirPath);
+    }
+    uri.append("/{site}");
+    uriPathVariables.put("site", commitReq.getSite().toString());
+    uri.append("/{problemNum}");
+    uriPathVariables.put("problemNum", commitReq.getProblemNum());
 
     try {
       if (commitReq.getCommit() == CommitType.DEFAULT) {
-        return defaultCommit(user, commitReq, url);
+        return defaultCommit(user, commitReq, uri, uriPathVariables);
       } else {
-        return customCommit(user, commitReq, url);
+        return customCommit(user, commitReq, uri, uriPathVariables);
       }
     } catch (Exception e) {
       throw e;
@@ -490,18 +516,21 @@ public class UserServiceImpl implements UserService {
    * @param url github 요청을 보낼 url
    * @return commit 완료된 path
    */
-  private CommitRes defaultCommit(User user, CommitReq commitReq, String url) {
+  private CommitRes defaultCommit(User user, CommitReq commitReq, StringBuilder uri,
+      Map<String, String> uriPathVariables) {
 
-    Long cnt = getCommitCnt(url, user.getGithubAccessToken(), commitReq.getProblemNum());
+    Long cnt =
+        getCommitCnt(uri, uriPathVariables, user.getGithubAccessToken(), commitReq.getProblemNum());
     String fileName = commitReq.getProblemNum() + "_" + cnt + "." + commitReq.getLanguage();
-    url += "/" + fileName;
+    uri.append("/{fileName}");
+    uriPathVariables.put("fileName", fileName);
 
     GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq);
     log.info(gitHubCommitReq.toString());
 
     try {
 
-      githubApiClient.put().uri(url).bodyValue(gitHubCommitReq)
+      githubApiClient.put().uri(uri.toString(), uriPathVariables).bodyValue(gitHubCommitReq)
           .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
           .onStatus(status -> status == HttpStatus.NOT_FOUND,
               clientResponse -> clientResponse.createException()
@@ -511,28 +540,29 @@ public class UserServiceImpl implements UserService {
                   .map(body -> new RuntimeException(body)))
           .toEntity(String.class).block();
 
-      log.info("Sucess Commit to: {}", url);
-      return new CommitRes(url);
+      log.info("Sucess Commit to: {}", getUrl(uriPathVariables));
+      return new CommitRes(uriPathVariables);
     } catch (Exception e) {
-      log.info("Fail Commit to: {}", url);
+      log.info("Fail Commit to: {}", getUrl(uriPathVariables));
       throw e;
     }
   }
 
   /**
-   * github repo의 지정된 경로에 custom commit
-   * 파일이 있으면 덮어쓰기
+   * github repo의 지정된 경로에 custom commit 파일이 있으면 덮어쓰기
    * 
    * @param user 요청한 user
    * @param commitReq Post의 reqBody
    * @param url github 요청을 보낼 url
    * @return commit 완료된 path
    */
-  private CommitRes customCommit(User user, CommitReq commitReq, String url) {
+  private CommitRes customCommit(User user, CommitReq commitReq, StringBuilder uri,
+      Map<String, String> uriPathVariables) {
     String fileName = commitReq.getFileName() + "." + commitReq.getLanguage();
-    url += "/" + fileName;
+    uri.append("/{fileName}");
+    uriPathVariables.put("fileName", fileName);
 
-    GithubFileContentRes githubFileContentRes = getFile(user, url);
+    GithubFileContentRes githubFileContentRes = getFile(user, uri, uriPathVariables);
     if (githubFileContentRes != null) {
       commitReq.setSha(githubFileContentRes.getSha());
     }
@@ -541,7 +571,7 @@ public class UserServiceImpl implements UserService {
     log.info(gitHubCommitReq.toString());
 
     try {
-      githubApiClient.put().uri(url).bodyValue(gitHubCommitReq)
+      githubApiClient.put().uri(uri.toString(), uriPathVariables).bodyValue(gitHubCommitReq)
           .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
           .onStatus(status -> status == HttpStatus.NOT_FOUND,
               clientResponse -> clientResponse.createException()
@@ -551,10 +581,10 @@ public class UserServiceImpl implements UserService {
                   .map(body -> new RuntimeException(body)))
           .toEntity(String.class).block();
 
-      log.info("Sucess Commit to: {}", url);
-      return new CommitRes(url);
+      log.info("Sucess Commit to: {}", getUrl(uriPathVariables));
+      return new CommitRes(uriPathVariables);
     } catch (Exception e) {
-      log.info("Fail Commit to: {}", url);
+      log.info("Fail Commit to: {}", getUrl(uriPathVariables));
       throw e;
     }
   }
@@ -566,9 +596,10 @@ public class UserServiceImpl implements UserService {
    * @param url github api 요청을 위한 주소
    * @return 파일 정보
    */
-  private GithubFileContentRes getFile(User user, String url) {
+  private GithubFileContentRes getFile(User user, StringBuilder uri,
+      Map<String, String> uriPathVariables) {
     try {
-      GithubFileContentRes response = githubApiClient.get().uri(url)
+      GithubFileContentRes response = githubApiClient.get().uri(uri.toString(), uriPathVariables)
           .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
           .onStatus(status -> status == HttpStatus.NOT_FOUND,
               clientResponse -> clientResponse.createException()
@@ -580,10 +611,10 @@ public class UserServiceImpl implements UserService {
               clientResponse -> clientResponse.bodyToMono(String.class)
                   .map(body -> new RuntimeException(body)))
           .bodyToMono(GithubFileContentRes.class).block();
-      log.info("Sucess Get File from : {}", url);
+      log.info("Sucess Get File from : {}", getUrl(uriPathVariables));
       return response;
     } catch (Exception e) {
-      log.info("Fail Get File from: {}", url);
+      log.info("Fail Get File from: {}", getUrl(uriPathVariables));
       return null;
     }
   }
@@ -596,16 +627,18 @@ public class UserServiceImpl implements UserService {
    * @param problemNum 레포 내부의 파일 성생 위치
    * @return 최댓값+1
    */
-  private Long getCommitCnt(String url, String token, String problemNum) {
+  private Long getCommitCnt(StringBuilder uri, Map<String, String> uriPathVariables, String token,
+      String problemNum) {
     Long cnt = 1L;
     try {
 
-      List<GithubRepoContentRes> response = githubApiClient.get().uri(url)
-          .header(HttpHeaders.AUTHORIZATION, "token " + token).retrieve()
-          .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-              clientResponse -> clientResponse.bodyToMono(String.class)
-                  .map(body -> new RuntimeException(body)))
-          .bodyToMono(new ParameterizedTypeReference<List<GithubRepoContentRes>>() {}).block();
+      List<GithubRepoContentRes> response =
+          githubApiClient.get().uri(uri.toString(), uriPathVariables)
+              .header(HttpHeaders.AUTHORIZATION, "token " + token).retrieve()
+              .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                  clientResponse -> clientResponse.bodyToMono(String.class)
+                      .map(body -> new RuntimeException(body)))
+              .bodyToMono(new ParameterizedTypeReference<List<GithubRepoContentRes>>() {}).block();
 
       Pattern pattern = Pattern.compile("^" + problemNum + "_\\d+\\b");
       String maxFileName = response.stream().filter(entry -> {
@@ -634,4 +667,23 @@ public class UserServiceImpl implements UserService {
     return cnt;
   }
 
+  /**
+   * 작업한 github url 받아오기
+   *
+   * @param uriPathVariables url 값들을 모아놓은 Map
+   * @return 작업한 url
+   */
+  private String getUrl(Map<String, String> uriPathVariables) {
+    StringBuilder uri = new StringBuilder();
+    uri.append(uriPathVariables.get("userName"));
+    String dirPath = uriPathVariables.getOrDefault("dirPath", "");
+    if (!dirPath.equals("")) {
+      uri.append("/" + dirPath);
+    }
+    uri.append("/" + uriPathVariables.get("repoName"));
+    uri.append("/" + uriPathVariables.get("site"));
+    uri.append("/" + uriPathVariables.get("problemNum"));
+    uri.append("/" + uriPathVariables.get("fileName"));
+    return uri.toString();
+  }
 }

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
-@ToString
 public class FileGetRes {
   String fileName;
   String contents;
@@ -13,4 +12,11 @@ public class FileGetRes {
     this.fileName = githubFileContentRes.getName();
     this.contents = githubFileContentRes.getContent();
   }
+
+  @Override
+  public String toString() {
+    return "FileGetRes [fileName=" + fileName + ", contents="
+        + contents.substring(0, (contents.length() - 1) % 10) + "..." + "]";
+  }
+
 }
