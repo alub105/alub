@@ -318,6 +318,8 @@ function createTimer(h, m, s) {
   component.style.textAlign = 'center'
   component.style.top = '570px'
   component.style.left = '1620px'
+  component.style.width = '15%'
+  
   
   componentHeader.style.padding = '5px'
   componentHeader.style.cursor = 'move'
@@ -334,6 +336,7 @@ function createTimer(h, m, s) {
   stopPauseButton.innerText = "시작"
   const stopButton = document.createElement('button')
   stopButton.innerText = "중단"
+  stopButton.addEventListener('click', stopTimer)
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   var timerRunning = false
   function startPauseTimer () {
@@ -341,23 +344,22 @@ function createTimer(h, m, s) {
       timerRunning = false
       stopPauseButton.innerText = "시작"
     } else {
-      increment(h,m,s)
       timerRunning = true
       stopPauseButton.innerText = "일시정지"
     }
   }
-  function stopTimer () {
+  function stopwatch(timerRunning) {
+    if (timerRunning) {
 
-  }
-  function increment (h,m,s) {
-    var time = 0
-    
-    time = setInterval((hour, min, sec) => {
+    } else {
+      
+    }
+    let timer = setInterval((hour, min, sec) => {
       if (sec > 0) {sec = sec - 1}
       if (sec === 0) {
         if (min === 0) {
           if(hour === 0) {
-            clearInterval(time);
+            clearInterval(timer);
           }
           else {
             hour = hour -1
@@ -370,6 +372,10 @@ function createTimer(h, m, s) {
           }
       }
     }, 1000);
+  }
+
+  function stopTimer () {
+    clearInterval(timer)
   }
   
 
@@ -452,7 +458,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             }
           });
           
-          if (currentUrl.includes("problem") || currentUrl.includes("submit")) {
+          if (currentUrl.includes("acmicpc.net/problem") || currentUrl.includes("submit")) {
             chrome.storage.sync.get("timerShown", function(response){
               if (Object.keys(response).length !== 0){
                 // chrome.storage.sync.get("hour", (response) => {hour = response.hour })
