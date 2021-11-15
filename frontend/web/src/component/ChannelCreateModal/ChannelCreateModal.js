@@ -36,6 +36,7 @@ const ChannelCreateModal = (props) => {
   };
 
   const searchMemberApi = () => {
+    console.log("channel");
     fetch(API_BASE_URL + "/api/users/searches", {
       method: "POST",
       headers: {
@@ -78,7 +79,7 @@ const ChannelCreateModal = (props) => {
 
   const submit = () => {
     let idList = members.map((member) => member.id);
-    console.log(storeToken);
+
     fetch(API_BASE_URL + "/api/channels/", {
       method: "POST",
       headers: {
@@ -91,11 +92,9 @@ const ChannelCreateModal = (props) => {
       }),
     }).then((response) => {
       if (response.ok) {
-        console.log(response);
         response.json().then((data) => {
           console.log(data);
           const channelId = data.data?.id;
-          console.log(channelId);
           dispatch(studyActions.setChannelList({ id: channelId, name: channelName }));
           props.onHide();
         });

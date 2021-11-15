@@ -80,9 +80,7 @@ const SideBarStudy = () => {
           if (response.ok) {
             response.json().then((data) => {
               // host , member, study name set
-              console.log(data.data);
               dispatch(studyActions.setStudyInfo(data.data));
-              console.log(storeStudyInfo);
               // study list set
               // getStudyList();
               history.push(`/channel/${storeSelectedChannel}/home`);

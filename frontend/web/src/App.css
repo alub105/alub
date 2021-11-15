@@ -23,6 +23,9 @@
   --background: #f4f4f4;
   --background-light: #fafafa;
 
+  --btn-success: #18ad60;
+  --btn-gray: #9da5af;
+
   /* --background-linear: linear-gradient(to bottom, #e9ecef, #b3c7db); */
   --background-linear: linear-gradient(120deg, rgba(0, 172, 193, 1) 0, rgba(84, 58, 183, 1) 100%);
 

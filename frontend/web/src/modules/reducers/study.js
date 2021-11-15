@@ -7,7 +7,6 @@ const initialState = {
 };
 
 const reducers = (state = initialState, action) => {
-  console.log(action.payload);
   switch (action.type) {
     case studyActions.SET_SELECTED_CHANNEL:
       return {
@@ -25,7 +24,7 @@ const reducers = (state = initialState, action) => {
     case studyActions.SET_STUDY_INFO:
       return {
         ...state,
-        studyInfo: action.payload,
+        studyInfo: Object.assign({}, state.studyInfo, action.payload),
       };
     default:
       return state;
