@@ -12,7 +12,7 @@
     "48": "logo.png",
     "128": "logo.png"
   },
-  "permissions": ["tabs", "storage", "activeTab", "management", "scripting", "notifications"],
+  "permissions": ["tabs", "storage", "activeTab", "scripting"],
   "background": {
     "service_worker": "background.js"
   },
