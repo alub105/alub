@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.a105.alub.api.request.ProblemsReq;
-import com.a105.alub.api.response.ProblemsRes;
+import com.a105.alub.api.response.ProblemRes;
 import com.a105.alub.api.service.ProblemsService;
 import com.a105.alub.common.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +21,12 @@ public class ProblemsController {
   private final ProblemsService problemsService;
 
   @PostMapping("/searches")
-  public ApiResponseDto<List<ProblemsRes>> searchProblems(@RequestBody ProblemsReq problemsReq) {
+  public ApiResponseDto<List<ProblemRes>> searchProblems(@RequestBody ProblemsReq problemsReq) {
 
-    List<ProblemsRes> problemsResList = problemsService.searchProblems(problemsReq.getTerms());
+    List<ProblemRes> problemResList = problemsService.searchProblems(problemsReq.getTerms());
     log.info("Search for problems with '{}': {}", problemsReq.getTerms().getKeyword(),
-        problemsResList);
+        problemResList);
 
-    return ApiResponseDto.success(problemsResList);
+    return ApiResponseDto.success(problemResList);
   }
 }
