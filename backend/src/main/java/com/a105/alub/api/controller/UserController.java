@@ -12,15 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.a105.alub.api.request.CommitReq;
 import com.a105.alub.api.request.ConfigsReq;
+import com.a105.alub.api.request.FileGetReq;
 import com.a105.alub.api.request.LoginReq;
 import com.a105.alub.api.request.RepoSetReq;
 import com.a105.alub.api.response.CommitRes;
 import com.a105.alub.api.response.ConfigsRes;
+import com.a105.alub.api.response.FileGetRes;
 import com.a105.alub.api.response.GithubRepoRes;
 import com.a105.alub.api.response.LoginRes;
 import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.api.service.UserService;
 import com.a105.alub.common.response.ApiResponseDto;
+import com.a105.alub.domain.enums.Site;
 import com.a105.alub.security.CurrentUser;
 import com.a105.alub.security.UserPrincipal;
 import io.swagger.annotations.ApiOperation;
@@ -120,12 +123,22 @@ public class UserController {
     return ApiResponseDto.success(githubRepoRes);
   }
 
+  @GetMapping("/sites/{siteName}/problems/{problemNum}/files/{fileName}")
+  public ApiResponseDto<FileGetRes> getGithubFile(
+      @ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable Site siteName,
+      @PathVariable String problemNum, @PathVariable String fileName) throws IOException {
+    FileGetReq fileGetReq =
+        FileGetReq.builder().site(siteName).fileName(fileName).problemNum(problemNum).build();
+    FileGetRes fileGetRes = userService.getFile(userPrincipal.getId(), fileGetReq);
+
+    return ApiResponseDto.success(fileGetRes);
+  }
+
   @PostMapping("/commits")
-  public ApiResponseDto<CommitRes> github(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+  public ApiResponseDto<CommitRes> commit(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
       @RequestBody CommitReq commitReq) throws IOException {
 
-     CommitRes commitRes = userService.commit(userPrincipal.getId(), commitReq);
-    log.info(commitRes.toString());
+    CommitRes commitRes = userService.commit(userPrincipal.getId(), commitReq);
 
     return ApiResponseDto.success(commitRes);
   }
