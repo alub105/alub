@@ -6,6 +6,11 @@
   $active-color: #0158b6;
   width: 100%;
 
+  a {
+    text-decoration: none;
+    color: var(--white);
+  }
+
   .close-icon {
     position: absolute;
     color: var(--white);
@@ -100,7 +105,7 @@
         margin-right: 10px;
       }
 
-      > div,
+      div,
       > span,
       > i {
         margin-left: 15px;
@@ -125,18 +130,12 @@
           width: $studyWidth;
           padding: 6px 0;
 
-          > i {
+          i {
             margin-left: 28px;
             margin-right: 6px;
           }
         }
       }
     }
-  }
-
-  .main {
-    width: 100%;
-    background-color: white;
-    height: 100vh;
   }
 }

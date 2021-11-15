@@ -2,11 +2,12 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { BrowserRouter as Router } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { API_BASE_URL } from "../../config/index";
 
 import SideBarChannel from "../SideBar/SideBarChannel";
 import SideBarStudy from "../SideBar/SideBarStudy";
+import StudyHome from "../Study/StudyHome.js";
 
 import * as userActions from "../../modules/actions/user";
 import * as studyActions from "../../modules/actions/study";
@@ -64,10 +65,8 @@ const Channel = () => {
 
   return (
     <div className="channel">
-      <Router>
-        <SideBarChannel />
-        <SideBarStudy />
-      </Router>
+      <SideBarChannel />
+      <SideBarStudy />
     </div>
   );
 };

@@ -59,8 +59,9 @@ function LandingPage() {
               className="background-ui"
               data-aos="fade-up"
               data-aos-delay="100"
+              alt="background-ui"
             />
-            <a href="#">
+            <a href=".">
               <img src={logo} alt="logo" className="logo" />
             </a>
             <button
@@ -157,12 +158,13 @@ function LandingPage() {
             <p>© 2021 ALUB. All rights reserved.</p>
             <p>Git과 Email을 통해 자유롭게 이슈를 올려보세요</p>
             <div className="flex-row">
-              <a href="https://github.com/alub105/alub" target="_blank">
+              <a href="https://github.com/alub105/alub" target="_blank" rel="noopener noreferrer">
                 <i className="fab fa-github " />
               </a>
               <a
                 href="https://mail.google.com/mail/u/0/?fs=1&to=alub105105@gmail.com&body=BODY&tf=cm"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 <i className="fas fa-envelope " />
               </a>
