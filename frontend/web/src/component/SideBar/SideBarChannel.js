@@ -4,7 +4,6 @@ import "./SideBarChannel.scoped.scss";
 import logo from "../../static/image/logo.png";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { API_BASE_URL } from "../../config/index";
 
 import * as studyActions from "../../modules/actions/study";
 
@@ -74,8 +73,8 @@ const SideBarChannel = () => {
             </div>
           </OverlayTrigger>
 
-          {storeChannelList.map((channel) => {
-            return <ChannelComponent info={channel} key={channel.id} />;
+          {storeChannelList.map((channel, index) => {
+            return <ChannelComponent info={channel} key={index} />;
           })}
 
           {/* --------------- 새 채널  ---------------  */}

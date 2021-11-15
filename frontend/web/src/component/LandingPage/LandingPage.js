@@ -4,10 +4,8 @@ import ellipse_blue from "../../static/image/Ellipse-blue.svg";
 import ellipse_white from "../../static/image/Ellipse-white.svg";
 import logo from "../../static/image/logo.png";
 import meeting from "../../static/image/meeting.png";
-import baekjoon from "../../static/image/baekjoon.png";
-import programmers from "../../static/image/programmers.png";
+import section2 from "../../static/image/section2.png";
 import comparison from "../../static/image/comparison.jpg";
-
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { OAUTH_REDIRECT_URI, CLIENT_ID } from "../../config/index";
@@ -61,8 +59,9 @@ function LandingPage() {
               className="background-ui"
               data-aos="fade-up"
               data-aos-delay="100"
+              alt="background-ui"
             />
-            <a href="#">
+            <a href=".">
               <img src={logo} alt="logo" className="logo" />
             </a>
             <button
@@ -134,13 +133,7 @@ function LandingPage() {
           </div>
           <div className="image-box ">
             <div>
-              <img src={programmers} alt="programmers" className="programmers" />
-            </div>
-            <div>
-              <img src={baekjoon} alt="baekjoon" className="baekjoon" />
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <i className="fab fa-github fa-4x" />
+              <img src={section2} alt="section2" className="section2" />
             </div>
           </div>
         </section>
@@ -165,12 +158,13 @@ function LandingPage() {
             <p>© 2021 ALUB. All rights reserved.</p>
             <p>Git과 Email을 통해 자유롭게 이슈를 올려보세요</p>
             <div className="flex-row">
-              <a href="https://github.com/alub105/alub" target="_blank">
+              <a href="https://github.com/alub105/alub" target="_blank" rel="noopener noreferrer">
                 <i className="fab fa-github " />
               </a>
               <a
                 href="https://mail.google.com/mail/u/0/?fs=1&to=alub105105@gmail.com&body=BODY&tf=cm"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 <i className="fas fa-envelope " />
               </a>

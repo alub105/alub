@@ -1,7 +1,9 @@
 package com.a105.alub.api.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -17,6 +19,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import com.a105.alub.api.request.CommitReq;
 import com.a105.alub.api.request.ConfigsReq;
+import com.a105.alub.api.request.FileGetReq;
 import com.a105.alub.api.request.GitHubCommitReq;
 import com.a105.alub.api.request.GithubTokenReq;
 import com.a105.alub.api.request.LoginReq;
@@ -24,8 +27,11 @@ import com.a105.alub.api.request.RepoCreateReq;
 import com.a105.alub.api.request.RepoSetReq;
 import com.a105.alub.api.response.CommitRes;
 import com.a105.alub.api.response.ConfigsRes;
+import com.a105.alub.api.response.FileGetRes;
 import com.a105.alub.api.response.GithubContentType;
+import com.a105.alub.api.response.GithubFileContentRes;
 import com.a105.alub.api.response.GithubRepo;
+import com.a105.alub.api.response.GithubRepoContentRes;
 import com.a105.alub.api.response.GithubRepoRes;
 import com.a105.alub.api.response.GithubTokenRes;
 import com.a105.alub.api.response.GithubUserRes;
@@ -33,12 +39,12 @@ import com.a105.alub.api.response.LoginRes;
 import com.a105.alub.api.response.MyInfoRes;
 import com.a105.alub.api.response.Readme;
 import com.a105.alub.api.response.RepoContent;
-import com.a105.alub.api.response.GithubRepoContentRes;
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
-import com.a105.alub.common.exception.CommitFileNameException;
 import com.a105.alub.common.exception.DirSettingFailException;
+import com.a105.alub.common.exception.FileNotFoundException;
 import com.a105.alub.common.exception.RepoNotFoundException;
 import com.a105.alub.common.exception.TimerFormatException;
+import com.a105.alub.common.exception.TokenForbiddenException;
 import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.config.GithubConfig;
 import com.a105.alub.domain.entity.User;
@@ -126,11 +132,11 @@ public class UserServiceImpl implements UserService {
 
   private String checkTimeFormat(String time) {
     final String REGEX = "([0-9]){2}(:[0-5][0-9]){2}";
-    
-    if(!time.matches(REGEX)) {
+
+    if (!time.matches(REGEX)) {
       throw new TimerFormatException("입력한 형식이 올바르지 않습니다.");
     }
-    
+
     return time;
   }
 
@@ -193,6 +199,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * 특정 유저 github의 모든 public repo 리스트 조회
+   * 
    * @param userId 유저 ID
    * @return
    */
@@ -229,6 +236,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * alub repo 설정
+   * 
    * @param userId 유저 ID
    * @param repoSetReq repo 설정 관련 request 데이터
    */
@@ -252,6 +260,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * github public repo 생성
+   * 
    * @param user 유저
    * @param repoName 생성할 repo 이름
    */
@@ -275,6 +284,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * 유저 자신이 소유한 특정 github repo 조회
+   * 
    * @param userId 유저 ID
    * @param repoName 조회할 repo 이름
    */
@@ -319,6 +329,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * 이미 존재하는 github repo를 alub repo로 설정
+   * 
    * @param user 유저
    * @param repoName alub repo로 설정할 이미 존재하는 github repo 이름
    * @param dirPath alub repo로 설정할 directory 경로
@@ -346,6 +357,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * github repo의 특정 경로에 README.md 생성
+   * 
    * @param user 유저
    * @param repoName README.md 생성할 repo 이름
    * @param dirPath README.md 생성할 경로
@@ -374,6 +386,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * 특정 github repo의 contents 목록 조회
+   * 
    * @param user 유저
    * @param repoName contents를 조회할 repo 이름
    * @param dirPath contents를 조회할 경로
@@ -398,6 +411,7 @@ public class UserServiceImpl implements UserService {
 
   /**
    * github repo의 특정 경로의 README.md 조회
+   * 
    * @param user 유저
    * @param repoName README.md를 조회할 repo 이름
    * @param dirPath README.md를 조회할 경로
@@ -419,22 +433,104 @@ public class UserServiceImpl implements UserService {
     return readme;
   }
 
+  /**
+   * github repo 내부의 특정 파일 조회
+   * 
+   * @param id 요청한 user의 id
+   * @param fileGetReq Get의 FilePath들을 모은 요청
+   * @return
+   */
+  @Override
+  public FileGetRes getFile(Long id, FileGetReq fileGetReq) {
+    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    StringBuilder uri = new StringBuilder("/repos/{userName}/{repoName}/contents");
+
+    Map<String, String> uriPathVariables = new HashMap<>();
+    uriPathVariables.put("userName", user.getName());
+    uriPathVariables.put("repoName", user.getRepoName());
+    String dirPath = user.getDirPath() == null ? "" : user.getDirPath();
+    if (!dirPath.equals("")) {
+      uri.append("/{dirPath}");
+      uriPathVariables.put("dirPath", dirPath);
+    }
+    uri.append("/{site}");
+    uriPathVariables.put("site", fileGetReq.getSite().toString());
+    uri.append("/{problemNum}");
+    uriPathVariables.put("problemNum", fileGetReq.getProblemNum());
+    uri.append("/{fileName}");
+    uriPathVariables.put("fileName", fileGetReq.getFileName());
+
+    try {
+      GithubFileContentRes githubFileContentRes = getFile(user, uri, uriPathVariables);
+      FileGetRes fileGetRes = new FileGetRes(githubFileContentRes);
+      log.info("Get File Contes: {}", fileGetRes);
+
+      return fileGetRes;
+    } catch (Exception e) {
+      throw new FileNotFoundException();
+    }
+
+  }
+
+  /**
+   * github repo의 지정된 경로에 file commit
+   * 
+   * @param id 요청한 user의 id
+   * @param commitReq Post의 reqBody
+   * @return
+   */
   @Override
   public CommitRes commit(Long id, CommitReq commitReq) {
     User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-    String url = String.format("/repos/%s/%s/contents/%s/%s/%s", user.getName(), user.getRepoName(),
-        user.getDirPath(), commitReq.getSite(), commitReq.getProblemNum());
+    StringBuilder uri = new StringBuilder("/repos/{userName}/{repoName}/contents");
+
+    Map<String, String> uriPathVariables = new HashMap<>();
+    uriPathVariables.put("userName", user.getName());
+    uriPathVariables.put("repoName", user.getRepoName());
+    String dirPath = user.getDirPath() == null ? "" : user.getDirPath();
+    if (!dirPath.equals("")) {
+      uri.append("/{dirPath}");
+      uriPathVariables.put("dirPath", dirPath);
+    }
+    uri.append("/{site}");
+    uriPathVariables.put("site", commitReq.getSite().toString());
+    uri.append("/{problemNum}");
+    uriPathVariables.put("problemNum", commitReq.getProblemNum());
+
+    try {
+      if (commitReq.getCommit() == CommitType.DEFAULT) {
+        return defaultCommit(user, commitReq, uri, uriPathVariables);
+      } else {
+        return customCommit(user, commitReq, uri, uriPathVariables);
+      }
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  /**
+   * github repo의 지정된 경로에 default commit
+   * 
+   * @param user 요청한 user
+   * @param commitReq Post의 reqBody
+   * @param url github 요청을 보낼 url
+   * @return commit 완료된 path
+   */
+  private CommitRes defaultCommit(User user, CommitReq commitReq, StringBuilder uri,
+      Map<String, String> uriPathVariables) {
+
+    Long cnt =
+        getCommitCnt(uri, uriPathVariables, user.getGithubAccessToken(), commitReq.getProblemNum());
+    String fileName = commitReq.getProblemNum() + "_" + cnt + "." + commitReq.getLanguage();
+    uri.append("/{fileName}");
+    uriPathVariables.put("fileName", fileName);
 
     GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq);
     log.info(gitHubCommitReq.toString());
 
     try {
-      Long cnt = getCommitCnt(url, user.getGithubAccessToken(), commitReq.getProblemNum());
-      String fileName = getFileName(commitReq, cnt);
 
-      url += "/" + fileName;
-      log.info("url: {}", url);
-      githubApiClient.put().uri(url).bodyValue(gitHubCommitReq)
+      githubApiClient.put().uri(uri.toString(), uriPathVariables).bodyValue(gitHubCommitReq)
           .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
           .onStatus(status -> status == HttpStatus.NOT_FOUND,
               clientResponse -> clientResponse.createException()
@@ -444,31 +540,105 @@ public class UserServiceImpl implements UserService {
                   .map(body -> new RuntimeException(body)))
           .toEntity(String.class).block();
 
-      log.info("Commit complete: {}", url);
-      return new CommitRes(url);
+      log.info("Sucess Commit to: {}", getUrl(uriPathVariables));
+      return new CommitRes(uriPathVariables);
     } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+      log.info("Fail Commit to: {}", getUrl(uriPathVariables));
+      throw e;
+    }
+  }
+
+  /**
+   * github repo의 지정된 경로에 custom commit 파일이 있으면 덮어쓰기
+   * 
+   * @param user 요청한 user
+   * @param commitReq Post의 reqBody
+   * @param url github 요청을 보낼 url
+   * @return commit 완료된 path
+   */
+  private CommitRes customCommit(User user, CommitReq commitReq, StringBuilder uri,
+      Map<String, String> uriPathVariables) {
+    String fileName = commitReq.getFileName() + "." + commitReq.getLanguage();
+    uri.append("/{fileName}");
+    uriPathVariables.put("fileName", fileName);
+
+    GithubFileContentRes githubFileContentRes = getFile(user, uri, uriPathVariables);
+    if (githubFileContentRes != null) {
+      commitReq.setSha(githubFileContentRes.getSha());
     }
 
+    GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq);
+    log.info(gitHubCommitReq.toString());
+
+    try {
+      githubApiClient.put().uri(uri.toString(), uriPathVariables).bodyValue(gitHubCommitReq)
+          .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
+          .onStatus(status -> status == HttpStatus.NOT_FOUND,
+              clientResponse -> clientResponse.createException()
+                  .flatMap(it -> Mono.error(new RepoNotFoundException())))
+          .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+              clientResponse -> clientResponse.bodyToMono(String.class)
+                  .map(body -> new RuntimeException(body)))
+          .toEntity(String.class).block();
+
+      log.info("Sucess Commit to: {}", getUrl(uriPathVariables));
+      return new CommitRes(uriPathVariables);
+    } catch (Exception e) {
+      log.info("Fail Commit to: {}", getUrl(uriPathVariables));
+      throw e;
+    }
+  }
+
+  /**
+   * github repo 내부의 특정 파일 조회
+   *
+   * @param user 요청한 유저
+   * @param url github api 요청을 위한 주소
+   * @return 파일 정보
+   */
+  private GithubFileContentRes getFile(User user, StringBuilder uri,
+      Map<String, String> uriPathVariables) {
+    try {
+      GithubFileContentRes response = githubApiClient.get().uri(uri.toString(), uriPathVariables)
+          .header(HttpHeaders.AUTHORIZATION, "token " + user.getGithubAccessToken()).retrieve()
+          .onStatus(status -> status == HttpStatus.NOT_FOUND,
+              clientResponse -> clientResponse.createException()
+                  .flatMap(it -> Mono.error(new FileNotFoundException())))
+          .onStatus(status -> status == HttpStatus.FORBIDDEN,
+              clientResponse -> clientResponse.createException()
+                  .flatMap(it -> Mono.error(new TokenForbiddenException())))
+          .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+              clientResponse -> clientResponse.bodyToMono(String.class)
+                  .map(body -> new RuntimeException(body)))
+          .bodyToMono(GithubFileContentRes.class).block();
+      log.info("Sucess Get File from : {}", getUrl(uriPathVariables));
+      return response;
+    } catch (Exception e) {
+      log.info("Fail Get File from: {}", getUrl(uriPathVariables));
+      return null;
+    }
   }
 
   /**
    * code를 통해 github repo에서 파일명 최댓값 받아오기
    *
-   * @param repo github repo, repo 내부 dir 경로
+   * @param url github api 요청을 위한 주소
+   * @param token 유저의 github token
+   * @param problemNum 레포 내부의 파일 성생 위치
    * @return 최댓값+1
    */
-  private Long getCommitCnt(String url, String token, String problemNum) {
+  private Long getCommitCnt(StringBuilder uri, Map<String, String> uriPathVariables, String token,
+      String problemNum) {
     Long cnt = 1L;
     try {
 
-      List<GithubRepoContentRes> response = githubApiClient.get().uri(url)
-          .header(HttpHeaders.AUTHORIZATION, "token " + token).retrieve()
-          .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-              clientResponse -> clientResponse.bodyToMono(String.class)
-                  .map(body -> new RuntimeException(body)))
-          .bodyToMono(new ParameterizedTypeReference<List<GithubRepoContentRes>>() {}).block();
+      List<GithubRepoContentRes> response =
+          githubApiClient.get().uri(uri.toString(), uriPathVariables)
+              .header(HttpHeaders.AUTHORIZATION, "token " + token).retrieve()
+              .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                  clientResponse -> clientResponse.bodyToMono(String.class)
+                      .map(body -> new RuntimeException(body)))
+              .bodyToMono(new ParameterizedTypeReference<List<GithubRepoContentRes>>() {}).block();
 
       Pattern pattern = Pattern.compile("^" + problemNum + "_\\d+\\b");
       String maxFileName = response.stream().filter(entry -> {
@@ -497,20 +667,23 @@ public class UserServiceImpl implements UserService {
     return cnt;
   }
 
-  private String getFileName(CommitReq commitReq, Long cnt) {
-    String fileName = "";
-
-    if (commitReq.getCommit() == CommitType.CUSTOM) {
-      if (commitReq.getFileName() == null) {
-        throw new CommitFileNameException("filaName이 잘못 되었습니다.");
-      }
-      fileName = commitReq.getFileName();
-    } else {
-      fileName = commitReq.getProblemNum() + "_" + cnt;
+  /**
+   * 작업한 github url 받아오기
+   *
+   * @param uriPathVariables url 값들을 모아놓은 Map
+   * @return 작업한 url
+   */
+  private String getUrl(Map<String, String> uriPathVariables) {
+    StringBuilder uri = new StringBuilder();
+    uri.append(uriPathVariables.get("userName"));
+    String dirPath = uriPathVariables.getOrDefault("dirPath", "");
+    if (!dirPath.equals("")) {
+      uri.append("/" + dirPath);
     }
-    fileName += "." + commitReq.getLanguage();
-
-    return fileName;
+    uri.append("/" + uriPathVariables.get("repoName"));
+    uri.append("/" + uriPathVariables.get("site"));
+    uri.append("/" + uriPathVariables.get("problemNum"));
+    uri.append("/" + uriPathVariables.get("fileName"));
+    return uri.toString();
   }
-
 }
