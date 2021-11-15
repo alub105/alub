@@ -2,6 +2,9 @@ package com.a105.alub.api.advice;
 
 
 import static com.a105.alub.common.response.ApiResponseCode.FAIL;
+
+import com.a105.alub.api.controller.UserController;
+import com.a105.alub.api.controller.UsersController;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.a105.alub.common.exception.AlreadyExistingRepoException;
@@ -11,7 +14,7 @@ import com.a105.alub.common.exception.RepoNotFoundException;
 import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.common.response.ApiResponseDto;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = {UserController.class, UsersController.class})
 public class UserControllerAdvice {
 
   @ExceptionHandler(IllegalStateException.class)
