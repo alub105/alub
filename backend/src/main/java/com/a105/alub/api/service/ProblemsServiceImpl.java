@@ -5,11 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.a105.alub.api.request.ProblemTerms;
-import com.a105.alub.api.response.ProblemsRes;
-import com.a105.alub.api.response.solvedac.ProblemItem;
+import com.a105.alub.api.response.ProblemRes;
+import com.a105.alub.api.response.solvedac.BojProblemItem;
 import com.a105.alub.api.response.solvedac.SolvedacSearchRes;
 import com.a105.alub.domain.entity.Problem;
-import com.a105.alub.domain.enums.BojLevel;
 import com.a105.alub.domain.enums.Site;
 import com.a105.alub.domain.repository.ProblemRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,28 +23,23 @@ public class ProblemsServiceImpl implements ProblemsService {
   private final WebClient solvedacApiClient;
 
   @Override
-  public List<ProblemsRes> searchProblems(ProblemTerms terms) {
-    List<ProblemsRes> problemsResList = new ArrayList<ProblemsRes>();
-    Site site = terms.getSite();
+  public List<ProblemRes> searchProblems(ProblemTerms terms) {
+    List<ProblemRes> problemResList = new ArrayList<>();
 
+    Site site = terms.getSite();
     if (site == Site.BOJ) {
       SolvedacSearchRes solvedacSearchRes = getBojSearch(terms.getKeyword());
-      log.info("search problems on BOJ: {}", solvedacSearchRes);
-      for (ProblemItem item : solvedacSearchRes.getItems()) {
-        problemsResList.add(ProblemsRes.builder().num(item.getProblemId()).title(item.getTitleKo())
-            .site(site).level(BojLevel.values()[item.getLevel()].toString()).build());
+      for (BojProblemItem item : solvedacSearchRes.getItems()) {
+        problemResList.add(new ProblemRes(item, site));
       }
     } else if (site == Site.PROGRAMMERS) {
-      List<Problem> problemList = getProgrammersSearch(terms.getKeyword());
-      for (Problem problem : problemList) {
-        problemsResList.add(
-            ProblemsRes.builder().num(problem.getProblemId().getNum()).title(problem.getTitle())
-                .site(problem.getProblemId().getSite()).level(problem.getLevel()).build()
-        );
+      for (Problem problem : getProgrammersSearch(terms.getKeyword())) {
+        problemResList.add(new ProblemRes(problem, site));
       }
     }
+    log.info("search problems on {} : {}", site.name(), problemResList.toArray());
 
-    return problemsResList;
+    return problemResList;
   }
 
   private SolvedacSearchRes getBojSearch(String keyword) {

@@ -2,9 +2,9 @@ package com.a105.alub.api.service;
 
 import java.util.List;
 import com.a105.alub.api.request.ProblemTerms;
-import com.a105.alub.api.response.ProblemsRes;
+import com.a105.alub.api.response.ProblemRes;
 
 public interface ProblemsService {
 
-  List<ProblemsRes> searchProblems(ProblemTerms terms);
+  List<ProblemRes> searchProblems(ProblemTerms terms);
 }

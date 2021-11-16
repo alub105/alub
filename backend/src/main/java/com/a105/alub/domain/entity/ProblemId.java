@@ -1,17 +1,21 @@
 package com.a105.alub.domain.entity;
 
+import com.a105.alub.domain.enums.Site;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
-import com.a105.alub.domain.enums.Site;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import lombok.Data;
+import lombok.Getter;
 
+@Getter
 @Data
 @Embeddable
 public class ProblemId implements Serializable {
 
-  private final Long num;
+  private Long num;
 
-  private final Site site;
-
+  @Enumerated(EnumType.STRING)
+  private Site site;
 
 }
