@@ -5,7 +5,7 @@ var START_URL = "";
 var API_URL = "/api/user/authenticate";
 
 chrome.management.get(chrome.runtime.id, function (data) {
-  // console.log(data);
+ 
   if (data.installType === "development") {
     BASE_URL = "http://localhost:8080";
     START_URL = "http://localhost:3000/oauth/redirect";
@@ -13,7 +13,7 @@ chrome.management.get(chrome.runtime.id, function (data) {
     BASE_URL = "https://alub.co.kr";
     START_URL = "https://alub.co.kr/oauth/redirect";
   }
-  // console.log("BASE_URL", BASE_URL);
+ 
 });
 
 function authListener(tabId, changeInfo, tab) {
@@ -61,7 +61,6 @@ const boj = "https://www.acmicpc.net/"
 
 function addStatusTable () {
 
-  console.log("status 테이블 추가 시작")
 
   const userId = document.querySelector(".loginbar .username")?.innerHTML
   // loginID와 푼사람의 ID가 같은지 확인하기 위해서 특정함.
@@ -81,7 +80,7 @@ function addStatusTable () {
           if (i < 0) return;
           const result = statusTable?.childNodes[1]?.childNodes[i]?.childNodes[3]?.childNodes[0]?.textContent;
           const judging = statusTable?.childNodes[1]?.childNodes[i]?.childNodes[3]?.querySelector("span")?.classList.contains("result-judging")
-          console.log(i+"번째 채점중", judging)
+
           if (judging){
                   setTimeout(function() {
                       addCommitButton(i)
@@ -126,7 +125,7 @@ function addStatusTable () {
 }
 
 
-function copyCode (BASE_URL) {
+function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, hour, minute, second) {
   chrome.storage.sync.get("commitNow", function (response) {
     if (response.commitNow) {
       const userId = document.querySelector(".loginbar .username")?.innerHTML
@@ -165,18 +164,44 @@ function copyCode (BASE_URL) {
       const url = window.location.href
       if (url.includes("acmicpc.net")){site = "BOJ"};
       if (url.includes("programmers")){site = "PROGRAMMERS"};
+          
+      
       
       if (correct){
+        if (startSecond - second >= 0) {
+          var consumedSecond = startSecond - second
+          if (startMinute - minute >= 0){
+            var consumedMinute = startMinute - minute
+            var consumedHour = startHour - hour
+          } else {
+            var consumedMinute = startMinute - minute + 60
+            var consumedHour = startHour - hour - 1
+          }
+        } else {
+          var consumedSecond = startSecond - second + 60
+          if (startMinute - 1 - minute >= 0){
+            var consumedMinute = startMinute - 1 - minute
+            var consumedHour = startHour - hour
+          } else {
+            var consumedMinute = startMinute - 1 - minute + 60
+            var consumedHour = startHour - hour - 1
+          }
+        }
         chrome.storage.sync.get("token", function(token) {
           if (commitConfig === "DEFAULT") {
-            
+            if (timerRunning) {
+              var spendTime = `${consumedHour}:${consumedMinute}:${consumedSecond}`
+            } else {
+              var spendTime = null
+            }
             const data = {
+                    timer: spendTime,
                     srcCode: answerCode,
                     commit: commitConfig,
                     language: codeLang,
                     runningTime: timeConsumed,
                     runningMemory: memory,
-                    problemName: problemName,
+                    problemTitle: problemName,
                     problemNum: problemNumber,
                     site: site,
                   }
@@ -192,7 +217,6 @@ function copyCode (BASE_URL) {
               ),
             })
               .then((response) => {
-                console.log(response)
               })
               .catch((err) => {
                 console.log(err);
@@ -261,14 +285,20 @@ function copyCode (BASE_URL) {
               function submitCommitData () {
                 chrome.storage.sync.set({commitNow:false}, () => {})
                 let fileName = fileNameInput.value
+                if (timerRunning) {
+                  var spendTime = `${consumedHour}:${consumedMinute}:${consumedSecond}`
+                } else {
+                  var spendTime = null
+                }
                 const data = {
+                  timer: spendTime,
                   srcCode: answerCode,
                   commit: commitConfig,
                   language: codeLang,
                   fileName:fileName,
                   runningTime: timeConsumed,
                   runningMemory: memory,
-                  problemName: problemName,
+                  problemTitle: problemName,
                   problemNum: problemNumber,
                   site: site,
                 }
@@ -283,11 +313,7 @@ function copyCode (BASE_URL) {
                     data
                   ),
                 })
-                .then((response) => {
-                  console.log(response)
-                  
-                  
-                })
+                .then((response) => {})
                 .catch((err) => {
                   console.log(err);
                 });
@@ -317,7 +343,7 @@ function createTimer(h, m, s) {
   component.style.border = '1px solid #d3d3d3'
   component.style.textAlign = 'center'
   component.style.top = '570px'
-  component.style.left = '1620px'
+  component.style.left = '740px'
   component.style.width = '15%'
   
   
@@ -330,54 +356,85 @@ function createTimer(h, m, s) {
 
   const timeComponent = document.createElement('p')
   timeComponent.style.fontSize = "20px"
-  timeComponent.innerText = `${h} : ${m} : ${s}`
   component.appendChild(timeComponent)
-  const stopPauseButton = document.createElement('button')
-  stopPauseButton.innerText = "시작"
+  const startPauseButton = document.createElement('button')
+  startPauseButton.innerText = "시작"
+  startPauseButton.addEventListener('click', startPauseTimer)
+  
   const stopButton = document.createElement('button')
-  stopButton.innerText = "중단"
-  stopButton.addEventListener('click', stopTimer)
+  stopButton.innerText = "초기화"
+  stopButton.addEventListener('click', reset)
+  
+  var startHour, startMinute, startSecond = 0
+  chrome.storage.sync.get("hour", (response) => {startHour = parseInt(response.hour)})
+  chrome.storage.sync.get("minute", (response) => {startMinute = parseInt(response.minute)})
+  chrome.storage.sync.get("second", (response) => {startSecond = parseInt(response.second)})
+
+  component.appendChild(startPauseButton)
+  component.appendChild(stopButton)
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   var timerRunning = false
+  var isStop = false
+  timeComponent.innerText = `${h} : ${m} : ${s}`
   function startPauseTimer () {
+    chrome.storage.sync.set({timerRunning:true}, () => {})
     if (timerRunning){
       timerRunning = false
-      stopPauseButton.innerText = "시작"
+      startPauseButton.innerText = "시작"
+      
     } else {
       timerRunning = true
-      stopPauseButton.innerText = "일시정지"
+      isStop = false
+      startPauseButton.innerText = "일시정지"
     }
-  }
-  function stopwatch(timerRunning) {
-    if (timerRunning) {
+    let timer = setInterval(() => {
+      if (!isStop) {
 
-    } else {
-      
-    }
-    let timer = setInterval((hour, min, sec) => {
-      if (sec > 0) {sec = sec - 1}
-      if (sec === 0) {
-        if (min === 0) {
-          if(hour === 0) {
-            clearInterval(timer);
+        if(timerRunning) {
+          if (s > 0) {s = s - 1}
+          if (s === 0) {
+            if (m === 0) {
+              if(h === 0) {
+                clearInterval(timer);
+              }
+              else {
+                h = h -1
+                m = 59
+                s = 59;
+              }
+            } else {
+              m = m - 1;
+              s = s - 1;
+              }
           }
-          else {
-            hour = hour -1
-            minute = 59
-            second = 59;
-          }
+          chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {
+            
+            timeComponent.innerText = `${h} : ${m} : ${s}`
+          })
         } else {
-          minute = minute - 1;
-          second = second - 1;
-          }
+          clearInterval(timer)
+          chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {
+            
+            timeComponent.innerText = `${h} : ${m} : ${s}`
+          })
+        }
+      } else {
+        clearInterval(timer)
+        
       }
     }, 1000);
   }
+  function reset() {
+    isStop = true
+    chrome.storage.sync.remove(['leftHour', 'leftMinute', "leftSecond", "timerRunning"], () => {
+      timeComponent.innerText = `${startHour} : ${startMinute} : ${startSecond}`
 
-  function stopTimer () {
-    clearInterval(timer)
+      h = startHour
+      m = startMinute
+      s = startSecond
+    })
   }
-  
+
 
       // if present, the header is where you move the DIV from:
     componentHeader.onmousedown = dragMouseDown;
@@ -418,18 +475,53 @@ function createTimer(h, m, s) {
   document.querySelector('.container.content')?.appendChild(component)
 }
 
+var timerRunning = false
+chrome.storage.sync.get("timerRunning", (response) => {
+  if (Object.keys(response).length !== 0){
+    timerRunning = response.timerRunning
+  }
+})
 
-var hour = 0
-var minute = 0
-var second = 30
-chrome.storage.sync.get("hour", (response) => {hour = parseInt(response.hour)})
-chrome.storage.sync.get("minute", (response) => {minute = parseInt(response.minute)})
-chrome.storage.sync.get("second", (response) => {second = parseInt(response.second)})
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     const currentUrl = tab.url
     // 백준에서
     if (currentUrl.startsWith(boj)) {
+      var startHour, startMinute, startSecond = 0
+      chrome.storage.sync.get("hour", (response) => {
+        startHour = parseInt(response.hour)
+      })
+      chrome.storage.sync.get("minute", (response) => {
+        startMinute = parseInt(response.minute)
+      })
+      chrome.storage.sync.get("second", (response) => {
+        startSecond = parseInt(response.second)
+        
+      })
+      var hour = 0
+      var minute = 0
+      var second = 0
+      chrome.storage.sync.get("leftHour", (response) => {
+        if (Object.keys(response).length !== 0){
+          hour = parseInt(response.leftHour)
+        } else {
+          chrome.storage.sync.get("hour", (response) => {hour = parseInt(response.hour)
+          })
+        }
+      })
+      chrome.storage.sync.get("leftMinute", (response) => {
+        if (Object.keys(response).length !== 0){
+          minute = parseInt(response.leftMinute)
+        } else {
+          chrome.storage.sync.get("minute", (response) => {minute = parseInt(response.minute)})}
+      })
+      chrome.storage.sync.get("leftSecond", (response) => {
+        if (Object.keys(response).length !== 0){
+          second = parseInt(response.leftSecond)
+        } else {
+          chrome.storage.sync.get("second", (response) => {second = parseInt(response.second)})
+        }
+      })
       await chrome.storage.sync.get("token", function (response) { 
         
         if (Object.keys(response).length !== 0){
@@ -458,12 +550,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             }
           });
           
-          if (currentUrl.includes("acmicpc.net/problem") || currentUrl.includes("submit")) {
+          if (currentUrl.includes("acmicpc.net/problem") || currentUrl.includes("submit") || currentUrl.includes("status")) {
             chrome.storage.sync.get("timerShown", function(response){
               if (Object.keys(response).length !== 0){
-                // chrome.storage.sync.get("hour", (response) => {hour = response.hour })
-                // chrome.storage.sync.get("minute", (response) => {minute = response.minute })
-                // chrome.storage.sync.get("second", (response) => {second = response.second })
                 chrome.scripting.executeScript({
                   target: { tabId: tab.id },
                   func: createTimer,
@@ -484,10 +573,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
           // 소스코드페이지에서는 copycode 함수 실행
           if (currentUrl.includes("source")){
+            
             chrome.scripting.executeScript({
               target: { tabId: tab.id },
               func: copyCode,
-              args: [BASE_URL]
+              args: [BASE_URL, timerRunning, startHour, startMinute, startSecond, hour, minute, second]
             })
           }
         }})
