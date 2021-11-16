@@ -1,35 +1,34 @@
 package com.a105.alub.api.response;
 
-import com.a105.alub.domain.entity.AssignedProblem;
 import com.a105.alub.domain.entity.Study;
-import com.a105.alub.domain.entity.StudyChannel;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-//@Builder
-public class StudyDto {
-  private final Long id;
+public class StudyCreateRes {
 
-  private final StudyChannel studyChannel;
+  private final Long id;
 
   private final String name;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
   private final LocalDateTime startTime;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
   private final LocalDateTime endTime;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
   private final LocalDateTime assignmentStartTime;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
   private final LocalDateTime assignmentEndTime;
 
-  private final List<AssignedProblemDto> assignedProblems;
+  private final List<AssignedProblemCreateRes> assignedProblems;
 
-  public StudyDto(Study study, List<AssignedProblemDto> assignedProblems) {
+  public StudyCreateRes(Study study, List<AssignedProblemCreateRes> assignedProblems) {
     this.id = study.getId();
-    this.studyChannel = study.getStudyChannel();
     this.name = study.getName();
     this.startTime = study.getStartTime();
     this.endTime = study.getEndTime();
