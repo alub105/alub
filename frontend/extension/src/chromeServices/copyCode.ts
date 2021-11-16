@@ -21,7 +21,7 @@ const copyCode = () => {
       "맞"
     );
   const problemNumber = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent;
-  const problemName = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent;
+  const problemTitle = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent;
   const memory = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent;
   const timeConsumed = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[6]?.textContent;
   const answerCode = document.getElementsByName("source")[0]?.innerText;
@@ -74,7 +74,7 @@ const copyCode = () => {
       language: lang,
       runningTime: timeConsumed,
       runningMemory: memory,
-      problemName: problemName,
+      problemTitle: problemTitle,
       problemNumber: problemNumber,
       site: site,
     };

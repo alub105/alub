@@ -1,12 +1,24 @@
 package com.a105.alub.domain.entity;
 
+import com.a105.alub.api.request.AssignedProblemReq;
+import com.a105.alub.domain.enums.BojLevel;
+import com.a105.alub.domain.enums.ProblemLevel;
+import com.a105.alub.domain.enums.Site;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import lombok.AllArgsConstructor;
@@ -32,12 +44,39 @@ public class AssignedProblem extends BaseTimeEntity {
   @JoinColumn(name = "study_id")
   private Study study;
 
-  private String problemNum;
+  private Long num;
 
-  private String problemTitle;
+  private String title;
 
-  private String problemSite;
+  @Enumerated(EnumType.STRING)
+  private Site site;
 
-  private String problemLevel;
+  private ProblemLevel level;
+
+  @Basic
+  @Access(AccessType.PROPERTY)
+  @Column(name = "level", nullable = false)
+  public String getLevel() {
+    return level.getName();
+  }
+
+  public void setLevel(String level) {
+    if (BojLevel.hasName(level)) {
+      this.level = BojLevel.valueOf(level);
+    }
+  }
+
+  public ProblemLevel getProblemLevel() {
+    return level;
+  }
+
+
+  public AssignedProblem(AssignedProblemReq assignedProblemReq, Study study) {
+    this.num = assignedProblemReq.getNum();
+    this.title = assignedProblemReq.getTitle();
+    this.site = assignedProblemReq.getSite();
+    this.level = assignedProblemReq.getLevel();
+    this.study = study;
+  }
 
 }

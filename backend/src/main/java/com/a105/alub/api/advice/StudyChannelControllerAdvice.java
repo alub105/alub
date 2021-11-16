@@ -2,6 +2,8 @@ package com.a105.alub.api.advice;
 
 
 import static com.a105.alub.common.response.ApiResponseCode.FAIL;
+
+import com.a105.alub.api.controller.StudyChannelController;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.a105.alub.common.exception.NotHostException;
@@ -10,7 +12,7 @@ import com.a105.alub.common.exception.UserNotFoundException;
 import com.a105.alub.common.exception.UserStudyChannelNotFoundException;
 import com.a105.alub.common.response.ApiResponseDto;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = StudyChannelController.class)
 public class StudyChannelControllerAdvice {
 
   @ExceptionHandler(StudyChannelNotFoundException.class)
