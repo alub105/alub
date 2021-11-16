@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import { API_BASE_URL } from "../../config/index";
+import * as util from "../../modules/axios/util";
 
 import StudyHome from "../Study/StudyHome.js";
 import Profile from "../Study/Profile.js";
@@ -70,23 +71,11 @@ const SideBarStudy = ({ match }) => {
 
   useEffect(() => {
     if (storeSelectedChannel > 0) {
-      fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${storeToken}`,
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            response.json().then((data) => {
-              setStudyInfo(data.data);
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      util.getStudyInfo(storeSelectedChannel, storeToken).then((data) => {
+        console.log(data);
+        // setStudyInfo(data.data);
+        console.log(studyInfo);
+      });
     }
   }, [storeSelectedChannel]);
 
@@ -101,7 +90,9 @@ const SideBarStudy = ({ match }) => {
       .then((response) => {
         console.log(response);
         if (response.ok) {
-          response.json().then((data) => {});
+          response.json().then((data) => {
+            console.log(data);
+          });
         }
       })
       .catch((error) => {

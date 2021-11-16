@@ -89,7 +89,6 @@ const StudySetting = ({ match }) => {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            console.log(data);
             setInviteList([...data.data]);
           });
         }
@@ -101,8 +100,8 @@ const StudySetting = ({ match }) => {
 
   const searchMember = (e) => {
     if (e.key === "Enter") {
-      searchMemberApi();
       // 기존 검색 결과 리스트 초기화
+      console.log("-----------------");
       let blank = [];
       let list = [1, 2, 3];
       console.log(inviteList);
@@ -110,6 +109,7 @@ const StudySetting = ({ match }) => {
       console.log(list);
       setInviteList([...blank]);
       console.log(inviteList);
+      searchMemberApi();
     }
   };
 
@@ -121,10 +121,9 @@ const StudySetting = ({ match }) => {
   };
 
   const addMember = (member) => {
-    setInviteList(inviteList.concat(member));
     // 결과 리스트에 선택한 멤버 추가
-    console.log(members.find((f) => f.id === member.id));
     if (!members.find((f) => f.id === member.id)) {
+      console.log("?");
       setAddedMember(addedMember.concat(member.id));
     }
     setInputs({

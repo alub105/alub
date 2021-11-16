@@ -100,14 +100,17 @@ const StudyCreateModal = (props) => {
 
   const studyDateFormat = useCallback((str1, str2) => {
     str1 = str1.replace(/\s+/g, "");
-    return str1 + str2;
+    str1 = str1.replaceAll(".", "-");
+    str1 = str1.slice(0, -1);
+    return str1 + " " + str2 + ":00";
   });
 
   const homeworkDateFormat = useCallback((str1, str2) => {
     str1 = str1.replace(/\s+/g, "");
+    str1 = str1.replaceAll(".", "-");
+    str1 = str1.slice(0, -1);
     let time = str2.split(" ")[4].split(":");
-    console.log(str1 + time[0] + "." + time[1]);
-    return str1 + time[0] + "." + time[1];
+    return str1 + " " + time[0] + ":" + time[1] + ":00";
   });
 
   const submit = () => {
@@ -132,6 +135,7 @@ const StudyCreateModal = (props) => {
         "Content-Type": "application/json;charset=UTF-8",
       },
       body: JSON.stringify({
+        name: studyName,
         startTime: studyStartTime,
         endTime: studyEndTime,
         assignmentStartTime: assignmentStartTime,
@@ -140,7 +144,12 @@ const StudyCreateModal = (props) => {
       }),
     })
       .then((response) => {
-        console.log(response);
+        if (response.ok) {
+          response.json().then((data) => {
+            // 스터디 리스트 추가
+            props.onHide();
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -180,22 +189,18 @@ const StudyCreateModal = (props) => {
             locale={ko}
             dateFormat="yyyy년 MM월 dd일"
             className="my-form study-input"
+            step="5"
             minDate={new Date()}
           />
           <input
             type="time"
             name="studyTime"
             ref={studyStartRef}
-            format="a hh:mm"
+            step="900"
+            required
             className="my-form study-input"
           />
-          <input
-            type="time"
-            name="studyTime"
-            ref={studyEndRef}
-            format="a hh:mm"
-            className="my-form study-input"
-          />
+          <input type="time" name="studyTime" ref={studyEndRef} className="my-form study-input" />
         </div>
         <div className="grid-column-3">
           <h4>과제 기한</h4>
@@ -236,7 +241,7 @@ const StudyCreateModal = (props) => {
               onKeyPress={searchProblem}
             />
           </div>
-          <div className="result" style={{ display: problem.length > 0 ? "none" : "block" }}>
+          <div className="result" style={{ display: problem.length === 0 ? "block" : "none" }}>
             {problems.map((result, index) => {
               return (
                 <div className="problem-content" key={index}>
@@ -280,8 +285,7 @@ const StudyCreateModal = (props) => {
       <Modal.Footer className="my-new-modal-footer">
         <button
           type="button"
-          //   className={`btn btn-success submit ${enabled ? "" : "disabled"}`}
-          className={`btn btn-success submit `}
+          className={`btn btn-success submit ${enabled ? "" : "disabled"}`}
           onClick={() => submit()}
         >
           등록
