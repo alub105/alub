@@ -143,7 +143,7 @@ function copyCode (BASE_URL) {
           )) &&
         userId === solvedUserId;
       const problemNumber = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent;
-      const problemName = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent;
+      const problemTitle = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent;
       const memory = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent;
       const timeConsumed = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[6]?.textContent;
       const answerCode = document.getElementsByName("source")[0]?.innerText;
@@ -212,7 +212,7 @@ function copyCode (BASE_URL) {
                     language: codeLang,
                     runningTime: timeConsumed,
                     runningMemory: memory,
-                    problemName: problemName,
+                    problemTitle: problemTitle,
                     problemNum: problemNumber,
                     site: site,
                   }
@@ -345,7 +345,7 @@ function copyCode (BASE_URL) {
                   fileName:fileName,
                   runningTime: timeConsumed,
                   runningMemory: memory,
-                  problemName: problemName,
+                  problemTitle: problemTitle,
                   problemNum: problemNumber,
                   site: site,
                 }
