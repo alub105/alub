@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 
 import MiniMap from './MiniMap';
-import UserCodes from "./UserCodes";
+import UserCodeList from "./UserCodeList";
 import './CodeView.scoped.css';
 
 
@@ -121,7 +121,7 @@ const CodeView = () => {
     }
   ];
 
-  const [nameList, setNameList] = useState(members);
+  const [userList, setUsetrList] = useState(members);
   const [fileList, setCodeList] = useState(fileTest);
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const CodeView = () => {
     return () => {
       console.log('컴포넌트가 화면에서 사라짐');
     };
-  }, ['?']);
+  }, []);
 
   function handleOnDragEnd(result) {
     /**
@@ -146,23 +146,25 @@ const CodeView = () => {
     const draggingItemIndex = result.source.index;
     const afterDragItemIndex = result.destination.index;
 
-    const nameTags = [...nameList];
+    const userTags = [...userList];
     const fileTags = [...fileList];
-    const removeNameTag = nameTags.splice(draggingItemIndex, 1);
+    const removeNameTag = userTags.splice(draggingItemIndex, 1);
     const removeFileTag = fileTags.splice(draggingItemIndex, 1);
 
-    nameTags.splice(afterDragItemIndex, 0, removeNameTag[0]);
+    userTags.splice(afterDragItemIndex, 0, removeNameTag[0]);
     fileTags.splice(afterDragItemIndex, 0, removeFileTag[0]);
 
-    setNameList(nameTags);
+    setUsetrList(userTags);
     setCodeList(fileTags);
   }
 
   return (
     <DragDropContext className="codeview" onDragEnd={handleOnDragEnd}>
-      <h1>CodeView</h1>
-      <MiniMap nameList={nameList}/>
-      <UserCodes fileList={fileList}/>
+      <div className="header">
+        <h1>CodeView</h1>
+        <MiniMap userList={userList}/>
+      </div>
+      <UserCodeList fileList={fileList}/>
 
     </DragDropContext>
   );

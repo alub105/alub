@@ -2,7 +2,7 @@ import React from "react";
 
 import UserCode from "./UserCode";
 
-const UserCodes = ({fileList}) => {
+const UserCodeList = ({fileList}) => {
   return (
     <div className="fileList" >
       {fileList.map((files, idx) => {
@@ -20,4 +20,4 @@ const UserCodes = ({fileList}) => {
   );
 };
 
-export default UserCodes;
+export default UserCodeList;

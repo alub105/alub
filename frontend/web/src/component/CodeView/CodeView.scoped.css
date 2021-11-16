@@ -2,21 +2,21 @@
   font-size: 100%;
   line-height: 1.5;
   font-family: var(--IBM);
+  margin: 0px;
 }
 
-.code{
-  overflow: scroll;
-  height: 80vh;
+.header{
+  width: 100vW;
+}
+
+.codeview{
   width: 100%;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
-*::-webkit-scrollbar {
-  /* display: none; */
-  /* width: 0px;
-  background-color: black; */
-}
+/* *::-webkit-scrollbar {
+  width: 2px;
+  background-color: black;
+} */
 
 .nameList {
   background-color: grey;
@@ -30,12 +30,16 @@
   width: 40vw;
 }
 
+.fileList .usercode .code{
+  height: 80vh;
+  width: 40vw;
+}
+
 .nameList, .fileList {
-  display: flex;
+  display: inline-flex;
   margin: 20px;
   padding: 0px;
-  width: 100%;
-  overflow: scroll;
+  width: 100vw;
 }
 
 .nameList .draggName, .fileList .usercode{

@@ -12,10 +12,14 @@ const UserCode = ({ user, codeList }) => {
   return (
     <div>
       <h1>{user.name}</h1>
-      <SyntaxHighlighter class="code" language="java" style={githubGist} showLineNumbers>
-        {/* <div className="code"> */}
-          {Buffer.from(selected.content, "base64").toString("utf-8")}
-        {/* </div> */}
+      <SyntaxHighlighter
+        className="code"
+        language="java"
+        style={githubGist}
+        showLineNumbers
+        wrapLongLines
+      >
+        {Buffer.from(selected.content, "base64").toString("utf-8")}
       </SyntaxHighlighter>
     </div>
   );

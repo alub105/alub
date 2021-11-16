@@ -1,7 +1,7 @@
 import React from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
-const MiniMap = ({nameList}) => {
+const MiniMap = ({userList}) => {
 
   return (
     <Droppable droppableId="nameList" direction="horizontal">
@@ -11,7 +11,7 @@ const MiniMap = ({nameList}) => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {nameList.map((member, idx) => {
+            {userList.map((member, idx) => {
               
               console.log(member.name + " : " + member)
               return (
