@@ -394,9 +394,7 @@ function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, 
                         document.querySelector("#alub-noti").remove();
                       }, 3000);
                     });
-                  }
-                  
-                  
+                  }                
                 })
                 .catch((err) => {
                   console.log(err);
@@ -413,12 +411,12 @@ function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, 
 // timer만드는 부분
 
 
-function createTimer(h, m, s) {
+function createTimer(h, m, s, timerRunning, timerPause) {
   const component = document.createElement('div')
   component.id = "component"
   const componentHeader = document.createElement("div")
   componentHeader.id = "componentHeader"
-  componentHeader.innerText = "Timer 이동"
+  componentHeader.innerText = "Timer"
   component.appendChild(componentHeader)
 
   component.style.position = 'absolute'
@@ -426,9 +424,9 @@ function createTimer(h, m, s) {
   component.style.backgroundColor = '#f1f1f1'
   component.style.border = '1px solid #d3d3d3'
   component.style.textAlign = 'center'
-  component.style.top = '570px'
-  component.style.left = '740px'
-  component.style.width = '15%'
+  component.style.top = '112px'
+  component.style.left = '933px'
+  component.style.width = '304px'
   
   
   componentHeader.style.padding = '5px'
@@ -436,13 +434,14 @@ function createTimer(h, m, s) {
   componentHeader.style.zIndex = 10
   componentHeader.style.backgroundColor = '#2196F3'
   componentHeader.style.color = '#fff'
-  componentHeader.style.fontSize = "15px"
+  componentHeader.style.fontSize = "20px"
 
   const timeComponent = document.createElement('p')
   timeComponent.style.fontSize = "20px"
   component.appendChild(timeComponent)
+  
   const startPauseButton = document.createElement('button')
-  startPauseButton.innerText = "시작"
+  startPauseButton.innerText = timerPause ? "시작" : "일시정지" 
   startPauseButton.addEventListener('click', startPauseTimer)
   
   const stopButton = document.createElement('button')
@@ -455,31 +454,26 @@ function createTimer(h, m, s) {
   chrome.storage.sync.get("second", (response) => {startSecond = parseInt(response.second)})
 
   component.appendChild(startPauseButton)
+
   component.appendChild(stopButton)
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  var timerRunning = false
   var isStop = false
+  var autotimerSwitch = false
+  
   timeComponent.innerText = `${h} : ${m} : ${s}`
-  function startPauseTimer () {
-    chrome.storage.sync.set({timerRunning:true}, () => {})
-    if (timerRunning){
-      timerRunning = false
-      startPauseButton.innerText = "시작"
-      
-    } else {
-      timerRunning = true
-      isStop = false
-      startPauseButton.innerText = "일시정지"
-    }
-    let timer = setInterval(() => {
-      if (!isStop) {
+  if (timerRunning) {
 
-        if(timerRunning) {
+    let autotimer = setInterval(() => {
+      if (!isStop) {
+        autotimerSwitch = true
+        if(!timerPause) {
           if (s > 0) {s = s - 1}
           if (s === 0) {
             if (m === 0) {
               if(h === 0) {
-                clearInterval(timer);
+                clearInterval(autotimer);
+                autotimerSwitch = false
+                chrome.storage.sync.set({timerPause:true})
               }
               else {
                 h = h -1
@@ -488,28 +482,86 @@ function createTimer(h, m, s) {
               }
             } else {
               m = m - 1;
-              s = s - 1;
-              }
+              s = 59;
+            }
           }
           chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {
             
-            timeComponent.innerText = `${h} : ${m} : ${s}`
+          timeComponent.innerText = `${h} : ${m} : ${s}`
           })
         } else {
-          clearInterval(timer)
+          clearInterval(autotimer)
           chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {
             
             timeComponent.innerText = `${h} : ${m} : ${s}`
           })
         }
       } else {
-        clearInterval(timer)
+        clearInterval(autotimer)
         
       }
     }, 1000);
   }
+  
+
+  function startPauseTimer () {
+    console.log(autotimerSwitch)
+    chrome.storage.sync.set({timerRunning:true})
+    if (!timerPause){
+      timerPause = true
+      timerRunning = false
+      chrome.storage.sync.set({timerPause:true})
+      startPauseButton.innerText = "시작"
+    } else {
+      timerRunning = true
+      timerPause = false
+      isStop = false
+      chrome.storage.sync.set({timerPause:false}, () => {})
+      startPauseButton.innerText = "일시정지"
+    }
+    if (timerRunning) {
+
+      let autotimer = setInterval(() => {
+        if (!isStop) {
+          if(!timerPause) {
+            if (s > 0) {s = s - 1}
+            if (s === 0) {
+              if (m === 0) {
+                if(h === 0) {
+                  clearInterval(autotimer);
+                  chrome.storage.sync.set({timerPause:true})
+                }
+                else {
+                  h = h -1
+                  m = 59
+                  s = 59;
+                }
+              } else {
+                m = m - 1;
+                s = 59;
+              }
+            }
+            chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {     
+            timeComponent.innerText = `${h} : ${m} : ${s}`
+            })
+          } else {
+            clearInterval(autotimer)
+            chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {
+              
+              timeComponent.innerText = `${h} : ${m} : ${s}`
+            })
+          }
+        } else {
+          clearInterval(autotimer)
+          
+        }
+      }, 1000);
+    }
+
+  }
   function reset() {
     isStop = true
+    autotimerSwitch = false
     chrome.storage.sync.remove(['leftHour', 'leftMinute', "leftSecond", "timerRunning"], () => {
       timeComponent.innerText = `${startHour} : ${startMinute} : ${startSecond}`
 
@@ -557,18 +609,27 @@ function createTimer(h, m, s) {
       }
 
   document.querySelector('.container.content')?.appendChild(component)
+  // console.log(timerPause, timerRunning)
+  // if(!timerPause) {
+  //   startPauseTimer()
+  // }
 }
 
-var timerRunning = false
-chrome.storage.sync.get("timerRunning", (response) => {
-  if (Object.keys(response).length !== 0){
-    timerRunning = response.timerRunning
-  }
-})
+var timerPause = true
+var hour = 0
+var minute = 0
+var second = 0
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     const currentUrl = tab.url
+        
+    var timerRunning = false
+    chrome.storage.sync.get("timerRunning", (response) => {
+      if (Object.keys(response).length !== 0){
+        timerRunning = response.timerRunning
+      }
+    })
     // 백준에서
     if (currentUrl.startsWith(boj)) {
       var startHour, startMinute, startSecond = 0
@@ -582,9 +643,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         startSecond = parseInt(response.second)
         
       })
-      var hour = 0
-      var minute = 0
-      var second = 0
+      chrome.storage.sync.get("timerPause", (response) => {
+        timerPause = response.timerPause
+      })
+
       chrome.storage.sync.get("leftHour", (response) => {
         if (Object.keys(response).length !== 0){
           hour = parseInt(response.leftHour)
@@ -605,6 +667,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         } else {
           chrome.storage.sync.get("second", (response) => {second = parseInt(response.second)})
         }
+      })
+      chrome.storage.sync.get("mode", function (response) {
+        if (response.mode === "dev") {BASE_URL = "http://localhost:8080";}
+        if (response.mode === "prod") {BASE_URL = "https://alub.co.kr"}
       })
       await chrome.storage.sync.get("token", function (response) { 
         
@@ -636,11 +702,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           
           if (currentUrl.includes("acmicpc.net/problem") || currentUrl.includes("submit") || currentUrl.includes("status")) {
             chrome.storage.sync.get("timerShown", function(response){
-              if (Object.keys(response).length !== 0){
+              if (Object.keys(response).length !== 0 && response.timerShown){
                 chrome.scripting.executeScript({
                   target: { tabId: tab.id },
                   func: createTimer,
-                  args: [hour, minute, second]
+                  args: [hour, minute, second, timerRunning, timerPause]
                 })
               }
             })
