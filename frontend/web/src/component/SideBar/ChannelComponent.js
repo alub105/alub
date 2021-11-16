@@ -5,21 +5,16 @@ import { useSelector, useDispatch } from "react-redux";
 
 import * as studyActions from "../../modules/actions/study";
 
-const ChannelComponent = ({ info }) => {
+const ChannelComponent = ({ info, selectChannel }) => {
   const dispatch = useDispatch();
   const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
-  // console.log(info);
 
-  const selectChannel = () => {
-    dispatch(studyActions.setSelectedChannel(info.id));
-  };
   return (
     <div>
       <OverlayTrigger
         delay={{ hide: 1, show: 1 }}
         overlay={(props) => (
           <Tooltip {...props} className="mytooltip">
-            {" "}
             {info.name} 채널
           </Tooltip>
         )}
@@ -27,7 +22,7 @@ const ChannelComponent = ({ info }) => {
       >
         <div
           className={`exist-channel channel ${storeSelectedChannel === info.id ? "selected" : ""}`}
-          onClick={() => selectChannel()}
+          onClick={() => selectChannel(info.id)}
         >
           {info.name}
           <div className="overlay-channel" />

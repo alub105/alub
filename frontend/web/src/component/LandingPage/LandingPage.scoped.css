@@ -2,13 +2,17 @@
   --landing-section-height: 53vh;
 }
 
+.landing {
+  min-width: 750px;
+}
+
 .landing flex-column {
   display: flex;
   flex-direction: column;
 }
 
 .landing .site-background {
-  width: 100vw;
+  width: 100%;
   height: 523px;
   background: var(--text-blue);
   overflow: hidden;
@@ -18,7 +22,7 @@
 .landing .background-ui {
   background-size: contain;
   /* height: 56vh; */
-  width: 50vw;
+  width: 50%;
   max-width: 650px;
   position: absolute;
   right: 0;
@@ -113,7 +117,7 @@
 /*-------------------- --------------*/
 
 .landing .section1 {
-  width: 100vw;
+  width: 100%;
   height: var(--landing-section-height);
   min-height: 300px;
   background-color: var(--white);
@@ -152,7 +156,7 @@
 
 /*------------------- Section2------------------*/
 .landing .section2 {
-  width: 100vw;
+  width: 100%;
   height: var(--landing-section-height);
   background-color: var(--background);
   min-height: 300px;
@@ -180,7 +184,7 @@
 /*------------ Section3-----------------*/
 
 .landing .section3 {
-  width: 100vw;
+  width: 100%;
   height: var(--landing-section-height);
   background-color: var(--white);
   min-height: 300px;
@@ -213,14 +217,14 @@
 .landing .ellipse-white {
   background-size: contain;
   position: absolute;
-  max-width: 100vw;
+  max-width: 100%;
   background-position: center;
   z-index: 0;
 }
 
 /*--------------- footer ---------------*/
 .landing footer .footer {
-  width: 100vw;
+  width: 100%;
   height: 300px;
   background-color: var(--background);
 }

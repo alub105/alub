@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { Route, Link } from "react-router-dom";
+import { Switch, Route, Link } from "react-router-dom";
 import "./SideBarStudy.scoped.scss";
 import { useSpring, animated } from "react-spring";
 import { useHistory } from "react-router";
@@ -13,17 +13,14 @@ import StudyHome from "../Study/StudyHome.js";
 import Profile from "../Study/Profile.js";
 import StudyProblem from "../Study/StudyProblem.js";
 import StudySetting from "../Study/StudySetting.js";
+import StudyCreateModal from "../Modal/StudyCreateModal";
 
-import * as studyActions from "../../modules/actions/study";
-
-const SideBarStudy = () => {
+const SideBarStudy = ({ match }) => {
   const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
-  const { studyInfo: storeStudyInfo } = useSelector((state) => state.study);
   const { token: storeToken } = useSelector((state) => state.user);
   const { userInfo: storeUserInfo } = useSelector((state) => state.user);
-  const history = useHistory();
-  const dispatch = useDispatch();
-
+  // 스터디 생성 모달 show
+  const [modalShow, setModalShow] = useState(false);
   // 사이드바 토글
   const [isOpen, setIsOpen] = useState(true);
   const [doingOpen, setDoingOpen] = useState(true);
@@ -36,6 +33,11 @@ const SideBarStudy = () => {
   const doneChildRef = useRef();
   // main 페이지 사이즈
   const [mainWidth, setMainWidth] = useState(232);
+  const [studyInfo, setStudyInfo] = useState({
+    name: "",
+    host: {},
+  });
+
   const [runningStudyList, setRunningStudyList] = useState([
     {
       id: 5,
@@ -67,7 +69,6 @@ const SideBarStudy = () => {
   ]);
 
   useEffect(() => {
-    // 스터디 채널 조회
     if (storeSelectedChannel > 0) {
       fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
         method: "GET",
@@ -79,11 +80,7 @@ const SideBarStudy = () => {
         .then((response) => {
           if (response.ok) {
             response.json().then((data) => {
-              // host , member, study name set
-              dispatch(studyActions.setStudyInfo(data.data));
-              // study list set
-              // getStudyList();
-              history.push(`/channel/${storeSelectedChannel}/home`);
+              setStudyInfo(data.data);
             });
           }
         })
@@ -104,9 +101,7 @@ const SideBarStudy = () => {
       .then((response) => {
         console.log(response);
         if (response.ok) {
-          response.json().then((data) => {
-            // history.push(`/channel/study/${storeSelectedChannel}`);
-          });
+          response.json().then((data) => {});
         }
       })
       .catch((error) => {
@@ -121,10 +116,9 @@ const SideBarStudy = () => {
 
   const toggleSidebar = () => {
     setIsOpen((isOpen) => !isOpen);
-    console.log(mainWidth);
+
     if (isOpen) {
       setMainWidth(0);
-      console.log("close toggle", mainWidth);
     } else {
       setMainWidth(232);
     }
@@ -156,6 +150,10 @@ const SideBarStudy = () => {
     [doneOpen]
   );
 
+  const createStudy = () => {
+    setModalShow(true);
+  };
+
   return (
     <div className="sidebar-study">
       <i
@@ -181,7 +179,7 @@ const SideBarStudy = () => {
                 <div>🏠 HOME</div>
               </Link>
             </div>
-            <div className="study create item">
+            <div className="study create item" onClick={() => createStudy()}>
               <span>스터디 추가</span>
               <i className="fal fa-plus" />
             </div>
@@ -231,10 +229,10 @@ const SideBarStudy = () => {
             <div
               className="study item"
               style={{
-                display: storeStudyInfo?.host?.id === storeUserInfo.userId ? "block" : "none",
+                display: studyInfo.host.id === storeUserInfo.userId ? "block" : "none",
               }}
             >
-              <Link to={`/channel/${storeSelectedChannel}/setting`}>
+              <Link to={`/channel/setting/${storeSelectedChannel}`}>
                 <div>스터디 설정</div>
               </Link>
             </div>
@@ -243,15 +241,17 @@ const SideBarStudy = () => {
       </animated.div>
       <Main width={mainWidth}>
         {/*------------------ 메인 페이지 ------------------*/}
-        <Route path="/channel/:channelId/home" component={StudyHome} />
+        <Route path="/channel/:channelId/home" exact={true} component={StudyHome} />
         {/*--------------------- 개인 페이지 ------------------*/}
-        <Route path="/channel/profile" exact={true} component={Profile} />
+        <Route path={`/channel/profile`} exact={true} component={Profile} />
+        {/*------------------ 스터디 채널 설정 페이지 ------------------*/}
+        <Route path={`/channel/setting/:channelId`} exact={true} component={StudySetting} />
         {/*------------------ 스터디 페이지 ------------------*/}
-        <Route path="/channel/:channelId/study/:studyId" exact={true} component={StudyProblem} />
+        <Route path={`/channel/:channelId/study/:studyId`} exact={true} component={StudyProblem} />
         {/*------------------ 멤버 페이지 ------------------*/}
-        {/*------------------ 스터디 설정 페이지 ------------------*/}
-        <Route path="/channel/:channelId/setting" exact={true} component={StudySetting} />
       </Main>
+      {/*---------------- 스터디 생성 모달 ----------------*/}
+      <StudyCreateModal show={modalShow} onHide={() => setModalShow(false)} />
     </div>
   );
 };

@@ -15,10 +15,7 @@ function App() {
         <main>
           <Switch>
             <Route path="/" exact={true} component={LandingPage} />
-            <Route path="/channel" exact={true} component={Channel} />
-            <Route path="/channel/:channelId/home" exact={true} component={Channel} />
-            <Route path="/channel/:channelId/study/:studyId" exact={true} component={Channel} />
-            <Route path="/channel/:channelId/setting" exact={true} component={Channel} />
+            <Route path="/channel" component={Channel} />
             <Route path="/oauth/redirect" component={Authenticate} />
             <Route component={NotFound} />
           </Switch>

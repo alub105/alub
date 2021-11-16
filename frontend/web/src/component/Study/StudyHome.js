@@ -7,9 +7,10 @@ import { API_BASE_URL } from "../../config/index";
 import "./StudyHome.scoped.scss";
 
 const StudyHome = ({ match }) => {
-  const { studyInfo: storeStudyInfo } = useSelector((state) => state.study);
   const { token: storeToken } = useSelector((state) => state.user);
-  const { channelId } = match.params;
+  const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
+  const { channelId } = match.params.channelId;
+  const [studyInfo, setStudyInfo] = useState({});
 
   const [runningStudyList, setRunningStudyList] = useState([
     {
@@ -42,7 +43,10 @@ const StudyHome = ({ match }) => {
   ]);
 
   useEffect(() => {
-    fetch(API_BASE_URL + `/api/channels/${channelId}/studies`, {
+    if (channelId < 0) {
+      return;
+    }
+    fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${storeToken}`,
@@ -52,17 +56,33 @@ const StudyHome = ({ match }) => {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            // console.log(data);
+            // host , member, study name set
+            setStudyInfo(data.data);
+
+            fetch(API_BASE_URL + `/api/channels/${channelId}/studies`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${storeToken}`,
+                "Content-Type": "application/json;charset=UTF-8",
+              },
+            })
+              .then((response) => {
+                if (response.ok) {
+                  response.json().then((data) => {});
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           });
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [storeSelectedChannel]);
 
   const runningSplitTime = (endTime) => {
-    console.log(endTime);
     const yt = endTime.split(" ");
     const year = yt[0].split("-");
     const time = yt[1].split(":");
@@ -70,7 +90,6 @@ const StudyHome = ({ match }) => {
   };
 
   const endSplitTime = (endTime) => {
-    console.log(endTime);
     const yt = endTime.split(" ");
     const year = yt[0].split("-");
     const time = yt[1].split(":");
@@ -79,7 +98,7 @@ const StudyHome = ({ match }) => {
 
   return (
     <div className="study-home">
-      <h1>{storeStudyInfo.name} </h1>
+      <h1>{studyInfo?.name} 홈</h1>
       <div className="study-wrapper">
         <div className="studies">
           <div className="study-list">

@@ -12,8 +12,9 @@ import StudyHome from "../Study/StudyHome.js";
 import * as userActions from "../../modules/actions/user";
 import * as studyActions from "../../modules/actions/study";
 
-const Channel = () => {
+const Channel = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
+  const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -65,8 +66,8 @@ const Channel = () => {
 
   return (
     <div className="channel">
-      <SideBarChannel />
-      <SideBarStudy />
+      <SideBarChannel match={match} />
+      <SideBarStudy match={match} />
     </div>
   );
 };

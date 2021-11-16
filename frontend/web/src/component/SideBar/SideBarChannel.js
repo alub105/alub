@@ -1,16 +1,17 @@
 /* eslint-disable */
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import "./SideBarChannel.scoped.scss";
 import logo from "../../static/image/logo.png";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router";
 
 import * as studyActions from "../../modules/actions/study";
 
 import ChannelComponent from "./ChannelComponent";
-import ChannelCreateModal from "../ChannelCreateModal/ChannelCreateModal";
+import ChannelCreateModal from "../Modal/ChannelCreateModal";
 
-const SideBarChannel = () => {
+const SideBarChannel = ({ match }) => {
   const dispatch = useDispatch();
   const [modalShow, setModalShow] = React.useState(false);
 
@@ -18,12 +19,22 @@ const SideBarChannel = () => {
   const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
   const { userInfo: storeUserInfo } = useSelector((state) => state.user);
 
+  const history = useHistory();
+
   useEffect(() => {
-    selectChannel(storeSelectedChannel);
+    // console.log("studybar 1", match);
+    // if (match.url === "/channel/profile") {
+    //   history.push("/channel/profile");
+    // }
   }, [storeChannelList, storeSelectedChannel]);
 
   const selectChannel = (value) => {
-    dispatch(studyActions.setSelectedChannel(value));
+    if (value === -1) {
+      history.push(`/channel/profile`);
+    } else if (value > 0) {
+      dispatch(studyActions.setSelectedChannel(value));
+      history.push(`/channel/${value}/home`);
+    }
   };
 
   const createNewChannel = () => {
@@ -55,26 +66,9 @@ const SideBarChannel = () => {
             </div>
           </OverlayTrigger>
           {/* --------------- 홈  ---------------  */}
-          <OverlayTrigger
-            delay={{ hide: 5, show: 5 }}
-            overlay={(props) => (
-              <Tooltip {...props} className="mytooltip">
-                홈으로 가기
-              </Tooltip>
-            )}
-            placement="right"
-          >
-            <div
-              className={`home channel ${storeSelectedChannel === -2 ? "selected-new" : ""}`}
-              onClick={() => selectChannel(-2)}
-            >
-              <img src={logo} alt="logo" className="logo" />
-              <div className="overlay-channel" />
-            </div>
-          </OverlayTrigger>
 
           {storeChannelList.map((channel, index) => {
-            return <ChannelComponent info={channel} key={index} />;
+            return <ChannelComponent info={channel} key={index} selectChannel={selectChannel} />;
           })}
 
           {/* --------------- 새 채널  ---------------  */}
