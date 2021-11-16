@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
 import com.a105.alub.api.response.StudyChannelCreateRes;
-import com.a105.alub.api.response.StudyChannelListRes;
+import com.a105.alub.api.response.StudyChannelDto;
 import com.a105.alub.api.response.StudyChannelRes;
 import com.a105.alub.common.exception.NotHostException;
 import com.a105.alub.common.exception.StudyChannelNotFoundException;
@@ -56,15 +56,15 @@ public class StudyChannelServiceImpl implements StudyChannelService {
   public StudyChannelRes getChannel(Long studyChannelId) {
     StudyChannel studyChannel = studyChannelRepository.findById(studyChannelId)
         .orElseThrow(StudyChannelNotFoundException::new);
-    if(!studyChannel.getEnabled()) {
+    if (!studyChannel.getEnabled()) {
       throw new StudyChannelNotFoundException();
     }
     User host =
         userRepository.findById(studyChannel.getHostId()).orElseThrow(UserNotFoundException::new);
     List<UserStudyChannel> userStudyChannelList =
         userStudyChannelRepository.findAllByStudyChannelId(studyChannelId);
-    userStudyChannelList = userStudyChannelList.stream()
-        .filter(UserStudyChannel::isEnabled).collect(Collectors.toList());
+    userStudyChannelList = userStudyChannelList.stream().filter(UserStudyChannel::isEnabled)
+        .collect(Collectors.toList());
 
     log.info("Get Study Channel: {}", studyChannel);
 
@@ -133,12 +133,18 @@ public class StudyChannelServiceImpl implements StudyChannelService {
   }
 
   @Override
-  public StudyChannelListRes getChannelList(Long userId) {
+  public List<StudyChannelDto> getChannelList(Long userId) {
     List<UserStudyChannel> userStudyChannelList =
         userStudyChannelRepository.findAllByUserId(userId);
-    StudyChannelListRes channelListRes = new StudyChannelListRes(userStudyChannelList);
+    userStudyChannelList = userStudyChannelList.stream().filter(UserStudyChannel::isEnabled)
+        .collect(Collectors.toList());
 
-    return channelListRes;
+    List<StudyChannelDto> studyChannelList = new LinkedList<StudyChannelDto>();
+    userStudyChannelList.stream().forEach(userStudyChannel -> {
+      studyChannelList.add(new StudyChannelDto(userStudyChannel.getStudyChannel()));
+    });
+
+    return studyChannelList;
   }
 
   private boolean isUser(List<Long> member) {
