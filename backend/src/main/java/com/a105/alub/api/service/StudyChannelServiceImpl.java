@@ -2,6 +2,7 @@ package com.a105.alub.api.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.a105.alub.api.request.StudyChannelCreateReq;
@@ -55,10 +56,16 @@ public class StudyChannelServiceImpl implements StudyChannelService {
   public StudyChannelRes getChannel(Long studyChannelId) {
     StudyChannel studyChannel = studyChannelRepository.findById(studyChannelId)
         .orElseThrow(StudyChannelNotFoundException::new);
+    if(!studyChannel.getEnabled()) {
+      throw new StudyChannelNotFoundException();
+    }
     User host =
         userRepository.findById(studyChannel.getHostId()).orElseThrow(UserNotFoundException::new);
     List<UserStudyChannel> userStudyChannelList =
         userStudyChannelRepository.findAllByStudyChannelId(studyChannelId);
+    userStudyChannelList = userStudyChannelList.stream()
+        .filter(entity->entity.isEnabled()==true).collect(Collectors.toList());
+
     log.info("Get Study Channel: {}", studyChannel);
 
     StudyChannelRes channelRes = new StudyChannelRes(studyChannel, host, userStudyChannelList);
