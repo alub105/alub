@@ -4,7 +4,12 @@ import com.a105.alub.api.request.AssignedProblemReq;
 import com.a105.alub.api.request.StudyCreateReq;
 import com.a105.alub.api.response.AssignedProblemCreateRes;
 import com.a105.alub.api.response.StudyCreateRes;
+import com.a105.alub.api.response.AssignedProblemGetRes;
+import com.a105.alub.api.response.SolvedGetRes;
+import com.a105.alub.api.response.StudyGetRes;
+import com.a105.alub.common.exception.SolvedNotFoundException;
 import com.a105.alub.common.exception.StudyChannelNotFoundException;
+import com.a105.alub.common.exception.StudyNotFoundException;
 import com.a105.alub.domain.entity.AssignedProblem;
 import com.a105.alub.domain.entity.Solved;
 import com.a105.alub.domain.entity.Study;
@@ -56,5 +61,32 @@ public class StudyServiceImpl implements StudyService {
     }
 
     return new StudyCreateRes(createdStudy, createdAssignedProblems);
+  }
+
+  @Override
+  public StudyGetRes findById(Long studyId) {
+    Study study = studyRepository.findById(studyId).orElseThrow(StudyNotFoundException::new);
+
+    List<User> members = userStudyChannelRepository
+        .findAllByStudyChannelId(study.getStudyChannel().getId())
+        .stream().map(UserStudyChannel::getUser).collect(Collectors.toList());
+
+    List<AssignedProblemGetRes> list = new ArrayList<>();
+
+    List<AssignedProblem> problems = assignedProblemRepository.findByStudyId(study.getId());
+    for (AssignedProblem problem : problems) {
+      List<SolvedGetRes> solvedGetResList = new ArrayList<>();
+      for (User member : members) {
+        Solved solved = solvedRepository
+            .findByUser_IdAndAssignedProblem_Id(member.getId(), problem.getId())
+            .orElseThrow(SolvedNotFoundException::new);
+
+        solvedGetResList.add(new SolvedGetRes(member, solved));
+      }
+      AssignedProblemGetRes dto = new AssignedProblemGetRes(problem, solvedGetResList);
+      list.add(dto);
+    }
+    StudyGetRes studyGetRes = new StudyGetRes(study, list);
+    return studyGetRes;
   }
 }
