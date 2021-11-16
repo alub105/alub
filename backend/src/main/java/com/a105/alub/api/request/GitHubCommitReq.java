@@ -26,7 +26,7 @@ public class GitHubCommitReq {
 
   private String makeCommitMessage(CommitReq commitReq, LocalDateTime now) {
     String commitMessage = (commitReq.getSite() == Site.BOJ ? "BOJ-" : "PRGMS-")
-        + commitReq.getProblemNum() + " '" + commitReq.getProblemName() + "' [ "
+        + commitReq.getProblemNum() + " '" + commitReq.getProblemTitle() + "' [ "
         + now.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss")) + " ] by Alub";
     return commitMessage;
   }
