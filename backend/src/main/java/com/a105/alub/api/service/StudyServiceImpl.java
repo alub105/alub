@@ -2,8 +2,8 @@ package com.a105.alub.api.service;
 
 import com.a105.alub.api.request.AssignedProblemReq;
 import com.a105.alub.api.request.StudyCreateReq;
-import com.a105.alub.api.response.AssignedProblemDto;
-import com.a105.alub.api.response.StudyDto;
+import com.a105.alub.api.response.AssignedProblemCreateRes;
+import com.a105.alub.api.response.StudyCreateRes;
 import com.a105.alub.common.exception.StudyChannelNotFoundException;
 import com.a105.alub.domain.entity.AssignedProblem;
 import com.a105.alub.domain.entity.Solved;
@@ -15,7 +15,6 @@ import com.a105.alub.domain.repository.AssignedProblemRepository;
 import com.a105.alub.domain.repository.SolvedRepository;
 import com.a105.alub.domain.repository.StudyChannelRepository;
 import com.a105.alub.domain.repository.StudyRepository;
-import com.a105.alub.domain.repository.UserRepository;
 import com.a105.alub.domain.repository.UserStudyChannelRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +37,14 @@ public class StudyServiceImpl implements StudyService {
 
   @Transactional
   @Override
-  public StudyDto createStudy(Long channelId, StudyCreateReq studyCreateReq) {
+  public StudyCreateRes createStudy(Long channelId, StudyCreateReq studyCreateReq) {
     StudyChannel studyChannel = studyChannelRepository.findById(channelId)
         .orElseThrow(StudyChannelNotFoundException::new);
 
     List<User> members = userStudyChannelRepository.findAllByStudyChannelId(studyChannel.getId())
         .stream().map(UserStudyChannel::getUser).collect(Collectors.toList());
 
-    List<AssignedProblemDto> createdAssignedProblems = new ArrayList<>();
+    List<AssignedProblemCreateRes> createdAssignedProblems = new ArrayList<>();
     Study createdStudy = studyRepository.save(new Study(studyCreateReq, studyChannel));
     for (AssignedProblemReq assignedProblemReq : studyCreateReq.getAssignedProblems()) {
       AssignedProblem assignedProblem = new AssignedProblem(assignedProblemReq, createdStudy);
@@ -53,9 +52,9 @@ public class StudyServiceImpl implements StudyService {
       for (User member : members) {
         solvedRepository.save(new Solved(member, assignedProblem));
       }
-      createdAssignedProblems.add(AssignedProblemDto.of(assignedProblem));
+      createdAssignedProblems.add(AssignedProblemCreateRes.of(assignedProblem));
     }
 
-    return new StudyDto(createdStudy, createdAssignedProblems);
+    return new StudyCreateRes(createdStudy, createdAssignedProblems);
   }
 }
