@@ -6,7 +6,7 @@ const initialState = {
 };
 
 const reducers = (state = initialState, action) => {
-  if (action.type === studyActions.DELETE_CHANNEL) {
+  if (action.type === studyActions.SET_CHANNEL_LIST) {
     console.log(action.payload);
   }
   switch (action.type) {
@@ -16,16 +16,10 @@ const reducers = (state = initialState, action) => {
         selectedChannel: action.payload,
       };
     case studyActions.SET_CHANNEL_LIST:
-      if (!state.channelList.find((channel) => Number(action.payload.id) === channel.id)) {
-        return {
-          channelList: state.channelList.concat(action.payload),
-          selectedChannel: action.payload.id,
-        };
-      } else {
-        return {
-          ...state,
-        };
-      }
+      return {
+        channelList: [...action.payload],
+        selectedChannel: action.payload.id,
+      };
     case studyActions.UPDATE_CHANNEL:
       return {
         ...state,

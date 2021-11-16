@@ -73,7 +73,8 @@ const SideBarStudy = ({ match }) => {
     if (storeSelectedChannel > 0) {
       util.getStudyInfo(storeSelectedChannel, storeToken).then((data) => {
         console.log(data);
-        // setStudyInfo(data.data);
+        setStudyInfo({ ...data.data });
+
         console.log(studyInfo);
       });
     }
@@ -215,12 +216,12 @@ const SideBarStudy = ({ match }) => {
           </div>
           <div>
             <div className="study item">
-              <div>멤버 목록</div>
+              <div>멤버 목록 </div>
             </div>
             <div
               className="study item"
               style={{
-                display: studyInfo.host.id === storeUserInfo.userId ? "block" : "none",
+                display: studyInfo?.host?.id === storeUserInfo.userId ? "block" : "none",
               }}
             >
               <Link to={`/channel/setting/${storeSelectedChannel}`}>

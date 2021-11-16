@@ -1,7 +1,6 @@
 import { API_BASE_URL } from "../../config/index";
 
 export const getStudyInfo = async (channelId, token) => {
-  console.log("util ", channelId, token);
   return new Promise(function(resolve, reject) {
     fetch(API_BASE_URL + `/api/channels/${channelId}`, {
       method: "GET",
@@ -11,10 +10,9 @@ export const getStudyInfo = async (channelId, token) => {
       },
     })
       .then((response) => {
-        console.log(response);
         if (response.ok) {
           response.json().then((data) => {
-            console.log(data);
+            // console.log(data);
             resolve(data);
           });
         }

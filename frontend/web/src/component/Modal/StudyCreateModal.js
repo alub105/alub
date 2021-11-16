@@ -147,6 +147,7 @@ const StudyCreateModal = (props) => {
         if (response.ok) {
           response.json().then((data) => {
             // 스터디 리스트 추가
+
             props.onHide();
           });
         }

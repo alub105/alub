@@ -52,9 +52,11 @@ const Channel = ({ match }) => {
         .then((response) => {
           if (response.ok) {
             response.json().then((data) => {
-              data.data.channel.map((channel) => {
-                dispatch(studyActions.setChannelList(channel));
-              });
+              // data.data.channel.map((channel) => {
+              //   dispatch(studyActions.setChannelList(channel));
+              // });
+              console.log(data.data);
+              dispatch(studyActions.setChannelList(data.data.channel));
             });
           }
         })

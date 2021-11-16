@@ -32,8 +32,7 @@ const StudySetting = ({ match }) => {
   const { channelName, memberName } = inputs;
 
   useEffect(() => {
-    let isSubscribed = true;
-
+    console.log("effect");
     fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
       method: "GET",
       headers: {
@@ -49,8 +48,8 @@ const StudySetting = ({ match }) => {
               ...inputs,
               channelName: data.data.name,
             });
-            setHost(data.data.host.name);
-            setMembers((members) => [...members, data.data.host]);
+            setHost(data.data.host.id);
+            setMembers((members) => members.concat(data.data.host));
             setMembers((members) => members.concat(data.data.member));
           });
         }
@@ -58,8 +57,6 @@ const StudySetting = ({ match }) => {
       .catch((error) => {
         console.log(error);
       });
-
-    return () => (isSubscribed = false);
   }, []);
 
   const onChange = (e) => {
@@ -70,6 +67,7 @@ const StudySetting = ({ match }) => {
     });
   };
   const onChangeHost = (e) => {
+    console.log(e.target.value);
     setHost(e.target.value);
   };
 
@@ -104,12 +102,7 @@ const StudySetting = ({ match }) => {
       searchMemberApi();
       // 기존 검색 결과 리스트 초기화
       let blank = [];
-      let list = [1, 2, 3];
-      console.log(inviteList);
-      list = [...blank];
-      console.log(list);
       setInviteList([...blank]);
-      console.log(inviteList);
     }
   };
 
@@ -121,12 +114,14 @@ const StudySetting = ({ match }) => {
   };
 
   const addMember = (member) => {
-    setInviteList(inviteList.concat(member));
+    console.log(member);
     // 결과 리스트에 선택한 멤버 추가
-    console.log(members.find((f) => f.id === member.id));
-    if (!members.find((f) => f.id === member.id)) {
+    // 중복 없을 때만 add
+    if (members.filter((m) => m.id === member.id).length === 0) {
+      setMembers(members.concat(member));
       setAddedMember(addedMember.concat(member.id));
     }
+
     setInputs({
       ...inputs,
       memberName: "",
@@ -134,7 +129,13 @@ const StudySetting = ({ match }) => {
   };
 
   const updateChannel = () => {
-    fetch(API_BASE_URL + `/api/channels/${match.params.channelId}`, {
+    console.log("==================");
+    console.log("update channel");
+    console.log(members);
+    console.log(addedMember);
+    console.log(host);
+    console.log(channelName);
+    fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${storeToken}`,
@@ -142,7 +143,7 @@ const StudySetting = ({ match }) => {
       },
       body: JSON.stringify({
         name: channelName,
-        hostId: studyInfo.host.id,
+        hostId: host,
         deletedMember: deleteMember,
         addedMember: addedMember,
       }),
@@ -209,7 +210,11 @@ const StudySetting = ({ match }) => {
           <h4>방장</h4>
           <select className="form-select" value={host} onChange={onChangeHost}>
             {members.map((member, index) => {
-              return <option key={index}>{member.name}</option>;
+              return (
+                <option key={index} value={member.id}>
+                  {member.name}
+                </option>
+              );
             })}
           </select>
         </div>
@@ -241,7 +246,7 @@ const StudySetting = ({ match }) => {
                   <p>{data.name}</p>
                   <button
                     type="button"
-                    className={`btn btn-danger ${data.id === studyInfo.host.id} ? '' : disabled`}
+                    className={`btn btn-danger ${data.id === studyInfo.host.id ? "disabled" : ""}`}
                     onClick={() => onRemove(data.id)}
                   >
                     삭제
