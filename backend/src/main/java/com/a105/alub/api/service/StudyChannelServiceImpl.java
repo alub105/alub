@@ -64,7 +64,7 @@ public class StudyChannelServiceImpl implements StudyChannelService {
     List<UserStudyChannel> userStudyChannelList =
         userStudyChannelRepository.findAllByStudyChannelId(studyChannelId);
     userStudyChannelList = userStudyChannelList.stream()
-        .filter(entity->entity.isEnabled()==true).collect(Collectors.toList());
+        .filter(UserStudyChannel::isEnabled).collect(Collectors.toList());
 
     log.info("Get Study Channel: {}", studyChannel);
 
