@@ -10,5 +10,5 @@ import lombok.ToString;
 @ToString
 public class SolvedacSearchRes {
   private long count;
-  private List<ProblemItem> items; 
+  private List<BojProblemItem> items;
 }

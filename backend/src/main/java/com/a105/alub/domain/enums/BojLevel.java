@@ -1,6 +1,6 @@
 package com.a105.alub.domain.enums;
 
-public enum BojLevel {
+public enum BojLevel implements ProblemLevel {
   unrated, 
   bronze5, 
   bronze4,
@@ -32,6 +32,18 @@ public enum BojLevel {
   ruby3,
   ruby2,
   ruby1;
-  
-  
+
+  @Override
+  public String getName() {
+    return this.name();
+  }
+
+  public static boolean hasName(String name) {
+    try {
+      BojLevel.valueOf(name);
+      return true;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
+  }
 }

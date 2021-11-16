@@ -1,5 +1,11 @@
 package com.a105.alub.domain.entity;
 
+import com.a105.alub.domain.enums.BojLevel;
+import com.a105.alub.domain.enums.ProblemLevel;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import org.hibernate.annotations.DynamicInsert;
@@ -21,10 +27,27 @@ import lombok.Setter;
 public class Problem {
 
   @EmbeddedId
-  private ProblemId problemId;
+  private ProblemId problemId = new ProblemId();
 
   private String title;
 
-  private String level;
+  private ProblemLevel level;
+
+  @Basic
+  @Access(AccessType.PROPERTY)
+  @Column(name = "level", nullable = false)
+  public String getLevel() {
+    return level.getName();
+  }
+
+  public void setLevel(String level) {
+    if (BojLevel.hasName(level)) {
+      this.level = BojLevel.valueOf(level);
+    }
+  }
+
+  public ProblemLevel getProblemLevel() {
+    return level;
+  }
 
 }

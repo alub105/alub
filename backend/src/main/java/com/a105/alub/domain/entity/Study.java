@@ -1,5 +1,6 @@
 package com.a105.alub.domain.entity;
 
+import com.a105.alub.api.request.StudyCreateReq;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,14 +34,22 @@ public class Study extends BaseTimeEntity {
   @JoinColumn(name = "study_channel_id")
   private StudyChannel studyChannel;
 
-  private String studyName;
+  private String name;
 
   private LocalDateTime startTime;
 
   private LocalDateTime endTime;
 
-  private LocalDateTime assignmentendStartTime;
+  private LocalDateTime assignmentStartTime;
 
-  private LocalDateTime assignmentendEndTime;
+  private LocalDateTime assignmentEndTime;
 
+  public Study(StudyCreateReq studyCreateReq, StudyChannel studyChannel) {
+    this.name = studyCreateReq.getName();
+    this.startTime = studyCreateReq.getStartTime();
+    this.endTime = studyCreateReq.getEndTime();
+    this.assignmentStartTime = studyCreateReq.getAssignmentStartTime();
+    this.assignmentEndTime = studyCreateReq.getAssignmentEndTime();
+    this.studyChannel = studyChannel;
+  }
 }

@@ -1,18 +1,24 @@
 package com.a105.alub.api.controller;
 
-import com.a105.alub.api.response.UserSearchDto;
-import com.a105.alub.api.service.UsersService;
-import com.a105.alub.common.response.ApiResponseDto;
-import com.a105.alub.domain.specs.UserSpecs.SearchKey;
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.a105.alub.api.request.FileListGetReq;
+import com.a105.alub.api.response.FileGetRes;
+import com.a105.alub.api.response.UserSearchDto;
+import com.a105.alub.api.service.UsersService;
+import com.a105.alub.common.response.ApiResponseDto;
+import com.a105.alub.domain.enums.Site;
+import com.a105.alub.domain.specs.UserSpecs.SearchKey;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequestMapping("/api/users")
@@ -39,4 +45,12 @@ public class UsersController {
     return ApiResponseDto.success(userSearchDtoList);
   }
 
+  @GetMapping("/{userId}/sites/{siteName}/problems/{problemNum}/files")
+  public ApiResponseDto<?> getGithubFile(@PathVariable Long userId, @PathVariable Site siteName,
+      @PathVariable String problemNum) throws IOException {
+    FileListGetReq fileListGetReq =
+        FileListGetReq.builder().userId(userId).site(siteName).problemNum(problemNum).build();
+    List<FileGetRes> fileList = usersService.getFileList(fileListGetReq);
+    return ApiResponseDto.success(fileList);
+  }
 }

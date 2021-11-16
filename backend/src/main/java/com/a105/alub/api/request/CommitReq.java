@@ -20,6 +20,6 @@ public class CommitReq {
   Time timer;
   Site site;
   String problemNum;
-  String problemName;
+  String problemTitle;
   String language;
 }
