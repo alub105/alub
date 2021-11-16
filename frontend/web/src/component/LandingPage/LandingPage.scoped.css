@@ -1,0 +1,307 @@
+:root {
+  --landing-section-height: 53vh;
+}
+
+.landing flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.landing .site-background {
+  width: 100vw;
+  height: 523px;
+  background: var(--text-blue);
+  overflow: hidden;
+  z-index: 3;
+}
+
+.landing .background-ui {
+  background-size: contain;
+  /* height: 56vh; */
+  width: 50vw;
+  max-width: 650px;
+  position: absolute;
+  right: 0;
+  top: 147px;
+  z-index: 2;
+}
+
+.landing .ellipse {
+  max-width: 100%;
+  height: auto;
+  background-position: center;
+  margin-top: -1px;
+  z-index: 1;
+}
+
+.landing .title-box {
+  color: var(--white);
+  margin-left: 65px;
+  width: 45%;
+  position: relative;
+  z-index: 100;
+}
+
+.landing .site-background .logo {
+  width: 50px;
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  cursor: pointer;
+}
+
+.landing .site-background .logo:hover {
+  box-shadow: 3px 3px 6px #296137;
+}
+
+.landing .site-background .login-button {
+  font-weight: bold;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  font-size: 1.1rem;
+}
+
+.landing .site-background .login-button i {
+  padding: 0 10px;
+}
+
+.landing .title {
+  font-size: 2.6rem;
+  color: var(--white);
+  margin-top: 125px;
+  margin-left: 65px;
+
+  position: relative;
+  z-index: 100;
+}
+
+.landing .logo-title {
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+  font-family: var(--Mulish);
+  font-size: 3.2rem;
+}
+
+.landing .title-box .sub-title {
+  margin-top: 1.5rem;
+  line-height: 1.8rem;
+  font-size: 1.1rem;
+}
+
+.landing .site-background .button-box {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+  margin-left: 65px;
+  margin-top: 78px;
+  z-index: 1000;
+  position: relative;
+  width: 45%;
+}
+
+.landing .site-background .button-box button {
+  font-family: var(--IBM);
+  font-weight: bold;
+  font-size: 1.2rem;
+  width: 18rem;
+}
+
+.landing .site-background .button-box button i {
+  padding-right: 10px;
+}
+
+/*-------------------- --------------*/
+
+.landing .section1 {
+  width: 100vw;
+  height: var(--landing-section-height);
+  min-height: 300px;
+  background-color: var(--white);
+
+  display: grid;
+  grid-template-columns: 60% 40%;
+}
+
+.landing .section1 .image-box {
+  margin: 0 auto;
+  align-items: center;
+}
+
+.landing .section1 .meeting {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.landing .section1 .text-box {
+  margin: 0 auto;
+  align-items: center;
+  padding: 130px 150px 0 0;
+}
+
+.landing section .text-box h1 {
+  font-size: 2rem;
+  font-family: var(--IBM);
+}
+
+.landing section .text-box p {
+  font-size: 1.1rem;
+  font-family: var(--IBM);
+  margin-top: 1.3rem;
+  font-weight: bold;
+}
+
+/*------------------- Section2------------------*/
+.landing .section2 {
+  width: 100vw;
+  height: var(--landing-section-height);
+  background-color: var(--background);
+  min-height: 300px;
+  display: grid;
+  grid-template-columns: 40% 60%;
+}
+
+.landing .section2 .text-box {
+  margin: 0 auto;
+  align-items: center;
+  padding: 100px 0 0 150px;
+}
+
+.landing .section2 .image-box {
+  margin: 0 auto;
+  justify-content: center;
+  display: flex;
+}
+
+.landing .section2 .image-box .section2 {
+  display: block;
+  width: 100%;
+}
+
+/*------------ Section3-----------------*/
+
+.landing .section3 {
+  width: 100vw;
+  height: var(--landing-section-height);
+  background-color: var(--white);
+  min-height: 300px;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  position: relative;
+  z-index: 1;
+}
+
+.landing .section3 .image-box {
+  margin: 0 auto;
+  justify-content: center;
+  display: flex;
+  width: 100%;
+}
+
+.landing .compare {
+  max-width: 750px;
+  object-fit: contain;
+  width: 70%;
+  height: 100%;
+}
+
+.landing .section3 .text-box {
+  margin: 0 auto;
+  align-items: center;
+  padding: 100px 150px 0 0;
+}
+
+.landing .ellipse-white {
+  background-size: contain;
+  position: absolute;
+  max-width: 100vw;
+  background-position: center;
+  z-index: 0;
+}
+
+/*--------------- footer ---------------*/
+.landing footer .footer {
+  width: 100vw;
+  height: 300px;
+  background-color: var(--background);
+}
+
+.landing footer .footer .footer-box {
+  padding-top: 80px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing footer .footer .footer-box p {
+  font-family: var(--IBM);
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  margin: 2px;
+}
+
+.landing footer .footer .flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.landing footer .footer .footer-box i {
+  color: var(--text-gray);
+}
+
+.landing footer .footer .footer-box .logo {
+  width: 25px;
+  height: 25px;
+}
+
+@media only screen and (max-width: 1006px) {
+  .landing .background-ui {
+    display: none;
+  }
+
+  .landing .title-box {
+    width: 80%;
+    margin-right: 20px;
+  }
+}
+
+@media only screen and (max-width: 849px) {
+  .landing .section1 .image-box,
+  .landing .section2 .image-box,
+  .landing .section3 .image-box {
+    display: none;
+  }
+
+  .landing .section1,
+  .landing .section2,
+  .landing .section3 {
+    grid-template-columns: 100%;
+  }
+
+  .landing .section1 .text-box,
+  .landing .section2 .text-box,
+  .landing .section3 .text-box {
+    padding: 150px 20vw !important;
+  }
+
+  .landing .title-box .sub-title {
+    font-size: 1rem;
+  }
+
+  .landing .site-background .button-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .landing .site-background .button-box button {
+    font-size: 1rem;
+    width: 13rem;
+  }
+}

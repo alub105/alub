@@ -1,0 +1,71 @@
+.study-home {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  padding: 20px 30px;
+
+  a {
+    text-decoration: none;
+    color: var(--text-black);
+    width: 100%;
+    // min-width: 378px;
+    padding: 0px;
+    height: 100%;
+    display: block;
+  }
+
+  h1 {
+    padding-top: 30px;
+    padding-left: 15px;
+  }
+  .study-wrapper {
+    margin-top: 3vh;
+    font-family: var(--IBM);
+
+    .studies {
+      margin-top: 10vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 35px;
+      width: 100%;
+      height: 100%;
+
+      .study-list {
+        width: 100%;
+        height: 100%;
+
+        table {
+          width: 100%;
+          min-width: 378px;
+          margin-top: 3vh;
+
+          tr {
+            width: 100%;
+            display: block;
+            td {
+              padding: 5px;
+              display: inline-block;
+              width: 50%;
+
+              &.name {
+                font-size: 1.1rem;
+                i {
+                  margin-right: 5px;
+                }
+              }
+
+              &.time {
+                width: 50%;
+                text-align: center;
+              }
+            }
+
+            &:hover {
+              background-color: var(--background);
+            }
+          }
+        }
+      }
+    }
+  }
+}

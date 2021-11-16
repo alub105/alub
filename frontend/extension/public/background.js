@@ -1,25 +1,23 @@
 //access token이 있고 set github일 때 바로 welcome page로 이동
-
-var BASE_URL = "";
-var START_URL = "";
-var API_URL = "/api/user/authenticate";
-
-chrome.management.get(chrome.runtime.id, function (data) {
- 
-  if (data.installType === "development") {
-    BASE_URL = "http://localhost:8080";
-    START_URL = "http://localhost:3000/oauth/redirect";
-  } else {
-    BASE_URL = "https://alub.co.kr";
-    START_URL = "https://alub.co.kr/oauth/redirect";
-  }
- 
-});
+let BASE_URL = "";
+let START_URL = "";
+let API_URL = "/api/user/authenticate";
 
 function authListener(tabId, changeInfo, tab) {
   if (changeInfo.status === "complete") {
-    if (tab.url.startsWith(START_URL)) {
+    if (tab.url.startsWith("http://localhost:3000")) {
+      BASE_URL = "http://localhost:8080";
+      START_URL = "http://localhost:3000/oauth/redirect";
+      chrome.storage.sync.set({ mode: "dev" });
+    } else if (tab.url.startsWith("https://alub.co.kr")) {
+      chrome.storage.sync.set({ mode: "prod" });
+      BASE_URL = "https://alub.co.kr";
+      START_URL = "https://alub.co.kr/oauth/redirect";
+    }
+
+    if (START_URL !== "" && tab.url.startsWith(START_URL)) {
       const param = tab.url.substring(tab.url.indexOf("?") + 1, tab.url.length | "undefined");
+      console.log("param ", param);
 
       const params = param.split("&");
       const platform = params[0].split("=");
@@ -57,7 +55,6 @@ function authListener(tabId, changeInfo, tab) {
 chrome.tabs.onUpdated.addListener(authListener);
 
 const boj = "https://www.acmicpc.net/"
-
 
 function addStatusTable () {
 
@@ -134,7 +131,7 @@ function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, 
       const correct = (resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("맞") || resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("100"))
         && userId===solvedUserId
       const problemNumber = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent
-      const problemName = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent
+      const problemTitle = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent
       const memory = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent
       const timeConsumed =resultTable?.childNodes[1]?.childNodes[0]?.childNodes[6]?.textContent
       const answerCode = document.getElementsByName("source")[0]?.innerText
@@ -201,7 +198,7 @@ function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, 
                     language: codeLang,
                     runningTime: timeConsumed,
                     runningMemory: memory,
-                    problemTitle: problemName,
+                    problemTitle: problemTitle,
                     problemNum: problemNumber,
                     site: site,
                   }
@@ -217,6 +214,48 @@ function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, 
               ),
             })
               .then((response) => {
+                if (response.ok) {
+                  response.json().then((data) => {
+                    const body = document.querySelector(".wrapper");
+                    const element = `<div style=' position: fixed; top: 25px; right: 0; z-index: 100' id='alub-noti'>
+                    <div
+                      style='
+                        width: 350px;
+                        height: 130px;
+                        display: flex;
+                        flex-direction: column;
+                        '
+                        >
+                        <div style=' background-color: #edf0f6; height: 30%; width: 100%; border-radius: 6px 6px 0 0 !important; padding: 5px; font-size: 20px;'>
+                        <strong style='padding: 20px; color: #20c997;'>ALUB</strong>
+                        </div>
+                        <div
+                        style='
+                        background-color: rgba(0,0,0, 0.7);
+                        height: 80%;
+                        width: 100%;
+                        font-size: 12px;
+                        padding: 20px 15px;
+                        margin: 0 auto;
+                        text-align: center;
+                        line-height: 24px;
+                        color: white;
+                        border-radius: 0 0 6px 6px !important;
+                        '
+                        
+                      >
+                        ${data.data.filePath}에 성공적으로 커밋을 완료하였습니다.
+                      </div>
+                    </div>
+                  </div>`;
+                    const template = document.createElement("div");
+                    template.innerHTML = element;
+                    body.appendChild(template);
+                    setTimeout(() => {
+                      document.querySelector("#alub-noti").remove();
+                    }, 3000);
+                  });
+                }
               })
               .catch((err) => {
                 console.log(err);
@@ -298,7 +337,7 @@ function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, 
                   fileName:fileName,
                   runningTime: timeConsumed,
                   runningMemory: memory,
-                  problemTitle: problemName,
+                  problemTitle: problemTitle,
                   problemNum: problemNumber,
                   site: site,
                 }
@@ -313,7 +352,52 @@ function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, 
                     data
                   ),
                 })
-                .then((response) => {})
+                .then((response) => {
+                  if (response.ok) {
+                    response.json().then((data) => {
+                      const body = document.querySelector(".wrapper");
+                      const element = `<div style=' position: fixed; top: 25px; right: 0; z-index: 100' id='alub-noti'>
+                      <div
+                        style='
+                          width: 350px;
+                          height: 130px;
+                          display: flex;
+                          flex-direction: column;
+                          '
+                          >
+                          <div style=' background-color: #edf0f6; height: 30%; width: 100%; border-radius: 6px 6px 0 0 !important; padding: 5px; font-size: 20px;'>
+                          <strong style='padding: 20px; color: #20c997;'>ALUB</strong>
+                          </div>
+                          <div
+                          style='
+                          background-color: rgba(0,0,0, 0.7);
+                          height: 80%;
+                          width: 100%;
+                          font-size: 12px;
+                          padding: 20px 15px;
+                          margin: 0 auto;
+                          text-align: center;
+                          line-height: 24px;
+                          color: white;
+                          border-radius: 0 0 6px 6px !important;
+                          '
+                          
+                        >
+                          ${data.data.filePath}에 성공적으로 커밋을 완료하였습니다.
+                        </div>
+                      </div>
+                    </div>`;
+                      const template = document.createElement("div");
+                      template.innerHTML = element;
+                      body.appendChild(template);
+                      setTimeout(() => {
+                        document.querySelector("#alub-noti").remove();
+                      }, 3000);
+                    });
+                  }
+                  
+                  
+                })
                 .catch((err) => {
                   console.log(err);
                 });

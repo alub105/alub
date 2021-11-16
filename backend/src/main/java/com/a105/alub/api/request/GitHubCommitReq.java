@@ -9,27 +9,24 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
-@ToString
 public class GitHubCommitReq {
   @JsonProperty("message")
   String commitMessage;
   @JsonProperty("content")
   String srcCode;
-  // @JsonProperty("sha")
-  // String sha;
+  @JsonProperty("sha")
+  String sha;
 
-  public GitHubCommitReq(CommitReq commitReq
-  // , String sha
-  ) {
+  public GitHubCommitReq(CommitReq commitReq) {
     LocalDateTime now = LocalDateTime.now();
     this.commitMessage = makeCommitMessage(commitReq, now);
     this.srcCode = addCommentToSrcCode(commitReq, now);
-    // this.sha = sha;
+    this.sha = commitReq.getSha();
   }
 
   private String makeCommitMessage(CommitReq commitReq, LocalDateTime now) {
     String commitMessage = (commitReq.getSite() == Site.BOJ ? "BOJ-" : "PRGMS-")
-        + commitReq.getProblemNum() + " '" + commitReq.getProblemName() + "' [ "
+        + commitReq.getProblemNum() + " '" + commitReq.getProblemTitle() + "' [ "
         + now.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss")) + " ] by Alub";
     return commitMessage;
   }
@@ -42,4 +39,11 @@ public class GitHubCommitReq {
     String message = Base64.getEncoder().encodeToString(srcCode.getBytes()).toString();
     return message;
   }
+
+  @Override
+  public String toString() {
+    return "GitHubCommitReq [commitMessage=" + commitMessage + ", srcCode="
+        + srcCode.substring(0, (srcCode.length() - 1) % 10) + "..., sha=" + sha + "]";
+  }
+
 }

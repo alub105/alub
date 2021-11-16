@@ -5,12 +5,26 @@
   --text-gray: #868e96;
   --text-green: #20c997;
   --text-black: #343a40;
+  --text-black-light: #4c5055;
   --text-red: #d9534f;
   --text-blue: #007aff;
 
-  --background: #e9ecef;
+  --study-color: #0d47a1;
+
+  --nav-width: 86px;
+  --nav-color: #023e8a;
+  --channel-width: 50px;
+  --channel-height: 50px;
+
+  --landing-section-height: 53vh;
+
+  --channel-border-radius: 10px;
+
+  --background: #f4f4f4;
+  --background-light: #fafafa;
+
   /* --background-linear: linear-gradient(to bottom, #e9ecef, #b3c7db); */
-  --background-linear: linear-gradient(60deg, rgba(84, 58, 183, 1) 0%, rgba(0, 172, 193, 1) 100%);
+  --background-linear: linear-gradient(120deg, rgba(0, 172, 193, 1) 0, rgba(84, 58, 183, 1) 100%);
 
   --IBM: "IBM", cursive;
   --Mulish: "Mulish", cursive;
