@@ -6,7 +6,6 @@ import com.a105.alub.api.response.StudyCreateRes;
 import com.a105.alub.api.response.StudyGetRes;
 import com.a105.alub.api.service.StudyService;
 import com.a105.alub.common.response.ApiResponseDto;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -9,7 +9,9 @@ import lombok.Getter;
 @Getter
 @Builder
 public class StudyGetSimpleRes {
+
   Long id;
+
   String name;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
