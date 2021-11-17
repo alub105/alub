@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
 import com.a105.alub.api.response.StudyChannelCreateRes;
-import com.a105.alub.api.response.StudyChannelListRes;
+import com.a105.alub.api.response.StudyChannelDto;
 import com.a105.alub.api.response.StudyChannelMemberDto;
 import com.a105.alub.api.response.StudyChannelRes;
 import com.a105.alub.api.service.StudyChannelService;
@@ -63,10 +63,10 @@ public class StudyChannelController {
   }
 
   @GetMapping("/mychannels")
-  public ApiResponseDto<StudyChannelListRes> getStudyChannelList(
+  public ApiResponseDto<List<StudyChannelDto>> getStudyChannelList(
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
-    StudyChannelListRes channelListRes = studyChannelService.getChannelList(userPrincipal.getId());
-    return ApiResponseDto.success(channelListRes);
+    List<StudyChannelDto> channelList = studyChannelService.getChannelList(userPrincipal.getId());
+    return ApiResponseDto.success(channelList);
   }
 
   @GetMapping("/{channelId}/members")

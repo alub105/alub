@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
 import com.a105.alub.api.response.StudyChannelCreateRes;
-import com.a105.alub.api.response.StudyChannelListRes;
+import com.a105.alub.api.response.StudyChannelDto;
 import com.a105.alub.api.response.StudyChannelMemberDto;
 import com.a105.alub.api.response.StudyChannelRes;
 import com.a105.alub.common.exception.NotHostException;
@@ -136,12 +136,18 @@ public class StudyChannelServiceImpl implements StudyChannelService {
   }
 
   @Override
-  public StudyChannelListRes getChannelList(Long userId) {
+  public List<StudyChannelDto> getChannelList(Long userId) {
     List<UserStudyChannel> userStudyChannelList =
         userStudyChannelRepository.findAllByUserId(userId);
-    StudyChannelListRes channelListRes = new StudyChannelListRes(userStudyChannelList);
+    userStudyChannelList = userStudyChannelList.stream().filter(UserStudyChannel::isEnabled)
+        .collect(Collectors.toList());
 
-    return channelListRes;
+    List<StudyChannelDto> studyChannelList = new LinkedList<StudyChannelDto>();
+    userStudyChannelList.stream().forEach(userStudyChannel -> {
+      studyChannelList.add(new StudyChannelDto(userStudyChannel.getStudyChannel()));
+    });
+
+    return studyChannelList;
   }
 
   @Override

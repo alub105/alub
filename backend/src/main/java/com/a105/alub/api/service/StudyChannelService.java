@@ -4,7 +4,7 @@ import java.util.List;
 import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
 import com.a105.alub.api.response.StudyChannelCreateRes;
-import com.a105.alub.api.response.StudyChannelListRes;
+import com.a105.alub.api.response.StudyChannelDto;
 import com.a105.alub.api.response.StudyChannelMemberDto;
 import com.a105.alub.api.response.StudyChannelRes;
 
@@ -18,7 +18,7 @@ public interface StudyChannelService {
 
   void deleteChannel(Long userId, Long channelId);
 
-  StudyChannelListRes getChannelList(Long userId);
+  List<StudyChannelDto> getChannelList(Long userId);
 
   List<StudyChannelMemberDto> getMemberList(Long channelId);
 }
