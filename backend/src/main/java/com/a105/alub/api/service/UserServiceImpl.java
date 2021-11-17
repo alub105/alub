@@ -542,7 +542,7 @@ public class UserServiceImpl implements UserService {
     uri.append("/{fileName}");
     uriPathVariables.put("fileName", fileName);
 
-    GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq);
+    GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq, commitReq.getLanguage());
     log.info(gitHubCommitReq.toString());
 
     try {
@@ -584,7 +584,7 @@ public class UserServiceImpl implements UserService {
       commitReq.setSha(githubFileContentRes.getSha());
     }
 
-    GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq);
+    GitHubCommitReq gitHubCommitReq = new GitHubCommitReq(commitReq, commitReq.getLanguage());
     log.info(gitHubCommitReq.toString());
 
     try {
