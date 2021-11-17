@@ -6,13 +6,14 @@ import { API_BASE_URL } from "../../config/index";
 import { Alert, Button } from "react-bootstrap";
 
 import * as studyActions from "../../modules/actions/study";
+import * as util from "../../modules/axios/util";
 
-const StudySetting = ({ match }) => {
+const StudySetting = (props) => {
   const dispatch = useDispatch();
 
   const { token: storeToken } = useSelector((state) => state.user);
   const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
-  const { channelList: storeChannelList } = useSelector((state) => state.study);
+
   const [studyInfo, setStudyInfo] = useState({});
 
   const [members, setMembers] = useState([]);
@@ -32,31 +33,16 @@ const StudySetting = ({ match }) => {
   const { channelName, memberName } = inputs;
 
   useEffect(() => {
-    console.log("effect");
-    fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${storeToken}`,
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            setStudyInfo(data.data);
-            setInputs({
-              ...inputs,
-              channelName: data.data.name,
-            });
-            setHost(data.data.host.id);
-            setMembers((members) => members.concat(data.data.host));
-            setMembers((members) => members.concat(data.data.member));
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
+    util.getStudyInfo(storeSelectedChannel, storeToken).then((data) => {
+      setStudyInfo(data.data);
+      setInputs({
+        ...inputs,
+        channelName: data.data.name,
       });
+      setHost(data.data.host.id);
+      setMembers((members) => members.concat(data.data.host));
+      setMembers((members) => members.concat(data.data.member));
+    });
   }, []);
 
   const onChange = (e) => {
@@ -72,29 +58,9 @@ const StudySetting = ({ match }) => {
   };
 
   const searchMemberApi = () => {
-    fetch(API_BASE_URL + "/api/users/searches", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${storeToken}`,
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-      body: JSON.stringify({
-        terms: {
-          name: memberName,
-        },
-      }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            console.log(data);
-            setInviteList([...data.data]);
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    util.searchMember(memberName, storeToken).then((data) => {
+      setInviteList([...data.data]);
+    });
   };
 
   const searchMember = (e) => {
@@ -129,42 +95,15 @@ const StudySetting = ({ match }) => {
   };
 
   const updateChannel = () => {
-    console.log("==================");
-    console.log("update channel");
-    console.log(members);
-    console.log(addedMember);
-    console.log(host);
-    console.log(channelName);
-    fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${storeToken}`,
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-      body: JSON.stringify({
+    util.updateChannel(channelName, host, deleteMember, addedMember).then((data) => {
+      setStudyInfo({
+        ...studyInfo,
         name: channelName,
-        hostId: host,
-        deletedMember: deleteMember,
-        addedMember: addedMember,
-      }),
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          response.json().then((data) => {
-            setStudyInfo({
-              ...studyInfo,
-              name: channelName,
-              member: [...studyInfo.member, members],
-            });
-
-            dispatch(studyActions.updateChannel({ id: match.params.channelId, name: channelName }));
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
+        member: [...studyInfo.member, members],
       });
+      props.updateStudyInfo(studyInfo);
+      dispatch(studyActions.updateChannel({ id: storeSelectedChannel, name: channelName }));
+    });
   };
 
   const clickDeleteButton = () => {
@@ -172,7 +111,7 @@ const StudySetting = ({ match }) => {
   };
 
   const deleteChannel = () => {
-    fetch(API_BASE_URL + `/api/channels/${match.params.channelId}`, {
+    fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${storeToken}`,
@@ -182,7 +121,7 @@ const StudySetting = ({ match }) => {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            dispatch(studyActions.deleteChannel(match.params.channelId));
+            dispatch(studyActions.deleteChannel(storeSelectedChannel));
             setShow(false);
           });
         }

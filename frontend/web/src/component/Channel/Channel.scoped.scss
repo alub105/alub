@@ -7,12 +7,23 @@ $time: 0.2s;
 $channelRadius: 10px;
 $imgSize: 50px;
 
+.channel {
+  width: 100vw;
+  height: 100vh;
+}
+
+a {
+  text-decoration: none;
+}
+
 .mytooltip > .tooltip-inner {
   font-size: 1rem;
 }
 
 .sidebar-channel {
   position: fixed;
+  width: 100%;
+  height: 100vh;
 
   .wrapper {
     position: fixed;
@@ -156,4 +167,10 @@ $imgSize: 50px;
   .overlay-channel {
     opacity: 0 !important;
   }
+}
+.router-main {
+  position: relative;
+  left: 86px;
+  width: calc(100vw - 86px);
+  height: 100vh;
 }

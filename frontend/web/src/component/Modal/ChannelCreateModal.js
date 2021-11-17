@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { React, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory, Redirect } from "react-router";
 import { Modal } from "react-bootstrap";
 import "./ChannelCreateModal.scoped.scss";
 import { API_BASE_URL } from "../../config/index";
@@ -9,11 +10,21 @@ import * as studyActions from "../../modules/actions/study";
 
 const ChannelCreateModal = (props) => {
   const { token: storeToken } = useSelector((state) => state.user);
+  const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
+  const { userInfo: storeUserInfo } = useSelector((state) => state.user);
   const [members, setMembers] = useState([]);
   // 검색한 멤버 결과 목록
   const [memberList, setMemberList] = useState([]);
 
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  useEffect(() => {
+    let host = { id: storeUserInfo.userId, name: storeUserInfo.name };
+    let blank = [host];
+
+    setMembers([...blank]);
+  }, [props.show]);
 
   const [inputs, setInputs] = useState({
     channelName: "",
@@ -95,8 +106,9 @@ const ChannelCreateModal = (props) => {
         response.json().then((data) => {
           console.log(data);
           const channelId = data.data?.id;
-          dispatch(studyActions.setChannelList({ id: channelId, name: channelName }));
+          dispatch(studyActions.updateChannelList({ id: channelId, name: channelName }));
           props.onHide();
+          history.push(`/channel/${data.data.id}`);
         });
       }
     });
@@ -159,7 +171,9 @@ const ChannelCreateModal = (props) => {
                   <p>{data.name}</p>
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className={`btn btn-danger ${
+                      storeUserInfo.userId === data.id ? "disabled" : ""
+                    }`}
                     onClick={() => onRemove(data.id)}
                   >
                     취소

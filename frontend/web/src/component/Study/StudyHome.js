@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { COMPLETIONSTATEMENT_TYPES } from "@babel/types";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Route, Link } from "react-router-dom";
 import { API_BASE_URL } from "../../config/index";
@@ -86,14 +85,14 @@ const StudyHome = ({ match }) => {
     const yt = endTime.split(" ");
     const year = yt[0].split("-");
     const time = yt[1].split(":");
-    return `~ ${year[1]}.${year[2]}  ${time[0]}:${time[1]}`;
+    return `진행: ${year[1]}월 ${year[2]}일  ${time[0]}:${time[1]}`;
   };
 
   const endSplitTime = (endTime) => {
     const yt = endTime.split(" ");
     const year = yt[0].split("-");
     const time = yt[1].split(":");
-    return `완료: ${year[1]}.${year[2]}  ${time[0]}:${time[1]}`;
+    return `완료: ${year[1]}월 ${year[2]}일  ${time[0]}:${time[1]}`;
   };
 
   return (

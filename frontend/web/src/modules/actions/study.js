@@ -2,6 +2,8 @@ export const SET_SELECTED_CHANNEL = "study/SET_SELECTED_CHANNEL";
 
 export const SET_CHANNEL_LIST = "study/SET_CHANNEL_LIST";
 
+export const UPDATE_CHANNEL_LIST = "study/UPDATE_CHANNEL_LIST";
+
 export const DELETE_CHANNEL = "study/DELETE_CHANNEL";
 
 export const UPDATE_CHANNEL = "study/UPDATE_CHANNEL";
@@ -15,6 +17,11 @@ export const setSelectedChannel = (id) => ({
 export const setChannelList = (channelInfo) => ({
   type: SET_CHANNEL_LIST,
   payload: channelInfo,
+});
+
+export const updateChannelList = (channel) => ({
+  type: UPDATE_CHANNEL_LIST,
+  payload: channel,
 });
 
 export const deleteChannel = (id) => ({

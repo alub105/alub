@@ -17,6 +17,7 @@ function App() {
             <Route path="/" exact={true} component={LandingPage} />
             <Route path="/channel" component={Channel} />
             <Route path="/oauth/redirect" component={Authenticate} />
+            <Route path="/path" component={Authenticate} />
             <Route component={NotFound} />
           </Switch>
         </main>

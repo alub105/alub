@@ -5,10 +5,12 @@
   padding: 20px 30px;
   font-family: var(—IBM);
   max-width: 800px;
+  min-width: 600px;
 
   h1 {
     text-align: center;
     padding: 30px 10px;
+    font-size: 2.4rem;
   }
 
   .container {
@@ -67,6 +69,11 @@
         text-align: center !important;
         align-items: center;
         justify-content: center;
+
+        h4 {
+          height: 209px;
+          line-height: 209px;
+        }
 
         p {
           margin: 0;

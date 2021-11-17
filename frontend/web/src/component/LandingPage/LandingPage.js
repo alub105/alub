@@ -48,6 +48,12 @@ function LandingPage() {
     history.push("/channel");
   };
 
+  const goExtension = () => {
+    window.open(
+      "https://chrome.google.com/webstore/detail/alub/joknofdeknbhkjfpmhleippabhejlagn?hl=ko"
+    );
+  };
+
   return (
     <div className="landing">
       <main>
@@ -93,7 +99,7 @@ function LandingPage() {
             </div>
             <div>
               <div className="button-box">
-                <button type="button" className="btn btn-dark btn-lg">
+                <button type="button" className="btn btn-dark btn-lg" onClick={() => goExtension()}>
                   <i className="fab fa-chrome" />
                   Extension 설치하기
                 </button>

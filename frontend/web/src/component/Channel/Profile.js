@@ -1,6 +1,8 @@
+import "./Profile.scoped.scss";
+
 const Profile = () => {
   return (
-    <div>
+    <div className>
       <h1>Profile</h1>
     </div>
   );

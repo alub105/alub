@@ -2,8 +2,10 @@
   width: 100%;
   height: 100%;
   margin: 0 auto;
-  padding: 20px 10px;
-  max-width: 850px;
+  padding: 20px 5vw;
+  font-family: var(--IBM);
+  max-width: 1200px;
+  min-width: 1000px;
 
   a {
     text-decoration: none;
@@ -18,6 +20,9 @@
   h1 {
     padding-top: 30px;
     padding-left: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 2.4rem;
   }
   .study-wrapper {
     margin-top: 3vh;
@@ -83,8 +88,8 @@
                 text-align: center;
 
                 .tag {
-                  border-radius: 12px;
-                  padding: 0.1rem 0.5rem;
+                  border-radius: 16px;
+                  padding: 3px 20px;
 
                   &.running {
                     background-color: var(--btn-success);
