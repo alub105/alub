@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { ChromeMessage, Sender, getCurrentTabUId, getCurrentTabUrl } from "./types";
+import {
+  ChromeMessage,
+  Sender,
+  getCurrentTabUId,
+  getCurrentTabUrl,
+} from "./types";
 import "./css/App.css";
 import logo from "./image/logo.png";
 import "./css/bootstrap.min.css";
@@ -172,7 +177,10 @@ const App = () => {
 
     const message: ChromeMessage = {
       from: Sender.React,
-      message: { data: { hh: hour, mm: minute, ss: second }, message: "setTimer" },
+      message: {
+        data: { hh: hour, mm: minute, ss: second },
+        message: "setTimer",
+      },
     };
 
     getCurrentTabUId((id) => {
@@ -184,10 +192,9 @@ const App = () => {
   };
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     let { value, min, max } = event.target;
-    let result = String(Math.max(Number(min), Math.min(Number(max), Number(value)))).padStart(
-      2,
-      "0"
-    );
+    let result = String(
+      Math.max(Number(min), Math.min(Number(max), Number(value)))
+    ).padStart(2, "0");
     if (event.target.id === "hour") {
       setHour(result);
     }
@@ -224,11 +231,13 @@ const App = () => {
           <div id="auth-mode" className="app-main">
             <div className="authenticate">
               <h4 className="middle-title">
-                <span style={{ color: "#20c997" }}>ALUB</span>으로 백준, 프로그래머스에서 바로
-                커밋하세요
+                <span style={{ color: "#20c997" }}>ALUB</span>으로 백준,
+                프로그래머스에서 바로 커밋하세요
               </h4>
               <hr className="hr" />
-              <h4 className="middle-title">Authenticate with GitHub to use ALUB</h4>
+              <h4 className="middle-title">
+                Authenticate with GitHub to use ALUB
+              </h4>
               <button
                 className="btn btn-lg btn-primary login-button"
                 type="button"
@@ -258,8 +267,8 @@ const App = () => {
           <div id="auth-mode" className="app-main">
             <div className="authenticate">
               <h4 className="middle-title">
-                <span style={{ color: "#20c997" }}>ALUB</span>으로 백준, 프로그래머스에서 바로
-                커밋하세요
+                <span style={{ color: "#20c997" }}>ALUB</span>으로 백준,
+                프로그래머스에서 바로 커밋하세요
               </h4>
               <hr className="hr" />
               <h4 className="middle-title">GitHub Repository를 설정하세요</h4>
@@ -287,7 +296,12 @@ const App = () => {
           <img src={logo} alt={"logo"} className="logo" />
           <span>{userName}</span>
           <span>/</span>
-          <a href={gitUrl} id="git-repo-name" className="dir-name" target="_blank">
+          <a
+            href={gitUrl}
+            id="git-repo-name"
+            className="dir-name"
+            target="_blank"
+          >
             {repoName}
           </a>
         </header>
@@ -329,7 +343,8 @@ const App = () => {
                         Custom
                       </label>
                       <span className="form-descript">
-                        코드 제출 시 파일의 이름을 수정할 수 있으며, 덮어쓰기도 가능합니다
+                        코드 제출 시 파일의 이름을 수정할 수 있으며, 덮어쓰기도
+                        가능합니다
                       </span>
                     </div>
                   </fieldset>

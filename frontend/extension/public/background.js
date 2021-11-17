@@ -16,7 +16,10 @@ function authListener(tabId, changeInfo, tab) {
     }
 
     if (START_URL !== "" && tab.url.startsWith(START_URL)) {
-      const param = tab.url.substring(tab.url.indexOf("?") + 1, tab.url.length | "undefined");
+      const param = tab.url.substring(
+        tab.url.indexOf("?") + 1,
+        tab.url.length | "undefined"
+      );
 
       const params = param.split("&");
       const platform = params[0].split("=");
@@ -37,12 +40,15 @@ function authListener(tabId, changeInfo, tab) {
           .then((response) => {
             if (response.ok) {
               response.json().then((data) => {
-                chrome.storage.sync.set({ token: data.data.token }, function () {
-                  chrome.storage.sync.get("token", function (token) {
-                    const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
-                    chrome.tabs.update({ url: welcome_url });
-                  });
-                });
+                chrome.storage.sync.set(
+                  { token: data.data.token },
+                  function () {
+                    chrome.storage.sync.get("token", function (token) {
+                      const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
+                      chrome.tabs.update({ url: welcome_url });
+                    });
+                  }
+                );
               });
             }
           })
@@ -76,7 +82,8 @@ function addStatusTable() {
     function addCommitButton(i) {
       if (i < 0) return;
       const result =
-        statusTable?.childNodes[1]?.childNodes[i]?.childNodes[3]?.childNodes[0]?.textContent;
+        statusTable?.childNodes[1]?.childNodes[i]?.childNodes[3]?.childNodes[0]
+          ?.textContent;
       const judging = statusTable?.childNodes[1]?.childNodes[i]?.childNodes[3]
         ?.querySelector("span")
         ?.classList.contains("result-judging");
@@ -86,16 +93,21 @@ function addStatusTable() {
           addCommitButton(i);
         }, 2000);
       } else {
-        if (statusTable?.childNodes[0]?.childNodes[0]?.childNodes?.length === 9) {
+        if (
+          statusTable?.childNodes[0]?.childNodes[0]?.childNodes?.length === 9
+        ) {
           statusTable?.childNodes[0]?.childNodes[0]?.appendChild(commitColumn);
         } // column이 여러번 생성되지 않도록 제한.
 
         if (
           (result.includes("맞") || result.includes("100")) &&
-          userId === statusTable?.childNodes[1]?.childNodes[i]?.childNodes[1]?.textContent
+          userId ===
+            statusTable?.childNodes[1]?.childNodes[i]?.childNodes[1]
+              ?.textContent
         ) {
           const answerNumber =
-            statusTable?.childNodes[1]?.childNodes[i]?.childNodes[0]?.textContent;
+            statusTable?.childNodes[1]?.childNodes[i]?.childNodes[0]
+              ?.textContent;
           let newButton = commitRow.cloneNode(true);
           const commitForm = document.createElement("form");
           commitForm.action = `https://acmicpc.net/source/${answerNumber}`;
@@ -130,8 +142,8 @@ function copyCode(BASE_URL) {
     if (response.commitNow) {
       const userId = document.querySelector(".loginbar .username")?.innerHTML;
       const solvedUserId =
-        document.querySelector(".table-striped")?.childNodes[1]?.childNodes[0]?.childNodes[1]
-          ?.textContent;
+        document.querySelector(".table-striped")?.childNodes[1]?.childNodes[0]
+          ?.childNodes[1]?.textContent;
       const resultTable = document.querySelector(".table-striped");
       const correct =
         (resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes(
@@ -141,17 +153,21 @@ function copyCode(BASE_URL) {
             "100"
           )) &&
         userId === solvedUserId;
-      const problemNumber = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent;
-      const problemTitle = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent;
-      const memory = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent;
-      const timeConsumed = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[6]?.textContent;
+      const problemNumber =
+        resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent;
+      const problemTitle =
+        resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent;
+      const memory =
+        resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent;
+      const timeConsumed =
+        resultTable?.childNodes[1]?.childNodes[0]?.childNodes[6]?.textContent;
       const answerCode = document.getElementsByName("source")[0]?.innerText;
 
       let codeLang = "";
       let site = "";
       const lang =
-        document.querySelector(".table-striped")?.childNodes[1]?.childNodes[0]?.childNodes[7]
-          ?.textContent;
+        document.querySelector(".table-striped")?.childNodes[1]?.childNodes[0]
+          ?.childNodes[7]?.textContent;
       if (typeof lang === "string") {
         if (lang.includes("Py")) {
           codeLang = "py";
@@ -326,7 +342,9 @@ function copyCode(BASE_URL) {
               inputForm.appendChild(inputButton);
               inputModal.appendChild(inputModalHeader);
 
-              document.querySelector(".container.content")?.appendChild(inputModal);
+              document
+                .querySelector(".container.content")
+                ?.appendChild(inputModal);
 
               function submitCommitData() {
                 chrome.storage.sync.set({ commitNow: false }, () => {});

@@ -22,10 +22,15 @@
         <div class="container">
           <header>
             <h1 class="title">ALUB</h1>
-            <h3 class="middle-title">Git Repository를 설정해 코드를 손쉽게 GitHub에 푸쉬하세요</h3>
+            <h3 class="middle-title">
+              Git Repository를 설정해 코드를 손쉽게 GitHub에 푸쉬하세요
+            </h3>
           </header>
           <main>
-            <div class="app-main my-flex justify-content-center align-items-center" id="loading">
+            <div
+              class="app-main my-flex justify-content-center align-items-center"
+              id="loading"
+            >
               <div class="spinner-border text-success" role="status">
                 <span class="sr-only">Loading...</span>
               </div>
@@ -63,7 +68,11 @@
                         maxlength="40"
                         placeholder="레포지토리 이름"
                       />
-                      <div class="valid-feedback" id="repo-duplicate-valid" style="display: none">
+                      <div
+                        class="valid-feedback"
+                        id="repo-duplicate-valid"
+                        style="display: none"
+                      >
                         생성 가능한 Repository입니다
                       </div>
                       <div
@@ -73,10 +82,18 @@
                       >
                         이미 존재하는 Repository 입니다
                       </div>
-                      <div class="invalid-feedback" id="no-input-invalid" style="display: none">
+                      <div
+                        class="invalid-feedback"
+                        id="no-input-invalid"
+                        style="display: none"
+                      >
                         Repository를 입력해 주세요
                       </div>
-                      <div class="invalid-feedback" id="regex-invalid" style="display: none">
+                      <div
+                        class="invalid-feedback"
+                        id="regex-invalid"
+                        style="display: none"
+                      >
                         잘못된 입력값입니다
                       </div>
                     </div>
@@ -89,7 +106,11 @@
                     >
                       중복 체크
                     </button>
-                    <div id="no-check-invalid" class="invalid-feedback" style="display: none">
+                    <div
+                      id="no-check-invalid"
+                      class="invalid-feedback"
+                      style="display: none"
+                    >
                       중복 체크를 해주세요
                     </div>
                   </div>
@@ -114,7 +135,10 @@
                       placeholder=""
                       disabled="true"
                     />
-                    <select id="exist-repo-names" class="form-select exist-repo-set"></select>
+                    <select
+                      id="exist-repo-names"
+                      class="form-select exist-repo-set"
+                    ></select>
                     <div class="form-group has-success">
                       <input
                         type="text"
@@ -123,7 +147,11 @@
                         class="exist-repo-set form-control"
                         placeholder="디렉토리 이름"
                       />
-                      <div class="invalid-feedback" id="dir-regex-invalid" style="display: none">
+                      <div
+                        class="invalid-feedback"
+                        id="dir-regex-invalid"
+                        style="display: none"
+                      >
                         잘못된 입력값입니다
                       </div>
                     </div>
@@ -160,11 +188,19 @@
       </div>
       <!------- Toast ---------->
       <div style="position: absolute; top: 3rem; right: 0">
-        <div class="toast" id="my-toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div
+          class="toast"
+          id="my-toast"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
           <div class="toast-header">
             <strong class="mr-auto">ALUB</strong>
           </div>
-          <div class="toast-body" id="my-toast-body">성공적으로 Repository 설정을 완료했습니다</div>
+          <div class="toast-body" id="my-toast-body">
+            성공적으로 Repository 설정을 완료했습니다
+          </div>
         </div>
       </div>
     </div>
