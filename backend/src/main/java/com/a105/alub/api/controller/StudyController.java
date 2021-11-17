@@ -1,10 +1,12 @@
 package com.a105.alub.api.controller;
 
 import com.a105.alub.api.request.StudyCreateReq;
+import com.a105.alub.api.response.StudiesGetRes;
 import com.a105.alub.api.response.StudyCreateRes;
 import com.a105.alub.api.response.StudyGetRes;
 import com.a105.alub.api.service.StudyService;
 import com.a105.alub.common.response.ApiResponseDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,13 @@ public class StudyController {
 
     StudyCreateRes studyCreateRes = studyService.createStudy(channelId, studyCreateReq);
     return ApiResponseDto.success(studyCreateRes);
+  }
+
+  @GetMapping("")
+  public ApiResponseDto<StudiesGetRes> getStudies(@PathVariable Long channelId) {
+
+    StudiesGetRes studiesGetRes = studyService.findByStudyChannelId(channelId);
+    return ApiResponseDto.success(studiesGetRes);
   }
 
   @GetMapping("/{studyId}")

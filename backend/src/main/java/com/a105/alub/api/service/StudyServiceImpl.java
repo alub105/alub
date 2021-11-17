@@ -3,10 +3,12 @@ package com.a105.alub.api.service;
 import com.a105.alub.api.request.AssignedProblemReq;
 import com.a105.alub.api.request.StudyCreateReq;
 import com.a105.alub.api.response.AssignedProblemCreateRes;
+import com.a105.alub.api.response.StudiesGetRes;
 import com.a105.alub.api.response.StudyCreateRes;
 import com.a105.alub.api.response.AssignedProblemGetRes;
 import com.a105.alub.api.response.SolvedGetRes;
 import com.a105.alub.api.response.StudyGetRes;
+import com.a105.alub.api.response.StudyGetSimpleRes;
 import com.a105.alub.common.exception.SolvedNotFoundException;
 import com.a105.alub.common.exception.StudyChannelNotFoundException;
 import com.a105.alub.common.exception.StudyNotFoundException;
@@ -21,8 +23,11 @@ import com.a105.alub.domain.repository.SolvedRepository;
 import com.a105.alub.domain.repository.StudyChannelRepository;
 import com.a105.alub.domain.repository.StudyRepository;
 import com.a105.alub.domain.repository.UserStudyChannelRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +66,30 @@ public class StudyServiceImpl implements StudyService {
     }
 
     return new StudyCreateRes(createdStudy, createdAssignedProblems);
+  }
+
+  @Override
+  public StudiesGetRes findByStudyChannelId(Long studyChannelId) {
+
+    List<Study> studies = studyRepository.findByStudyChannel_Id(studyChannelId);
+
+    LocalDateTime now = LocalDateTime.now();
+    Map<Boolean, List<Study>> studiesGroup = studies.stream()
+        .collect(Collectors.partitioningBy(x -> now.isAfter(x.getEndTime())));
+
+    List<StudyGetSimpleRes> runningStudies = studiesGroup.get(false).stream()
+        .sorted(Comparator.comparing(Study::getAssignmentStartTime))
+        .limit(5)
+        .map(StudyGetSimpleRes::of)
+        .collect(Collectors.toList());
+
+    List<StudyGetSimpleRes> endedStudies = studiesGroup.get(true).stream()
+        .sorted(Comparator.comparing(Study::getEndTime).reversed())
+        .limit(5)
+        .map(StudyGetSimpleRes::of)
+        .collect(Collectors.toList());
+
+    return new StudiesGetRes(runningStudies, endedStudies);
   }
 
   @Override
