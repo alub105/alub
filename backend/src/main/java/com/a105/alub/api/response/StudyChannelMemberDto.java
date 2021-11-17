@@ -8,7 +8,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class StudyChannelMemberDto {
   Long id;
-  String email;
   String name;
   String repoName;
   String dirPath;
@@ -16,7 +15,6 @@ public class StudyChannelMemberDto {
   public StudyChannelMemberDto(User user) {
     this.id = user.getId();
     this.name = user.getName();
-    this.email = user.getEmail();
     this.repoName = user.getRepoName();
     this.dirPath = user.getDirPath();
   }
