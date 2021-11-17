@@ -51,7 +51,7 @@ public class StudyServiceImpl implements StudyService {
     StudyChannel studyChannel = studyChannelRepository.findById(channelId)
         .orElseThrow(StudyChannelNotFoundException::new);
 
-    List<User> members = userStudyChannelRepository.findAllByStudyChannelId(studyChannel.getId())
+    List<User> members = userStudyChannelRepository.findAllByStudyChannelIdAndEnabledIsTrue(studyChannel.getId())
         .stream().map(UserStudyChannel::getUser).collect(Collectors.toList());
 
     List<AssignedProblemCreateRes> createdAssignedProblems = new ArrayList<>();
@@ -97,7 +97,7 @@ public class StudyServiceImpl implements StudyService {
     Study study = studyRepository.findById(studyId).orElseThrow(StudyNotFoundException::new);
 
     List<User> members = userStudyChannelRepository
-        .findAllByStudyChannelId(study.getStudyChannel().getId())
+        .findAllByStudyChannelIdAndEnabledIsTrue(study.getStudyChannel().getId())
         .stream().map(UserStudyChannel::getUser).collect(Collectors.toList());
 
     List<AssignedProblemGetRes> list = new ArrayList<>();
