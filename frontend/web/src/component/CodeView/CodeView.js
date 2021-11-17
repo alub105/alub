@@ -1,13 +1,13 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
+import { API_BASE_URL } from "../../config/index";
 
-import MiniMap from './MiniMap';
+import MiniMap from "./MiniMap";
 import UserCodeList from "./UserCodeList";
-import './CodeView.scoped.css';
+import "./CodeView.scoped.css";
 
-
-const CodeView = () => {
+const CodeView = ({ match, location }) => {
   const fileTest = [
     {
       member: {
@@ -52,7 +52,7 @@ const CodeView = () => {
           filename: "19237_1.c",
           content:
             "LyoKKiDrqZTrqqjrpqw6IDIwMTYgS0IsIOyLnOqwhDogMCBtcwoqIO2DgOyd\ntOuouCDsi5zqsIQ6IG51bGwKKiAyMDIxLjExLjEwCiogYnkgQWx1YgoqKi8K\nI2luY2x1ZGUgPGNzdGRpbz4KI2luY2x1ZGUgPGlvc3RyZWFtPgojaW5jbHVk\nZSA8c3RyaW5nPgojaW5jbHVkZSA8YWxnb3JpdGhtPgoKdXNpbmcgbmFtZXNw\nYWNlIHN0ZDsKCnN0cmluZyBzdHI7CmludCBtYWluKCkgewoJd2hpbGUgKGdl\ndGxpbmUoY2luLCBzdHIpKSB7CgkJZm9yIChpbnQgaSA9IDA7IGkgPCBzdHIu\nc2l6ZSgpOyBpKyspIHsKCQkJY2hhciBjdXIgPSBzdHJbaV07CgkJCWlmICgn\nQScgPD0gY3VyICYmIGN1ciA8PSAnWicpIHsKCQkJCWNoYXIgY2hhbmdlZCA9\nIChjdXIgLSAnQScgKyAxMykgJSAyNiArICdBJzsKCQkJCWNvdXQgPDwgY2hh\nbmdlZDsKCQkJfQoJCQllbHNlIGlmICgnYScgPD0gY3VyICYmIGN1ciA8PSAn\neicpIHsKCQkJCWNoYXIgY2hhbmdlZCA9IChjdXIgLSAnYScgKyAxMykgJSAy\nNiArICdhJzsKCQkJCWNvdXQgPDwgY2hhbmdlZDsKCQkJfQoJCQllbHNlCgkJ\nCQljb3V0IDw8IGN1cjsKCQl9CgkJY291dCA8PCAiXG4iOwoJfQoJcmV0dXJu\nIDA7Cn0=\n",
-        }
+        },
       ],
     },
     {
@@ -75,7 +75,7 @@ const CodeView = () => {
           filename: "19237_1.c",
           content:
             "LyoKKiDrqZTrqqjrpqw6IDIwMTYgS0IsIOyLnOqwhDogMCBtcwoqIO2DgOyd\ntOuouCDsi5zqsIQ6IG51bGwKKiAyMDIxLjExLjEwCiogYnkgQWx1YgoqKi8K\nI2luY2x1ZGUgPGNzdGRpbz4KI2luY2x1ZGUgPGlvc3RyZWFtPgojaW5jbHVk\nZSA8c3RyaW5nPgojaW5jbHVkZSA8YWxnb3JpdGhtPgoKdXNpbmcgbmFtZXNw\nYWNlIHN0ZDsKCnN0cmluZyBzdHI7CmludCBtYWluKCkgewoJd2hpbGUgKGdl\ndGxpbmUoY2luLCBzdHIpKSB7CgkJZm9yIChpbnQgaSA9IDA7IGkgPCBzdHIu\nc2l6ZSgpOyBpKyspIHsKCQkJY2hhciBjdXIgPSBzdHJbaV07CgkJCWlmICgn\nQScgPD0gY3VyICYmIGN1ciA8PSAnWicpIHsKCQkJCWNoYXIgY2hhbmdlZCA9\nIChjdXIgLSAnQScgKyAxMykgJSAyNiArICdBJzsKCQkJCWNvdXQgPDwgY2hh\nbmdlZDsKCQkJfQoJCQllbHNlIGlmICgnYScgPD0gY3VyICYmIGN1ciA8PSAn\neicpIHsKCQkJCWNoYXIgY2hhbmdlZCA9IChjdXIgLSAnYScgKyAxMykgJSAy\nNiArICdhJzsKCQkJCWNvdXQgPDwgY2hhbmdlZDsKCQkJfQoJCQllbHNlCgkJ\nCQljb3V0IDw8IGN1cjsKCQl9CgkJY291dCA8PCAiXG4iOwoJfQoJcmV0dXJu\nIDA7Cn0=\n",
-        }
+        },
       ],
     },
     {
@@ -92,7 +92,7 @@ const CodeView = () => {
         {
           filename: "19237_1.c",
           content:
-          "LyoKKiDrqZTrqqjrpqw6IDIwMTYgS0IsIOyLnOqwhDogMCBtcwoqIO2DgOyd\ntOuouCDsi5zqsIQ6IG51bGwKKiAyMDIxLjExLjEwCiogYnkgQWx1YgoqKi8K\nI2luY2x1ZGUgPGNzdGRpbz4KI2luY2x1ZGUgPGlvc3RyZWFtPgojaW5jbHVk\nZSA8c3RyaW5nPgojaW5jbHVkZSA8YWxnb3JpdGhtPgoKdXNpbmcgbmFtZXNw\nYWNlIHN0ZDsKCnN0cmluZyBzdHI7CmludCBtYWluKCkgewoJd2hpbGUgKGdl\ndGxpbmUoY2luLCBzdHIpKSB7CgkJZm9yIChpbnQgaSA9IDA7IGkgPCBzdHIu\nc2l6ZSgpOyBpKyspIHsKCQkJY2hhciBjdXIgPSBzdHJbaV07CgkJCWlmICgn\nQScgPD0gY3VyICYmIGN1ciA8PSAnWicpIHsKCQkJCWNoYXIgY2hhbmdlZCA9\nIChjdXIgLSAnQScgKyAxMykgJSAyNiArICdBJzsKCQkJCWNvdXQgPDwgY2hh\nbmdlZDsKCQkJfQoJCQllbHNlIGlmICgnYScgPD0gY3VyICYmIGN1ciA8PSAn\neicpIHsKCQkJCWNoYXIgY2hhbmdlZCA9IChjdXIgLSAnYScgKyAxMykgJSAy\nNiArICdhJzsKCQkJCWNvdXQgPDwgY2hhbmdlZDsKCQkJfQoJCQllbHNlCgkJ\nCQljb3V0IDw8IGN1cjsKCQl9CgkJY291dCA8PCAiXG4iOwoJfQoJcmV0dXJu\nIDA7Cn0=\n",
+            "LyoKKiDrqZTrqqjrpqw6IDIwMTYgS0IsIOyLnOqwhDogMCBtcwoqIO2DgOyd\ntOuouCDsi5zqsIQ6IG51bGwKKiAyMDIxLjExLjEwCiogYnkgQWx1YgoqKi8K\nI2luY2x1ZGUgPGNzdGRpbz4KI2luY2x1ZGUgPGlvc3RyZWFtPgojaW5jbHVk\nZSA8c3RyaW5nPgojaW5jbHVkZSA8YWxnb3JpdGhtPgoKdXNpbmcgbmFtZXNw\nYWNlIHN0ZDsKCnN0cmluZyBzdHI7CmludCBtYWluKCkgewoJd2hpbGUgKGdl\ndGxpbmUoY2luLCBzdHIpKSB7CgkJZm9yIChpbnQgaSA9IDA7IGkgPCBzdHIu\nc2l6ZSgpOyBpKyspIHsKCQkJY2hhciBjdXIgPSBzdHJbaV07CgkJCWlmICgn\nQScgPD0gY3VyICYmIGN1ciA8PSAnWicpIHsKCQkJCWNoYXIgY2hhbmdlZCA9\nIChjdXIgLSAnQScgKyAxMykgJSAyNiArICdBJzsKCQkJCWNvdXQgPDwgY2hh\nbmdlZDsKCQkJfQoJCQllbHNlIGlmICgnYScgPD0gY3VyICYmIGN1ciA8PSAn\neicpIHsKCQkJCWNoYXIgY2hhbmdlZCA9IChjdXIgLSAnYScgKyAxMykgJSAy\nNiArICdhJzsKCQkJCWNvdXQgPDwgY2hhbmdlZDsKCQkJfQoJCQllbHNlCgkJ\nCQljb3V0IDw8IGN1cjsKCQl9CgkJY291dCA8PCAiXG4iOwoJfQoJcmV0dXJu\nIDA7Cn0=\n",
         },
         {
           filename: "19237_3.java",
@@ -116,20 +116,59 @@ const CodeView = () => {
       name: "WookiJung1",
     },
     {
-      id: "14",
+      id: "15",
       name: "WookiJung2",
-    }
+    },
   ];
 
-  const [userList, setUsetrList] = useState(members);
-  const [fileList, setCodeList] = useState(fileTest);
+  // const query = location.search.split("=");
+
+  // const channelId = match.params.channelId;
+  // const siteName = query[0];
+  // const problemNum = query[1];
+  // let userId = -1;
+
+  // const members_url = API_BASE_URL + `/api/channels/${channelId}/members`;
+  // const files_url =
+  //   API_BASE_URL +
+  //   `/api/users/${userId}/sites/${siteName}/problems/${problemNum}/files`;
+  const [userList, setUserList] = useState([]);
+  const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
-    console.log('컴포넌트가 화면에 나타남');
+    getMembers();
+    getFileList();
     return () => {
-      console.log('컴포넌트가 화면에서 사라짐');
+      console.log("컴포넌트가 화면에서 사라짐");
     };
   }, []);
+
+  function getMembers() {
+    // fetch(members_url)
+    // .then(res => res.json())
+    // .then(data => this.setUserList([...data.data]));
+
+    setUserList([...members]);
+  }
+
+  function getFileList() {
+    // let files = {
+    //   member: {},
+    //   codeList: [],
+    // };
+    // userList.forEach((member) => {
+    //   this.userId = member.id;
+    //   console.log(this.userId);
+    //   fetch(files_url)
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     files.codeList = data.data;
+    //     setFileList([...fileList, files]);
+    //   });
+    // });
+
+    setFileList([...fileTest]);
+  }
 
   function handleOnDragEnd(result) {
     /**
@@ -154,19 +193,20 @@ const CodeView = () => {
     userTags.splice(afterDragItemIndex, 0, removeNameTag[0]);
     fileTags.splice(afterDragItemIndex, 0, removeFileTag[0]);
 
-    setUsetrList(userTags);
-    setCodeList(fileTags);
+    setUserList(userTags);
+    setFileList(fileTags);
   }
 
   return (
-    <DragDropContext className="codeview" onDragEnd={handleOnDragEnd}>
-      <div className="header">
-        <h1>CodeView</h1>
-        <MiniMap userList={userList}/>
-      </div>
-      <UserCodeList fileList={fileList}/>
-
-    </DragDropContext>
+    <div className="codeview">
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <div className="header">
+          <h1>CodeView</h1>
+          <MiniMap userList={userList} />
+        </div>
+        <UserCodeList fileList={fileList} />
+      </DragDropContext>
+    </div>
   );
 };
 
