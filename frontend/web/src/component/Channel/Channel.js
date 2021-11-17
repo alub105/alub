@@ -20,7 +20,9 @@ import * as util from "../../modules/axios/util";
 
 const Channel = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
-  const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
+  const { selectedChannel: storeSelectedChannel } = useSelector(
+    (state) => state.study
+  );
 
   const { channelList: storeChannelList } = useSelector((state) => state.study);
   const { userInfo: storeUserInfo } = useSelector((state) => state.user);
@@ -79,7 +81,11 @@ const Channel = ({ match }) => {
                   }`}
                   onClick={() => selectChannel(-1)}
                 >
-                  <img className="image" alt="profile" src={storeUserInfo.imageUrl} />
+                  <img
+                    className="image"
+                    alt="profile"
+                    src={storeUserInfo.imageUrl}
+                  />
                   <div className="overlay-profile" />
                 </div>
               </Link>
@@ -87,7 +93,13 @@ const Channel = ({ match }) => {
             {/* --------------- 홈  ---------------  */}
 
             {storeChannelList.map((channel, index) => {
-              return <ChannelComponent info={channel} key={index} selectChannel={selectChannel} />;
+              return (
+                <ChannelComponent
+                  info={channel}
+                  key={index}
+                  selectChannel={selectChannel}
+                />
+              );
             })}
 
             {/* --------------- 새 채널  ---------------  */}
@@ -100,23 +112,47 @@ const Channel = ({ match }) => {
               )}
               placement="right"
             >
-              <button className={`channel create-channel`} onClick={() => createNewChannel()}>
-                <i className="fal fa-plus fa-2x" />
-                <div className="overlay-channel" />
-              </button>
+              <div>
+                <button
+                  className={`channel create-channel`}
+                  onClick={() => createNewChannel()}
+                >
+                  <i className="fal fa-plus fa-2x" />
+                  <div className="overlay-channel" />
+                </button>
+              </div>
             </OverlayTrigger>
           </nav>
         </div>
         {/*--------------- 스터디 생성 모달 ----------------------*/}
-        <ChannelCreateModal show={modalShow} onHide={() => setModalShow(false)} />
+        <ChannelCreateModal
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+        />
       </div>
       <div className="router-main">
         <Switch>
-          <Route path="/channel" exact={true} component={SideBarStudy} />
-          <Route path="/channel/:channelId" exact={true} component={SideBarStudy} />
-          <Route path="/channel/:channelId/study/:studyId" exact={true} component={SideBarStudy} />
-          <Route path="/channel/:channelId/setting" exact={true} component={SideBarStudy} />
-          <Route path="/channel/:channelId/member" exact={true} component={SideBarStudy} />
+          <Route path="/channel" exact={true} component={Profile} />
+          <Route
+            path="/channel/:channelId"
+            exact={true}
+            component={SideBarStudy}
+          />
+          <Route
+            path="/channel/:channelId/study/:studyId"
+            exact={true}
+            component={SideBarStudy}
+          />
+          <Route
+            path="/channel/:channelId/setting"
+            exact={true}
+            component={SideBarStudy}
+          />
+          <Route
+            path="/channel/:channelId/member"
+            exact={true}
+            component={SideBarStudy}
+          />
           <Route path="/channel/common/profile" component={Profile} />
           <Route render={() => <div>not</div>} />
         </Switch>

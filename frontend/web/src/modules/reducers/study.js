@@ -1,7 +1,7 @@
 import * as studyActions from "../actions/study";
 
 const initialState = {
-  selectedChannel: -1, //선택한 채널 id
+  selectedChannel: 0, //선택한 채널 id
   channelList: [],
 };
 
@@ -35,7 +35,9 @@ const reducers = (state = initialState, action) => {
     case studyActions.DELETE_CHANNEL:
       return {
         ...state,
-        channelList: state.channelList.filter((channel) => channel.id !== Number(action.payload)),
+        channelList: state.channelList.filter(
+          (channel) => channel.id !== Number(action.payload)
+        ),
       };
 
     default:

@@ -165,9 +165,15 @@ export const searchMember = async (memberName, token) => {
   });
 };
 
-export const updateChannel = (name, hostId, deletedMember, addedMember, token) => {
+export const updateChannel = (
+  name,
+  hostId,
+  deletedMember,
+  addedMember,
+  token
+) => {
   return new Promise(function(resolve, reject) {
-    fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
+    fetch(API_BASE_URL + `/api/channels/${token}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${storeToken}`,
@@ -179,6 +185,52 @@ export const updateChannel = (name, hostId, deletedMember, addedMember, token) =
         deletedMember: deletedMember,
         addedMember: addedMember,
       }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+// repo setting
+export const getUserConfig = (token) => {
+  return new Promise(function(resolve, reject) {
+    fetch(API_BASE_URL + `/api/user/configs`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+// repo setting
+export const getUserRepos = (token) => {
+  return new Promise(function(resolve, reject) {
+    fetch(API_BASE_URL + `/api/user/repos`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
     })
       .then((response) => {
         if (response.ok) {
