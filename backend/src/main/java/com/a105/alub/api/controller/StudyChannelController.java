@@ -1,5 +1,6 @@
 package com.a105.alub.api.controller;
 
+import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
 import com.a105.alub.api.response.StudyChannelCreateRes;
-import com.a105.alub.api.response.StudyChannelListRes;
+import com.a105.alub.api.response.StudyChannelDto;
 import com.a105.alub.api.response.StudyChannelRes;
 import com.a105.alub.api.service.StudyChannelService;
 import com.a105.alub.common.response.ApiResponseDto;
@@ -61,9 +62,9 @@ public class StudyChannelController {
   }
 
   @GetMapping("/mychannels")
-  public ApiResponseDto<StudyChannelListRes> getStudyChannelList(
+  public ApiResponseDto<List<StudyChannelDto>> getStudyChannelList(
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
-    StudyChannelListRes channelListRes = studyChannelService.getChannelList(userPrincipal.getId());
-    return ApiResponseDto.success(channelListRes);
+    List<StudyChannelDto> channelList = studyChannelService.getChannelList(userPrincipal.getId());
+    return ApiResponseDto.success(channelList);
   }
 }
