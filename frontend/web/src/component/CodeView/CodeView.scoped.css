@@ -16,12 +16,24 @@
 }
 
 *::-webkit-scrollbar {
-  width: 2px;
-  /* background-color: black; */
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: rgb(151, 150, 150);
+}
+*::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
 }
 
 .nameList {
   background-color: grey;
+  width: 98%;
 }
 
 .nameList .draggName {
@@ -41,7 +53,8 @@
 
 .fileList .usercode .code {
   height: 80vh;
-  width: 40vw;
+  width: 100%;
+  border: 1px solid;
 }
 
 .fileList .usercode .code code {
@@ -52,10 +65,9 @@
 .fileList {
   display: inline-flex;
   margin: 20px 0;
-  width: 100vw;
 }
 
-.nameList .draggName{
+.nameList .draggName {
   margin: 10px;
   padding: 10px;
 }

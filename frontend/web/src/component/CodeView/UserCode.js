@@ -8,11 +8,8 @@ import {
 } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
 const UserCode = ({ user, codeList }) => {
-  const [selected, setSelected] = useState(codeList.length - 1);
 
-  function setCode(idx){
-    setSelected(idx);
-  }
+  const [selected, setSelected] = useState(codeList.length - 1);
 
   return (
     <div>
@@ -20,28 +17,29 @@ const UserCode = ({ user, codeList }) => {
         <h1>{user.name}</h1>
         <DropdownButton
           id="dropdown-basic-button"
-          title={codeList[selected].filename}
-          onSelect={
-            (eventKey) => setSelected(eventKey)
-          }
+          title={codeList[selected].fileName}
+          onSelect={(eventKey) => setSelected(eventKey)}
         >
-          {codeList.map(({filename}, idx) => {
+          {codeList.map(({ fileName }, idx) => {
             return (
-              <Dropdown.Item key={idx} eventKey={idx}>{filename}</Dropdown.Item>
+              <Dropdown.Item key={idx} eventKey={idx}>
+                {fileName}
+              </Dropdown.Item>
             );
           })}
         </DropdownButton>
       </div>
       <SyntaxHighlighter
         className="code"
-        language="java"
+        language={codeList[selected].fileName.split(".")[1]}
         style={githubGist}
         showLineNumbers
-        lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}
-        wrapLines={true}
-        // wrapLongLines
+        // lineProps={{
+        //   style: { wordBreak: "break-all", whiteSpace: "pre-wrap" },
+        // }}
+        // wrapLines={true}
       >
-        {Buffer.from(codeList[selected].content, "base64").toString("utf-8")}
+        {Buffer.from(codeList[selected].contents, "base64").toString("utf-8")}
       </SyntaxHighlighter>
     </div>
   );
