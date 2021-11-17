@@ -44,11 +44,11 @@ public class StudyChannelServiceImpl implements StudyChannelService {
         .hostId(userId).enabled(true).build();
     StudyChannel createdStudyChannel = studyChannelRepository.save(studyChannel);
 
-    log.info("Created Study Channel: {}", createdStudyChannel);
+    log.info("Create Study Channel: {}", createdStudyChannel);
 
     createUserStudyChannel(createdStudyChannel, channelCreateReq.getMemberId());;
 
-    log.info("Created All User Study Channel");
+    log.info("Create All User Study Channel");
 
     return new StudyChannelCreateRes(studyChannel.getId());
   }
@@ -98,12 +98,12 @@ public class StudyChannelServiceImpl implements StudyChannelService {
     studyChannel.setName(channelModifyReq.getName());
     studyChannelRepository.save(studyChannel);
 
-    log.info("Updated Study Channel ID: {}", studyChannelId);
+    log.info("Update Study Channel ID: {}", studyChannelId);
 
     createUserStudyChannel(studyChannel, channelModifyReq.getAddedMember());
     deleteUserStudyChannelList(deletedMember);
 
-    log.info("Updated User Study Channel ID: {}", studyChannelId);
+    log.info("Update User Study Channel ID: {}", studyChannelId);
 
   }
 
@@ -118,19 +118,19 @@ public class StudyChannelServiceImpl implements StudyChannelService {
       UserStudyChannel userStudyChannel = getUserStudyChannel(studyChannel, userId);
       deleteUserStudyChannel(userStudyChannel);
 
-      log.info("Deleted User Study Channel ID: {}", userId);
+      log.info("Delete User Study Channel ID: {}", userId);
 
     } else {
 
       List<UserStudyChannel> deletedMember =
           userStudyChannelRepository.findAllByStudyChannelId(studyChannelId);
       deleteUserStudyChannelList(deletedMember);
-      log.info("Deleted All User Study Channel ID: {}", studyChannelId);
+      log.info("Delete All User Study Channel ID: {}", studyChannelId);
 
       studyChannel.setEnabled(false);
       studyChannelRepository.save(studyChannel);
 
-      log.info("Deleted Study Channel ID: {}", studyChannelId);
+      log.info("Delete Study Channel ID: {}", studyChannelId);
     }
 
   }
