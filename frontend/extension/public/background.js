@@ -39,7 +39,8 @@ function authListener(tabId, changeInfo, tab) {
             if (response.ok) {
               response.json().then((data) => {
                 chrome.storage.sync.set({ token: data.data.token }, function () {
-                  
+                  const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
+                  chrome.tabs.update({ url: welcome_url });
                 });
               });
             }
