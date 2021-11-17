@@ -7,7 +7,9 @@ import "./StudyHome.scoped.scss";
 
 const StudyHome = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
-  const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
+  const { selectedChannel: storeSelectedChannel } = useSelector(
+    (state) => state.study
+  );
   const { channelId } = match.params.channelId;
   const [studyInfo, setStudyInfo] = useState({});
 
@@ -145,7 +147,9 @@ const StudyHome = ({ match }) => {
                           </Link>
                         </td>
                         <td className="time">
-                          <span className="tag done">{endSplitTime(study.endTime)}</span>
+                          <span className="tag done">
+                            {endSplitTime(study.endTime)}
+                          </span>
                         </td>
                       </tr>
                     );

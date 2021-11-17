@@ -1,5 +1,11 @@
 /* eslint-disable */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Modal } from "react-bootstrap";
 import "./StudyCreateModal.scoped.scss";
 import DatePicker from "react-datepicker";
@@ -11,7 +17,9 @@ import { API_BASE_URL } from "../../config/index";
 
 const StudyCreateModal = (props) => {
   const { token: storeToken } = useSelector((state) => state.user);
-  const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
+  const { selectedChannel: storeSelectedChannel } = useSelector(
+    (state) => state.study
+  );
   const [inputs, setInputs] = useState({
     studyName: "",
     problem: "",
@@ -119,7 +127,10 @@ const StudyCreateModal = (props) => {
       studyDate.toLocaleDateString(),
       studyStartRef.current.value
     );
-    let studyEndTime = studyDateFormat(studyDate.toLocaleDateString(), studyEndRef.current.value);
+    let studyEndTime = studyDateFormat(
+      studyDate.toLocaleDateString(),
+      studyEndRef.current.value
+    );
     let assignmentStartTime = homeworkDateFormat(
       homeworkStart.toLocaleDateString(),
       homeworkStart.toString()
@@ -169,7 +180,9 @@ const StudyCreateModal = (props) => {
     >
       <Modal.Header className="my-modal-header">
         <i className="fal fa-times fa-2x close-icon" onClick={props.onHide} />
-        <Modal.Title id="contained-modal-title-vcenter">새 스터디 만들기</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          새 스터디 만들기
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className="my-modal-body">
         <div className="grid-column">
@@ -202,7 +215,12 @@ const StudyCreateModal = (props) => {
             required
             className="my-form study-input"
           />
-          <input type="time" name="studyTime" ref={studyEndRef} className="my-form study-input" />
+          <input
+            type="time"
+            name="studyTime"
+            ref={studyEndRef}
+            className="my-form study-input"
+          />
         </div>
         <div className="grid-column-3">
           <h4>과제 기한</h4>
@@ -243,12 +261,16 @@ const StudyCreateModal = (props) => {
               onKeyPress={searchProblem}
             />
           </div>
-          <div className="result" style={{ display: problem.length === 0 ? "block" : "none" }}>
+          <div
+            className="result"
+            style={{ display: problem.length === 0 ? "block" : "none" }}
+          >
             {problems.map((result, index) => {
               return (
                 <div className="problem-content" key={index}>
                   <p>
-                    [{result.site}] &nbsp; {result.title} - {result.num} - {result.level}
+                    [{result.site}] &nbsp; {result.title} - {result.num} -{" "}
+                    {result.level}
                   </p>
                   <button
                     type="button"
@@ -261,15 +283,21 @@ const StudyCreateModal = (props) => {
               );
             })}
           </div>
-          <div className="result" style={{ display: problem.length > 0 ? "block" : "none" }}>
-            <h4 style={{ display: searchResult?.length > 0 ? "none" : "block" }}>
+          <div
+            className="result"
+            style={{ display: problem.length > 0 ? "block" : "none" }}
+          >
+            <h4
+              style={{ display: searchResult?.length > 0 ? "none" : "block" }}
+            >
               검색 결과가 없습니다
             </h4>
             {searchResult.map((result, index) => {
               return (
                 <div className="problem-content" key={index}>
                   <p>
-                    [{result.site}] &nbsp; {result.title} - {result.num} - {result.level}
+                    [{result.site}] &nbsp; {result.title} - {result.num} -{" "}
+                    {result.level}
                   </p>
                   <button
                     type="button"

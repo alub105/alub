@@ -95,11 +95,14 @@ const SideBarStudy = ({ match }) => {
 
   const doingToggle = useCallback(
     (e) => {
-      if (doingParentRef.current === null || doingChildRef.current === null) return;
+      if (doingParentRef.current === null || doingChildRef.current === null)
+        return;
       if (doingParentRef.current.clientHeight > 0) {
         doingParentRef.current.style.height = "0%";
       } else {
-        doingParentRef.current.style.height = `${doingChildRef.current.clientHeight}px`;
+        doingParentRef.current.style.height = `${
+          doingChildRef.current.clientHeight
+        }px`;
       }
       setDoingOpen(!doingOpen);
     },
@@ -108,11 +111,14 @@ const SideBarStudy = ({ match }) => {
 
   const doneToggle = useCallback(
     (e) => {
-      if (doneParentRef.current === null || doneChildRef.current === null) return;
+      if (doneParentRef.current === null || doneChildRef.current === null)
+        return;
       if (doneParentRef.current.clientHeight > 0) {
         doneParentRef.current.style.height = "0px";
       } else {
-        doneParentRef.current.style.height = `${doneChildRef.current.clientHeight}px`;
+        doneParentRef.current.style.height = `${
+          doneChildRef.current.clientHeight
+        }px`;
       }
       setDoneOpen(!doneOpen);
     },
@@ -145,7 +151,11 @@ const SideBarStudy = ({ match }) => {
         <i className="fas fa-bars open-icon" />
       </div>
 
-      <animated.div style={{ width: width }} className="wrapper" id="sidebar-wrapper">
+      <animated.div
+        style={{ width: width }}
+        className="wrapper"
+        id="sidebar-wrapper"
+      >
         {/*------------------- 스터디 ------------------*/}
         <nav className="nav">
           <div>
@@ -160,7 +170,9 @@ const SideBarStudy = ({ match }) => {
             </div>
             {/*-------------- 진행중 스터디 -------------- */}
             <div className="study item" onClick={() => doingToggle()}>
-              <i className={`fas fa-caret-right ${doingOpen ? "rotate" : ""}`} />
+              <i
+                className={`fas fa-caret-right ${doingOpen ? "rotate" : ""}`}
+              />
               진행 중인 스터디
             </div>
             <div className="doing" ref={doingParentRef}>
@@ -206,7 +218,10 @@ const SideBarStudy = ({ match }) => {
             <div
               className="study item"
               style={{
-                display: studyInfo?.host?.id === storeUserInfo.userId ? "block" : "none",
+                display:
+                  studyInfo?.host?.id === storeUserInfo.userId
+                    ? "block"
+                    : "none",
               }}
             >
               <Link to={`/channel/${channelId}/setting`}>
@@ -222,12 +237,21 @@ const SideBarStudy = ({ match }) => {
         {/*------------------ 스터디 채널 설정 페이지 ------------------*/}
         <Route
           path={`/channel/:channelId/setting`}
-          render={() => <StudySetting updateStudyInfo={() => updateStudyInfo()} />}
+          render={() => (
+            <StudySetting updateStudyInfo={() => updateStudyInfo()} />
+          )}
         />
         {/*------------------ 멤버 페이지 ------------------*/}
-        <Route path="/channel/:channelId/member" exact={true} component={Member} />
+        <Route
+          path="/channel/:channelId/member"
+          exact={true}
+          component={Member}
+        />
         {/*------------------ 스터디 페이지 ------------------*/}
-        <Route path={`/channel/:channelId/study/:studyId`} component={StudyProblem} />
+        <Route
+          path={`/channel/:channelId/study/:studyId`}
+          component={StudyProblem}
+        />
       </Main>
       {/*---------------- 스터디 생성 모달 ----------------*/}
       <StudyCreateModal show={modalShow} onHide={() => setModalShow(false)} />
