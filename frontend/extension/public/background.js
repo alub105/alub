@@ -39,10 +39,7 @@ function authListener(tabId, changeInfo, tab) {
             if (response.ok) {
               response.json().then((data) => {
                 chrome.storage.sync.set({ token: data.data.token }, function () {
-                  chrome.storage.sync.get("token", function (token) {
-                    const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
-                    chrome.tabs.update({ url: welcome_url });
-                  });
+                  
                 });
               });
             }
@@ -61,7 +58,6 @@ const boj = "https://www.acmicpc.net/"
 
 function addStatusTable () {
 
-  console.log("status 테이블 추가 시작")
 
   const userId = document.querySelector(".loginbar .username")?.innerHTML
   // loginID와 푼사람의 ID가 같은지 확인하기 위해서 특정함.
@@ -81,7 +77,7 @@ function addStatusTable () {
           if (i < 0) return;
           const result = statusTable?.childNodes[1]?.childNodes[i]?.childNodes[3]?.childNodes[0]?.textContent;
           const judging = statusTable?.childNodes[1]?.childNodes[i]?.childNodes[3]?.querySelector("span")?.classList.contains("result-judging")
-          console.log(i+"번째 채점중", judging)
+
           if (judging){
                   setTimeout(function() {
                       addCommitButton(i)
@@ -126,87 +122,77 @@ function addStatusTable () {
 }
 
 
-function copyCode (BASE_URL) {
+function copyCode (BASE_URL, timerRunning, startHour, startMinute, startSecond, hour, minute, second) {
   chrome.storage.sync.get("commitNow", function (response) {
     if (response.commitNow) {
-      const userId = document.querySelector(".loginbar .username")?.innerHTML;
-      const solvedUserId =
-        document.querySelector(".table-striped")?.childNodes[1]?.childNodes[0]?.childNodes[1]
-          ?.textContent;
-      const resultTable = document.querySelector(".table-striped");
-      const correct =
-        (resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes(
-          "맞"
-        ) ||
-          resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes(
-            "100"
-          )) &&
-        userId === solvedUserId;
-      const problemNumber = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent;
-      const problemTitle = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent;
-      const memory = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent;
-      const timeConsumed = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[6]?.textContent;
-      const answerCode = document.getElementsByName("source")[0]?.innerText;
-
-      let codeLang = "";
-      let site = "";
-      const lang =
-        document.querySelector(".table-striped")?.childNodes[1]?.childNodes[0]?.childNodes[7]?.textContent;
-      if (typeof lang === "string") {
-        if (lang.includes("Py")) {
-          codeLang = "py";
-        }
-        if (lang.includes("Java")) {
-          codeLang = "java";
-        }
-        if (lang.includes("C")) {
-          codeLang = "C";
-        }
-        if (lang.includes("Ruby")) {
-          codeLang = "rbw";
-        }
-        if (lang.includes("Rust")) {
-          codeLang = "rs";
-        }
-        if (lang.includes("Go")) {
-          codeLang = "go";
-        }
-        if (lang.includes("node")) {
-          codeLang = "js";
-        }
-        if (lang.includes("Text")) {
-          codeLang = "txt";
-        }
-        if (lang.includes("Swift")) {
-          codeLang = "swift";
-        }
-      }
-      const url = window.location.href;
-      if (url.includes("acmicpc.net")) {
-        site = "BOJ";
-      }
-      if (url.includes("programmers")) {
-        site = "PROGRAMMERS";
-      }
-      chrome.storage.sync.get("mode", function (mode) {
-        if (mode.mode === "dev") {
-          BASE_URL = "http://localhost:8080";
-        } else if (mode.mode === "prod") {
-          BASE_URL = "https://alub.co.kr";
-        }
-      });
+      const userId = document.querySelector(".loginbar .username")?.innerHTML
+      const solvedUserId = document.querySelector('.table-striped')?.childNodes[1]?.childNodes[0]?.childNodes[1]?.textContent
+      const resultTable = document.querySelector('.table-striped')
+      const correct = (resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("맞") || resultTable?.childNodes[1]?.childNodes[0]?.childNodes[4]?.childNodes[0]?.textContent?.includes("100"))
+        && userId===solvedUserId
+      const problemNumber = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[2]?.textContent
+      const problemTitle = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.textContent
+      const memory = resultTable?.childNodes[1]?.childNodes[0]?.childNodes[5]?.textContent
+      const timeConsumed =resultTable?.childNodes[1]?.childNodes[0]?.childNodes[6]?.textContent
+      const answerCode = document.getElementsByName("source")[0]?.innerText
       let commitConfig = ''
       chrome.storage.sync.get("commitConfig", function (response) {
         if (Object.keys(response).length !== 0){
           commitConfig = response.commitConfig
         }
       })
+      let codeLang = ''
+      let site = ''
+      const lang = document.querySelector(".table-striped")?.childNodes[1]?.childNodes[0]?.childNodes[7]?.textContent
+      if (typeof(lang) === 'string'){
+        if(lang.includes('Py')){codeLang = 'py'}
+        if(lang.includes('Java')){codeLang = 'java'}
+        if(lang.includes('C')){
+          if(lang.includes('++')) {codeLang = 'cpp'}
+            else { codeLang = 'c'}
+          }
+        if(lang.includes('Ruby')){codeLang = 'rbw'}
+        if(lang.includes('Rust')){codeLang = 'rs'}
+        if(lang.includes('Go')){codeLang = 'go'}
+        if(lang.includes('node')){codeLang = 'js'}
+        if(lang.includes('Text')){codeLang = 'txt'}
+        if(lang.includes('Swift')){codeLang = 'swift'}
+      } 
+      const url = window.location.href
+      if (url.includes("acmicpc.net")){site = "BOJ"};
+      if (url.includes("programmers")){site = "PROGRAMMERS"};
+          
+      
       
       if (correct){
+        if (startSecond - second >= 0) {
+          var consumedSecond = startSecond - second
+          if (startMinute - minute >= 0){
+            var consumedMinute = startMinute - minute
+            var consumedHour = startHour - hour
+          } else {
+            var consumedMinute = startMinute - minute + 60
+            var consumedHour = startHour - hour - 1
+          }
+        } else {
+          var consumedSecond = startSecond - second + 60
+          if (startMinute - 1 - minute >= 0){
+            var consumedMinute = startMinute - 1 - minute
+            var consumedHour = startHour - hour
+          } else {
+            var consumedMinute = startMinute - 1 - minute + 60
+            var consumedHour = startHour - hour - 1
+          }
+        }
         chrome.storage.sync.get("token", function(token) {
           if (commitConfig === "DEFAULT") {
-            
+            if (timerRunning) {
+              var spendTime = `${consumedHour}:${consumedMinute}:${consumedSecond}`
+            } else {
+              var spendTime = null
+            }
             const data = {
+                    timer: spendTime,
                     srcCode: answerCode,
                     commit: commitConfig,
                     language: codeLang,
@@ -338,7 +324,13 @@ function copyCode (BASE_URL) {
               function submitCommitData () {
                 chrome.storage.sync.set({commitNow:false}, () => {})
                 let fileName = fileNameInput.value
+                if (timerRunning) {
+                  var spendTime = `${consumedHour}:${consumedMinute}:${consumedSecond}`
+                } else {
+                  var spendTime = null
+                }
                 const data = {
+                  timer: spendTime,
                   srcCode: answerCode,
                   commit: commitConfig,
                   language: codeLang,
@@ -402,9 +394,7 @@ function copyCode (BASE_URL) {
                         document.querySelector("#alub-noti").remove();
                       }, 3000);
                     });
-                  }
-                  
-                  
+                  }                
                 })
                 .catch((err) => {
                   console.log(err);
@@ -418,15 +408,311 @@ function copyCode (BASE_URL) {
   })
 }
 
+// timer만드는 부분
 
+
+function createTimer(h, m, s, timerRunning, timerPause) {
+  const component = document.createElement('div')
+  component.id = "component"
+  const componentHeader = document.createElement("div")
+  componentHeader.id = "componentHeader"
+  componentHeader.innerText = "Timer"
+  component.appendChild(componentHeader)
+
+  component.style.position = 'absolute'
+  component.style.zIndex = 9
+  component.style.backgroundColor = '#f1f1f1'
+  component.style.border = '1px solid #d3d3d3'
+  component.style.textAlign = 'center'
+  component.style.top = '112px'
+  component.style.left = '933px'
+  component.style.width = '304px'
+  
+  
+  componentHeader.style.padding = '5px'
+  componentHeader.style.cursor = 'move'
+  componentHeader.style.zIndex = 10
+  componentHeader.style.backgroundColor = '#2196F3'
+  componentHeader.style.color = '#fff'
+  componentHeader.style.fontSize = "20px"
+
+  const timeComponent = document.createElement('p')
+  timeComponent.style.fontSize = "20px"
+  component.appendChild(timeComponent)
+  
+  const startPauseButton = document.createElement('button')
+  startPauseButton.innerText = timerPause ? "시작" : "일시정지" 
+  startPauseButton.addEventListener('click', startPauseTimer)
+  
+  const stopButton = document.createElement('button')
+  stopButton.innerText = "초기화"
+  stopButton.addEventListener('click', reset)
+  
+  var startHour, startMinute, startSecond = 0
+  chrome.storage.sync.get("hour", (response) => {startHour = parseInt(response.hour)})
+  chrome.storage.sync.get("minute", (response) => {startMinute = parseInt(response.minute)})
+  chrome.storage.sync.get("second", (response) => {startSecond = parseInt(response.second)})
+
+  component.appendChild(startPauseButton)
+
+  component.appendChild(stopButton)
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  var isStop = false
+  var autotimerSwitch = false
+  
+  timeComponent.innerText = `${h} : ${m} : ${s}`
+  if (timerRunning) {
+
+    let autotimer = setInterval(() => {
+      if (!isStop) {
+        autotimerSwitch = true
+        if(!timerPause) {
+          if (s > 0) {s = s - 1}
+          if (s === 0) {
+            if (m === 0) {
+              if(h === 0) {
+                clearInterval(autotimer);
+                autotimerSwitch = false
+                chrome.storage.sync.set({timerPause:true})
+              }
+              else {
+                h = h -1
+                m = 59
+                s = 59;
+              }
+            } else {
+              m = m - 1;
+              s = 59;
+            }
+          }
+          chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {
+            
+          timeComponent.innerText = `${h} : ${m} : ${s}`
+          })
+        } else {
+          clearInterval(autotimer)
+          chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {
+            
+            timeComponent.innerText = `${h} : ${m} : ${s}`
+          })
+        }
+      } else {
+        clearInterval(autotimer)
+        
+      }
+    }, 1000);
+  }
+  
+
+  function startPauseTimer () {
+    console.log(autotimerSwitch)
+    chrome.storage.sync.set({timerRunning:true})
+    if (!timerPause){
+      timerPause = true
+      timerRunning = false
+      chrome.storage.sync.set({timerPause:true})
+      startPauseButton.innerText = "시작"
+    } else {
+      timerRunning = true
+      timerPause = false
+      isStop = false
+      chrome.storage.sync.set({timerPause:false}, () => {})
+      startPauseButton.innerText = "일시정지"
+    }
+    if (timerRunning) {
+
+      let autotimer = setInterval(() => {
+        if (!isStop) {
+          if(!timerPause) {
+            if (s > 0) {s = s - 1}
+            if (s === 0) {
+              if (m === 0) {
+                if(h === 0) {
+                  clearInterval(autotimer);
+                  chrome.storage.sync.set({timerPause:true})
+                }
+                else {
+                  h = h -1
+                  m = 59
+                  s = 59;
+                }
+              } else {
+                m = m - 1;
+                s = 59;
+              }
+            }
+            chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {     
+            timeComponent.innerText = `${h} : ${m} : ${s}`
+            })
+          } else {
+            clearInterval(autotimer)
+            chrome.storage.sync.set({leftHour:h, leftMinute:m, leftSecond:s}, () => {
+              
+              timeComponent.innerText = `${h} : ${m} : ${s}`
+            })
+          }
+        } else {
+          clearInterval(autotimer)
+          
+        }
+      }, 1000);
+    }
+
+  }
+  function reset() {
+    isStop = true
+    autotimerSwitch = false
+    chrome.storage.sync.remove(['leftHour', 'leftMinute', "leftSecond", "timerRunning"], () => {
+      timeComponent.innerText = `${startHour} : ${startMinute} : ${startSecond}`
+
+      h = startHour
+      m = startMinute
+      s = startSecond
+    })
+  }
+
+
+      // if present, the header is where you move the DIV from:
+    componentHeader.onmousedown = dragMouseDown;
+      // otherwise, move the DIV from anywhere inside the DIV:
+    // component.onmousedown = dragMouseDown;
+    
+  
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+      }
+  
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        component.style.top = (component.offsetTop - pos2) + "px";
+        component.style.left = (component.offsetLeft - pos1) + "px";
+      }
+  
+      function closeDragElement() {
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+
+  document.querySelector('.container.content')?.appendChild(component)
+  // console.log(timerPause, timerRunning)
+  // if(!timerPause) {
+  //   startPauseTimer()
+  // }
+}
+
+var timerPause = true
+var hour = 0
+var minute = 0
+var second = 0
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     const currentUrl = tab.url
+        
+    var timerRunning = false
+    chrome.storage.sync.get("timerRunning", (response) => {
+      if (Object.keys(response).length !== 0){
+        timerRunning = response.timerRunning
+      }
+    })
     // 백준에서
     if (currentUrl.startsWith(boj)) {
-      await chrome.storage.sync.get("token", function (response) { 
+      var startHour, startMinute, startSecond = 0
+      chrome.storage.sync.get("hour", (response) => {
+        startHour = parseInt(response.hour)
+      })
+      chrome.storage.sync.get("minute", (response) => {
+        startMinute = parseInt(response.minute)
+      })
+      chrome.storage.sync.get("second", (response) => {
+        startSecond = parseInt(response.second)
+        
+      })
+      chrome.storage.sync.get("timerPause", (response) => {
+        timerPause = response.timerPause
+      })
+
+      chrome.storage.sync.get("leftHour", (response) => {
         if (Object.keys(response).length !== 0){
+          hour = parseInt(response.leftHour)
+        } else {
+          chrome.storage.sync.get("hour", (response) => {hour = parseInt(response.hour)
+          })
+        }
+      })
+      chrome.storage.sync.get("leftMinute", (response) => {
+        if (Object.keys(response).length !== 0){
+          minute = parseInt(response.leftMinute)
+        } else {
+          chrome.storage.sync.get("minute", (response) => {minute = parseInt(response.minute)})}
+      })
+      chrome.storage.sync.get("leftSecond", (response) => {
+        if (Object.keys(response).length !== 0){
+          second = parseInt(response.leftSecond)
+        } else {
+          chrome.storage.sync.get("second", (response) => {second = parseInt(response.second)})
+        }
+      })
+      chrome.storage.sync.get("mode", function (response) {
+        if (response.mode === "dev") {BASE_URL = "http://localhost:8080";}
+        if (response.mode === "prod") {BASE_URL = "https://alub.co.kr"}
+      })
+      await chrome.storage.sync.get("token", function (response) { 
+        
+        if (Object.keys(response).length !== 0){
+          // userconfig 자동으로 가져옴.
+          let url = BASE_URL + "/api/user/configs";
+          fetch(url, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${response.token}`,
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          }).then((response) => {
+            if (response.ok) {
+              response.json().then((data) => {
+                if (data.data.repoName === null) {
+                  setRepoMode(true);
+                } else {
+                  // commit mode setting
+                  //timer shown setting
+                  chrome.storage.sync.set({timerShown:data.data.timershown, repoName:data.data.repoName, commitConfig:data.data.commit},function () {})
+                  // 타이머 setting
+                  let time = data.data.timerDefaultTime.split(":");
+                  chrome.storage.sync.set({hour:time[0], minute:time[1], second:time[2]},function () {})
+                }
+              });
+            }
+          });
+          
+          if (currentUrl.includes("acmicpc.net/problem") || currentUrl.includes("submit") || currentUrl.includes("status")) {
+            chrome.storage.sync.get("timerShown", function(response){
+              if (Object.keys(response).length !== 0 && response.timerShown){
+                chrome.scripting.executeScript({
+                  target: { tabId: tab.id },
+                  func: createTimer,
+                  args: [hour, minute, second, timerRunning, timerPause]
+                })
+              }
+            })
+          }
+
+          // 제출현황판에서는 commit하는것 초기화 + commit버튼추가
           if (currentUrl.includes("status")){
             chrome.storage.sync.set({commitNow:false}, ()=>{})
             chrome.scripting.executeScript({
@@ -434,16 +720,18 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               func: addStatusTable,
             })
           }
+
+          // 소스코드페이지에서는 copycode 함수 실행
           if (currentUrl.includes("source")){
+            
             chrome.scripting.executeScript({
               target: { tabId: tab.id },
               func: copyCode,
-              args: [BASE_URL]
+              args: [BASE_URL, timerRunning, startHour, startMinute, startSecond, hour, minute, second]
             })
           }
         }})
     }
   }
 })
-
 
