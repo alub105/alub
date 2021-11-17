@@ -16,4 +16,5 @@ public interface UserStudyChannelRepository
   void deleteAllByStudyChannelId(Long studyChannelId);
 
   List<UserStudyChannel> findAllByUserId(Long userId);
+
 }

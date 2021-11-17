@@ -13,7 +13,6 @@ var repoRegex = /^[a-zA-Z0-9_.-]*$/;
 var dirRegex = /[/]{2,}/;
 
 chrome.storage.sync.get("mode", function (mode) {
-  console.log(mode.mode);
   if (mode.mode === "dev") {
     BASE_URL = "http://localhost:8080";
     START_URL = "http://localhost:3000/oauth/redirect";
@@ -130,6 +129,9 @@ function getUserRepo() {
           if (data.data.repoName === null) {
             USER_REPO = "설정한 Repository가 없습니다";
             isSet = false;
+
+            $("#new-repo").prop("checked", true);
+            $("#repo-name").val("Alub");
           } else if (data.data.dirPath === null) {
             // 새 repo 설정
             USER_REPO = "github.com/" + userName + "/" + data.data.repoName;
