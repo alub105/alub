@@ -56,11 +56,13 @@ const App = () => {
                 setCommitChecked(data.data.commit);
                 //timer shown setting
                 setTimerShown(data.data.timerShown);
+                chrome.storage.sync.set({timerShown:data.data.timershown, repoName:data.data.repoName, commitConfig:data.data.commit},function () {})
                 // 타이머 setting
                 let time = data.data.timerDefaultTime.split(":");
                 setHour(time[0]);
                 setMinute(time[1]);
                 setSecond(time[2]);
+                chrome.storage.sync.set({hour:time[0], minute:time[1], second:time[2]},function () {})
 
                 setRepoName(data.data.repoName);
                 setInitialInfo(data.data.repoName);
@@ -125,7 +127,7 @@ const App = () => {
   const handleTimerShown = () => {
     setTimerShown((timerShown) => !timerShown);
     console.log(!timerShown);
-
+    chrome.storage.sync.set({timerShown:!timerShown},function () {})
     const url = API_BASE_URL + "/api/user/configs";
     fetch(url, {
       method: "PATCH",
@@ -137,7 +139,7 @@ const App = () => {
         timerShown: !timerShown,
       }),
     })
-      .then((response) => {})
+      .then((response) => {console.log(response)})
       .catch((error) => {
         console.log(error);
       });
@@ -165,22 +167,18 @@ const App = () => {
         timerDefaultTime: `${h}:${m}:${s}`,
       }),
     })
-      .then((response) => {})
+      .then(() => {
+        setHour(h)
+        setMinute(m)
+        setSecond(s)
+        
+      })
+
       .catch((error) => {
-        console.log(error);
+        
+
       });
 
-    const message: ChromeMessage = {
-      from: Sender.React,
-      message: { data: { hh: hour, mm: minute, ss: second }, message: "setTimer" },
-    };
-
-    getCurrentTabUId((id) => {
-      id &&
-        chrome.tabs.sendMessage(id, message, (response) => {
-          setResponseFromContent(response);
-        });
-    });
   };
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     let { value, min, max } = event.target;
@@ -351,6 +349,8 @@ const App = () => {
                       onChange={handleTimerShown}
                     />
                   </div>
+                </form>
+                <form onSubmit={setTimer}>
                   <div className="flex-row default-time-set">
                     <span className="timer-show-title">기본 시간 설정</span>
                     <div className="flex-row">
@@ -387,9 +387,8 @@ const App = () => {
                         onChange={onChangeInput}
                       />
                       <button
-                        type="button"
+                        type="submit"
                         className="btn btn-outline-primary timer-setting-button"
-                        onClick={setTimer}
                       >
                         설정
                       </button>

@@ -1,6 +1,5 @@
 import { ChromeMessage, Sender, getCurrentTabUrl } from "../types";
 import copyCode from "./copyCode";
-import createTimer from "./createTimer";
 type MessageResponse = (response?: any) => void;
 const currentUrl = window.location.href;
 const validateSender = (message: ChromeMessage, sender: chrome.runtime.MessageSender) => {
@@ -20,11 +19,7 @@ const messagesFromReactAppListener = (
   }
 
   if (isValidated && message.message.message === "setTimer") {
-    const data = message.message.data;
-    const hh = parseInt(data.hh);
-    const mm = parseInt(data.mm);
-    const ss = parseInt(data.ss);
-    // createTimer(hh,mm,ss)
+    
     console.log("메세지는감.");
     response("타이머 셋팅 완료");
   }

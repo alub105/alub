@@ -1,16 +1,14 @@
 package com.a105.alub.api.response;
 
 import com.a105.alub.domain.entity.AssignedProblem;
-import com.a105.alub.domain.entity.Study;
 import com.a105.alub.domain.enums.ProblemLevel;
 import com.a105.alub.domain.enums.Site;
-import javax.persistence.Enumerated;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
-public class AssignedProblemDto {
+public class AssignedProblemCreateRes {
 
   private final Long id;
 
@@ -22,8 +20,8 @@ public class AssignedProblemDto {
 
   private final ProblemLevel level;
 
-  public static AssignedProblemDto of(AssignedProblem assignedProblem) {
-    return new AssignedProblemDtoBuilder()
+  public static AssignedProblemCreateRes of(AssignedProblem assignedProblem) {
+    return new AssignedProblemCreateResBuilder()
         .id(assignedProblem.getId())
         .num(assignedProblem.getNum())
         .title(assignedProblem.getTitle())

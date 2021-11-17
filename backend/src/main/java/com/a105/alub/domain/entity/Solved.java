@@ -27,7 +27,7 @@ import lombok.Setter;
 public class Solved extends BaseTimeEntity {
 
   @EmbeddedId
-  private SolvedId solvedId;
+  private SolvedId solvedId = new SolvedId();
 
   @MapsId("userId")
   @ManyToOne(fetch = FetchType.LAZY)
@@ -43,5 +43,17 @@ public class Solved extends BaseTimeEntity {
   private boolean solved;
 
   private LocalDateTime solvedTime;
+
+  public Solved(User user, AssignedProblem assignedProblem) {
+    this.user = user;
+    this.assignedProblem = assignedProblem;
+  }
+
+  public void solveAssignedProblem(LocalDateTime solvedTime) {
+    if (!this.solved) {
+      this.solved = true;
+      this.solvedTime = solvedTime;
+    }
+  }
 
 }
