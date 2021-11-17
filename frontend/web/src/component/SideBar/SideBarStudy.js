@@ -1,12 +1,13 @@
 /* eslint-disable */
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { Switch, Route, Link } from "react-router-dom";
+import { Route, Link } from "react-router-dom";
 import "./SideBarStudy.scoped.scss";
 import { useSpring, animated } from "react-spring";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import * as util from "../../modules/axios/util";
+import * as studyActions from "../../modules/actions/study";
 
 import StudyHome from "../Study/StudyHome.js";
 import StudyProblem from "../Study/StudyProblem.js";
@@ -17,6 +18,8 @@ import Member from "../Study/Member";
 const SideBarStudy = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
   const { userInfo: storeUserInfo } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
 
   const channelId = match.params.channelId;
   // 스터디 생성 모달 show
@@ -74,7 +77,11 @@ const SideBarStudy = ({ match }) => {
       setStudyInfo({ ...data.data });
     });
     // 스터디 리스트 가져오기
-    // util.getStudyList(channelId, storeToken).then((data) => {});
+    util.getStudyList(channelId, storeToken).then((data) => {
+      console.log(data);
+    });
+
+    dispatch(studyActions.setSelectedChannel(channelId));
   }, [channelId]);
 
   const { width } = useSpring({

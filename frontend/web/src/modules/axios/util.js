@@ -244,3 +244,54 @@ export const getUserRepos = (token) => {
       });
   });
 };
+
+// repo name 중복체크
+export const getRepoDuplicate = (repoName, token) => {
+  return new Promise(function(resolve, reject) {
+    fetch(API_BASE_URL + `/api/user/repos/${repoName}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+// repo 세팅
+export const setRepo = (repoName, creation, dirPath, token) => {
+  return new Promise(function(resolve, reject) {
+    fetch(API_BASE_URL + `/api/user/repos`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        repoName: repoName,
+        creation: creation,
+        dirPath: dirPath,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};

@@ -16,6 +16,8 @@ import { useSelector } from "react-redux";
 import { API_BASE_URL } from "../../config/index";
 
 const StudyCreateModal = (props) => {
+  // const { channelId } = match.params.channelId;
+  const { channelId } = 30;
   const { token: storeToken } = useSelector((state) => state.user);
   const { selectedChannel: storeSelectedChannel } = useSelector(
     (state) => state.study
@@ -111,7 +113,7 @@ const StudyCreateModal = (props) => {
     str1 = str1.replace(/\s+/g, "");
     str1 = str1.replaceAll(".", "-");
     str1 = str1.slice(0, -1);
-    return str1 + " " + str2 + ":00";
+    return str1 + " " + str2;
   });
 
   const homeworkDateFormat = useCallback((str1, str2) => {
@@ -119,7 +121,7 @@ const StudyCreateModal = (props) => {
     str1 = str1.replaceAll(".", "-");
     str1 = str1.slice(0, -1);
     let time = str2.split(" ")[4].split(":");
-    return str1 + " " + time[0] + ":" + time[1] + ":00";
+    return str1 + " " + time[0] + ":" + time[1];
   });
 
   const submit = () => {
@@ -140,7 +142,18 @@ const StudyCreateModal = (props) => {
       homeworkEnd.toString()
     );
 
-    fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}/studies`, {
+    console.log(studyName);
+    console.log(studyStartTime);
+    console.log(studyEndTime);
+    console.log(assignmentStartTime);
+    console.log(assignmentEndTime);
+    console.log(problems);
+    console.log(typeof problems[0].num);
+
+    let assignedProblems = problems;
+    console.log(assignedProblems);
+
+    fetch(API_BASE_URL + `/api/channels/30/studies`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${storeToken}`,
@@ -156,10 +169,11 @@ const StudyCreateModal = (props) => {
       }),
     })
       .then((response) => {
+        console.log(response);
         if (response.ok) {
           response.json().then((data) => {
+            console.log(data.data);
             // 스터디 리스트 추가
-
             props.onHide();
           });
         }

@@ -11,7 +11,6 @@ import SideBarStudy from "../SideBar/SideBarStudy";
 import Profile from "./Profile.js";
 import ChannelComponent from "../SideBar/ChannelComponent";
 import ChannelCreateModal from "../Modal/ChannelCreateModal";
-import Member from "../Study/Member";
 
 import * as userActions from "../../modules/actions/user";
 import * as studyActions from "../../modules/actions/study";

@@ -9,6 +9,7 @@ import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
 import com.a105.alub.api.response.StudyChannelCreateRes;
 import com.a105.alub.api.response.StudyChannelDto;
+import com.a105.alub.api.response.StudyChannelMemberDto;
 import com.a105.alub.api.response.StudyChannelRes;
 import com.a105.alub.common.exception.NotHostException;
 import com.a105.alub.common.exception.StudyChannelNotFoundException;
@@ -78,7 +79,9 @@ public class StudyChannelServiceImpl implements StudyChannelService {
       StudyChannelModifyReq channelModifyReq) {
     StudyChannel studyChannel = studyChannelRepository.findById(studyChannelId)
         .orElseThrow(StudyChannelNotFoundException::new);
-
+    if (!studyChannel.getEnabled()) {
+      throw new StudyChannelNotFoundException();
+    }
     // Host만 수정 가능
     if (!isHost(userId, studyChannel)) {
       throw new NotHostException();
@@ -145,6 +148,27 @@ public class StudyChannelServiceImpl implements StudyChannelService {
     });
 
     return studyChannelList;
+  }
+
+  @Override
+  public List<StudyChannelMemberDto> getMemberList(Long studyChannelId) {
+    StudyChannel studyChannel = studyChannelRepository.findById(studyChannelId)
+        .orElseThrow(StudyChannelNotFoundException::new);
+    if (!studyChannel.getEnabled()) {
+      throw new StudyChannelNotFoundException();
+    }
+
+    List<UserStudyChannel> userStudyChannelList =
+        userStudyChannelRepository.findAllByStudyChannelId(studyChannelId);
+    userStudyChannelList = userStudyChannelList.stream().filter(UserStudyChannel::isEnabled)
+        .collect(Collectors.toList());
+
+    List<StudyChannelMemberDto> memberList = new LinkedList<StudyChannelMemberDto>();
+    userStudyChannelList.stream().forEach(list -> {
+      memberList.add(new StudyChannelMemberDto(list.getUser()));
+    });
+
+    return memberList;
   }
 
   private boolean isUser(List<Long> member) {

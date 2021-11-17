@@ -13,6 +13,7 @@ import com.a105.alub.api.request.StudyChannelCreateReq;
 import com.a105.alub.api.request.StudyChannelModifyReq;
 import com.a105.alub.api.response.StudyChannelCreateRes;
 import com.a105.alub.api.response.StudyChannelDto;
+import com.a105.alub.api.response.StudyChannelMemberDto;
 import com.a105.alub.api.response.StudyChannelRes;
 import com.a105.alub.api.service.StudyChannelService;
 import com.a105.alub.common.response.ApiResponseDto;
@@ -66,5 +67,12 @@ public class StudyChannelController {
       @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
     List<StudyChannelDto> channelList = studyChannelService.getChannelList(userPrincipal.getId());
     return ApiResponseDto.success(channelList);
+  }
+
+  @GetMapping("/{channelId}/members")
+  public ApiResponseDto<List<StudyChannelMemberDto>> getStudyChannelMemberList(
+      @ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable Long channelId) {
+    List<StudyChannelMemberDto> memberList = studyChannelService.getMemberList(channelId);
+    return ApiResponseDto.success(memberList);
   }
 }

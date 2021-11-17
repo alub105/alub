@@ -1,14 +1,13 @@
 /* eslint-disable */
 import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import * as studyActions from "../../modules/actions/study";
-
 const ChannelComponent = ({ info, selectChannel }) => {
-  const dispatch = useDispatch();
-  const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
+  const { selectedChannel: storeSelectedChannel } = useSelector(
+    (state) => state.study
+  );
 
   return (
     <div>
@@ -25,7 +24,8 @@ const ChannelComponent = ({ info, selectChannel }) => {
           <div
             className={`exist-channel channel ${
               storeSelectedChannel === info.id ? "selected" : ""
-            }`}
+            } `}
+            // className={`exist-channel channel`}
             onClick={() => selectChannel(info.id)}
           >
             {info.name}
