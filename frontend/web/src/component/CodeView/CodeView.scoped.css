@@ -143,3 +143,7 @@ h1 {
 .fileList .usercode {
   margin-right: 30px;
 }
+
+.codeview .comments {
+  width: 100%;
+}

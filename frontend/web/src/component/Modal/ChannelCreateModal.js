@@ -108,7 +108,6 @@ const ChannelCreateModal = (props) => {
     }).then((response) => {
       if (response.ok) {
         response.json().then((data) => {
-          console.log(data);
           const channelId = data.data?.id;
           dispatch(
             studyActions.updateChannelList({ id: channelId, name: channelName })
@@ -176,7 +175,7 @@ const ChannelCreateModal = (props) => {
             className="result"
             style={{ display: memberName?.length > 0 ? "none" : "block" }}
           >
-            {members.map((data, index) => {
+            {members?.map((data, index) => {
               return (
                 <div className="member-item" key={index}>
                   <p>{data.name}</p>
@@ -200,13 +199,15 @@ const ChannelCreateModal = (props) => {
             <h4 style={{ display: memberList?.length > 0 ? "none" : "block" }}>
               검색 결과가 없습니다
             </h4>
-            {memberList.map((member, index) => {
+            {memberList?.map((member, index) => {
               return (
                 <div className="member-item" key={index}>
                   <p>{member.name}</p>
                   <button
                     type="button"
-                    className="btn btn-success"
+                    className={`btn btn-success ${
+                      storeUserInfo?.userId === member.id ? "disabled" : ""
+                    }`}
                     onClick={() => addMember(member)}
                   >
                     초대

@@ -92,7 +92,8 @@ const StudyCreateModal = (props) => {
       problems.length > 0 &&
       studyName.length > 0 &&
       studyStartRef.current.value !== "" &&
-      studyEndRef.current.value !== ""
+      studyEndRef.current.value !== "" &&
+      studyDate !== ""
     ) {
       return true;
     }
@@ -254,7 +255,7 @@ const StudyCreateModal = (props) => {
             className="result"
             style={{ display: problem.length === 0 ? "block" : "none" }}
           >
-            {problems.map((result, index) => {
+            {problems?.map((result, index) => {
               return (
                 <div className="problem-content" key={index}>
                   <p>
@@ -281,7 +282,7 @@ const StudyCreateModal = (props) => {
             >
               검색 결과가 없습니다
             </h4>
-            {searchResult.map((result, index) => {
+            {searchResult?.map((result, index) => {
               return (
                 <div className="problem-content" key={index}>
                   <p>

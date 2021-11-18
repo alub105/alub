@@ -27,7 +27,7 @@ const Member = ({ match }) => {
         <h1>멤버 조회</h1>
         <div className="table-box ">
           <div className="flex-column">
-            {members.map((member, index) => {
+            {members?.map((member, index) => {
               if (member.repoName === null) {
                 return (
                   <div className="grid" key={index}>

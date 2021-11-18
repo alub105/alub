@@ -134,7 +134,7 @@ const StudyProblem = ({ match }) => {
                       보러가기
                     </Link>
                   </td>
-                  {problem.members.map((member) => {
+                  {problem?.members.map((member) => {
                     if (member.solved) {
                       return (
                         <td key={member.userId}>
@@ -147,7 +147,7 @@ const StudyProblem = ({ match }) => {
                       );
                     } else {
                       return (
-                        <td key={member.userId}>
+                        <td key={member?.userId}>
                           <img
                             src={cancel}
                             alt="unsolved image"

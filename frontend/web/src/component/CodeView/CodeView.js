@@ -17,7 +17,7 @@ const CodeView = ({ match, location }) => {
 
   const channelId = match.params.channelId;
   const siteName = query[1].split("&")[0];
-  const problemNum = query[2];
+  var problemNum = query[2];
 
   const [userList, setUserList] = useState([]);
   const [fileList, setFileList] = useState([]);
@@ -27,6 +27,11 @@ const CodeView = ({ match, location }) => {
   useEffect(() => {
     getMembers();
     getProblem();
+
+    let problemParams = problemNum.split("&");
+    if (problemParams.length > 1) {
+      problemNum = problemParams[0];
+    }
   }, []);
 
   function getProblem() {
@@ -115,13 +120,14 @@ const CodeView = ({ match, location }) => {
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <div className="header">
           <h1>
-            [{siteName}] {problemInfo.title} {problemNum} - {problemInfo.level}
+            [{siteName}] {problemInfo?.title} {problemNum} -{" "}
+            {problemInfo?.level}
           </h1>
           <div className="container">
             <MiniMap userList={userList} fileList={fileList} />
           </div>
         </div>
-        <UserCodeList fileList={fileList} />
+        <UserCodeList fileList={fileList} problemInfo={problemInfo} />
         <div
           style={{ display: fileList.length === 0 ? "block" : "none" }}
           className="no-file-div"
