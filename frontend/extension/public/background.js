@@ -254,6 +254,12 @@ function copyCode(
               problemNum: problemNumber,
               site: site,
             };
+            chrome.storage.sync.remove([
+              "leftHour",
+              "leftMinute",
+              "leftSecond",
+              "timerRunning",
+            ]);
 
             fetch(BASE_URL + "/api/user/commits", {
               method: "POST",
@@ -321,7 +327,7 @@ function copyCode(
               inputModal.style.width = "100%";
               inputModal.style.height = "100%";
               inputModal.style.backgroundColor = "black";
-              inputModal.style.opacity = "0.6";
+              inputModal.style.opacity = "1";
               inputModal.style.display = "flex";
               inputModal.style.position = "fixed";
               inputModal.style.top = 0;
@@ -332,9 +338,9 @@ function copyCode(
               const inputModalHeader = document.createElement("div");
               inputModalHeader.style.textAlign = "center";
               inputModalHeader.style.position = "relative";
-              inputModalHeader.style.backgroundColor = "white";
+              inputModalHeader.style.backgroundColor = "#F0FFFF";
               inputModalHeader.style.borderRadius = "10px";
-              inputModalHeader.style.opacity = "1.0";
+
               inputModalHeader.style.padding = "45px 25px";
               inputModalHeader.style.width = "35%";
               inputModalHeader.style.height = "35%";
@@ -349,9 +355,10 @@ function copyCode(
               const fileNameInput = document.createElement("input");
               inputDiv.innerHTML = "<span>파일명: </span>";
               inputDiv.style.fontSize = "25px";
+              fileNameInput.setAttribute("minlength", 2)
               inputDiv.appendChild(fileNameInput);
-              inputDiv.append(`.${codeLang}`);
-
+              inputDiv.append(` .${codeLang}`);
+              
               const inputButton = document.createElement("button");
               inputButton.setAttribute("class", "btn btn-primary");
               inputButton.style.padding = "15px 20px";
@@ -389,6 +396,12 @@ function copyCode(
                   problemNum: problemNumber,
                   site: site,
                 };
+                chrome.storage.sync.remove([
+                  "leftHour",
+                  "leftMinute",
+                  "leftSecond",
+                  "timerRunning",
+                ]);
 
                 fetch(BASE_URL + "/api/user/commits", {
                   method: "POST",
@@ -469,9 +482,9 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   component.style.backgroundColor = "#222";
   component.style.border = "1px solid #111";
   component.style.textAlign = "center";
-  component.style.top = "112px";
-  component.style.left = "933px";
-  component.style.width = "465px";
+  component.style.top = "90px";
+  component.style.left = "1200px";
+  component.style.width = "165px";
   component.style.height = "130px";
 
   componentHeader.style.padding = "5px";
@@ -483,14 +496,21 @@ function createTimer(h, m, s, timerRunning, timerPause) {
 
   const timeComponent = document.createElement("p");
   timeComponent.style.fontSize = "20px";
+  timeComponent.style.color = "white";
   component.appendChild(timeComponent);
 
   const startPauseButton = document.createElement("button");
   startPauseButton.innerText = timerPause ? "시작" : "일시정지";
+  startPauseButton.style.backgroundColor = timerPause ? "#006400" : "#8B0000";
+  startPauseButton.style.color = "white";
+
   startPauseButton.addEventListener("click", startPauseTimer);
 
   const stopButton = document.createElement("button");
   stopButton.innerText = "초기화";
+  stopButton.style.backgroundColor = "#FFD700";
+  stopButton.style.color = "white";
+
   stopButton.addEventListener("click", reset);
 
   var startHour,
@@ -516,7 +536,10 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   var isStop = false;
   var autotimerSwitch = false;
 
-  timeComponent.innerText = `${h} : ${m} : ${s}`;
+  var strHour = String(h).padStart(2, "0");
+  var strMinute = String(m).padStart(2, "0");
+  var strSecond = String(s).padStart(2, "0");
+  timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
   if (timerRunning) {
     let autotimer = setInterval(() => {
       if (!isStop) {
@@ -534,17 +557,20 @@ function createTimer(h, m, s, timerRunning, timerPause) {
               } else {
                 h = h - 1;
                 m = 59;
-                s = 59;
+                s = 60;
               }
             } else {
               m = m - 1;
-              s = 59;
+              s = 60;
             }
           }
           chrome.storage.sync.set(
             { leftHour: h, leftMinute: m, leftSecond: s },
             () => {
-              timeComponent.innerText = `${h} : ${m} : ${s}`;
+              strHour = String(h).padStart(2, "0");
+              strMinute = String(m).padStart(2, "0");
+              strSecond = String(s).padStart(2, "0");
+              timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
             }
           );
         } else {
@@ -552,7 +578,10 @@ function createTimer(h, m, s, timerRunning, timerPause) {
           chrome.storage.sync.set(
             { leftHour: h, leftMinute: m, leftSecond: s },
             () => {
-              timeComponent.innerText = `${h} : ${m} : ${s}`;
+              strHour = String(h).padStart(2, "0");
+              strMinute = String(m).padStart(2, "0");
+              strSecond = String(s).padStart(2, "0");
+              timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
             }
           );
         }
@@ -566,11 +595,13 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     chrome.storage.sync.set({ timerRunning: true });
     if (!timerPause) {
       timerPause = true;
+      startPauseButton.style.backgroundColor = "green";
       timerRunning = false;
       chrome.storage.sync.set({ timerPause: true });
       startPauseButton.innerText = "시작";
     } else {
       timerRunning = true;
+      startPauseButton.style.backgroundColor = "red";
       timerPause = false;
       isStop = false;
       chrome.storage.sync.set({ timerPause: false }, () => {});
@@ -601,7 +632,10 @@ function createTimer(h, m, s, timerRunning, timerPause) {
             chrome.storage.sync.set(
               { leftHour: h, leftMinute: m, leftSecond: s },
               () => {
-                timeComponent.innerText = `${h} : ${m} : ${s}`;
+                strHour = String(h).padStart(2, "0");
+                strMinute = String(m).padStart(2, "0");
+                strSecond = String(s).padStart(2, "0");
+                timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
               }
             );
           } else {
@@ -609,7 +643,10 @@ function createTimer(h, m, s, timerRunning, timerPause) {
             chrome.storage.sync.set(
               { leftHour: h, leftMinute: m, leftSecond: s },
               () => {
-                timeComponent.innerText = `${h} : ${m} : ${s}`;
+                let strHour = String(h).padStart(2, "0");
+                let strMinute = String(m).padStart(2, "0");
+                let strSecond = String(s).padStart(2, "0");
+                timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
               }
             );
           }
@@ -620,6 +657,10 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     }
   }
   function reset() {
+    startPauseButton.innerText = "시작";
+    startPauseButton.style.backgroundColor = "green";
+    timerPause = true;
+    timerRunning = false;
     isStop = true;
     autotimerSwitch = false;
     chrome.storage.sync.remove(
@@ -633,11 +674,25 @@ function createTimer(h, m, s, timerRunning, timerPause) {
       }
     );
   }
+  // scroll할때 스크롤 하는만큼 타이머 위치 변화
+  chrome.storage.sync.set({ scrollY: 0 });
+  window.onscroll = function () {
+    var diffY = window.scrollY;
+    var presentY = parseInt(component.style.top.replace("px", ""));
+    chrome.storage.sync.get("scrollY", (response) => {
+      if (Object.keys(response).length !== 0) {
+        if (diffY > response.scrollY) {
+          component.style.top = `${presentY + diffY - response.scrollY}px`;
+        } else {
+          component.style.top = `${presentY + diffY - response.scrollY}px`;
+        }
+        chrome.storage.sync.set({ scrollY: diffY });
+      }
+    });
+  };
 
-  // if present, the header is where you move the DIV from:
+  // header를 잡고 드래그하면 위치를 변화시키게하는 함수
   componentHeader.onmousedown = dragMouseDown;
-  // otherwise, move the DIV from anywhere inside the DIV:
-  // component.onmousedown = dragMouseDown;
 
   function dragMouseDown(e) {
     e = e || window.event;
@@ -668,12 +723,41 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     document.onmouseup = null;
     document.onmousemove = null;
   }
+  // 맞았습니다가 나올경우 stop시키는 함수
+  const statusTable = document.getElementById("status-table");
+  const userId = document.querySelector(".loginbar .username")?.innerHTML;
+  const result =
+    statusTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.childNodes[0]
+      ?.textContent;
+
+  function correctPause() {
+    const judging = statusTable?.childNodes[1]?.childNodes[0]?.childNodes[3]
+      ?.querySelector("span")
+      ?.classList.contains("result-judging");
+    if (judging) {
+      setTimeout(function () {
+        correctPause();
+        // console.log("채점중")
+      }, 5000);
+    } else {
+      // console.log("채점끝")
+      if (
+        (result?.includes("맞") || result?.includes("100")) &&
+        userId ===
+          statusTable?.childNodes[1]?.childNodes[0]?.childNodes[1]?.textContent
+      ) {
+        // console.log("내가 푼 문제가 맞네")
+        timerPause = true;
+        startPauseButton.style.backgroundColor = "green";
+        timerRunning = false;
+        chrome.storage.sync.set({ timerPause: true });
+        startPauseButton.innerText = "시작";
+      }
+    }
+  }
+  window.onload = correctPause();
 
   document.querySelector(".container.content")?.appendChild(component);
-  // console.log(timerPause, timerRunning)
-  // if(!timerPause) {
-  //   startPauseTimer()
-  // }
 }
 
 var timerPause = true;
@@ -706,7 +790,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         startSecond = parseInt(response.second);
       });
       chrome.storage.sync.get("timerPause", (response) => {
-        timerPause = response.timerPause;
+        if (Object.keys(response).length !== 0) {
+          timerPause = response.timerPause;
+        }
       });
 
       chrome.storage.sync.get("leftHour", (response) => {
@@ -764,7 +850,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                   //timer shown setting
                   chrome.storage.sync.set(
                     {
-                      timerShown: data.data.timershown,
+                      timerShown: data.data.timerShown,
                       repoName: data.data.repoName,
                       commitConfig: data.data.commit,
                     },
