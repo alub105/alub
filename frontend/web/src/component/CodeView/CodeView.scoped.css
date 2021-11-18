@@ -1,0 +1,77 @@
+* {
+  font-size: 100%;
+  line-height: 1.5;
+  font-family: var(--IBM);
+  margin: 0px;
+  padding: 0px;
+}
+
+.header {
+  width: 100vw;
+}
+
+.codeview {
+  width: 100%;
+  padding: 20px;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: rgb(151, 150, 150);
+}
+*::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+}
+
+.nameList {
+  background-color: grey;
+  width: 98%;
+}
+
+.nameList .draggName {
+  background-color: white;
+}
+
+.fileList .usercode {
+  width: 40vw;
+}
+
+.fileList .usercode .header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fileList .usercode .code {
+  height: 80vh;
+  width: 100%;
+  border: 1px solid;
+}
+
+.fileList .usercode .code code {
+  width: 100%;
+}
+
+.nameList,
+.fileList {
+  display: inline-flex;
+  margin: 20px 0;
+}
+
+.nameList .draggName {
+  margin: 10px;
+  padding: 10px;
+}
+
+.fileList .usercode {
+  margin-right: 30px;
+}

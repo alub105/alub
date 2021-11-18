@@ -40,10 +40,10 @@ function authListener(tabId, changeInfo, tab) {
           .then((response) => {
             if (response.ok) {
               response.json().then((data) => {
-                chrome.storage.sync.set(
-                  { token: data.data.token },
-                  function () {}
-                );
+                chrome.storage.sync.set({ token: data.data.token }, function () {
+                  const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
+                  chrome.tabs.update({ url: welcome_url });
+                });
               });
             }
           })
@@ -758,12 +758,60 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   window.onload = correctPause();
 
   document.querySelector(".container.content")?.appendChild(component);
-}
+
 
 var timerPause = true;
 var hour = 0;
 var minute = 0;
 var second = 0;
+
+      // if present, the header is where you move the DIV from:
+    componentHeader.onmousedown = dragMouseDown;
+      // otherwise, move the DIV from anywhere inside the DIV:
+    // component.onmousedown = dragMouseDown;
+    
+  
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+      }
+  
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        component.style.top = (component.offsetTop - pos2) + "px";
+        component.style.left = (component.offsetLeft - pos1) + "px";
+      }
+  
+      function closeDragElement() {
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+
+  document.querySelector('.container.content')?.appendChild(component)
+  // console.log(timerPause, timerRunning)
+  // if(!timerPause) {
+  //   startPauseTimer()
+  // }
+}
+
+var timerPause = true
+var hour = 0
+var minute = 0
+var second = 0
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {

@@ -8,8 +8,6 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import lombok.AllArgsConstructor;
@@ -29,7 +27,7 @@ import lombok.Setter;
 public class Problem {
 
   @EmbeddedId
-  private ProblemId problemId;
+  private ProblemId problemId = new ProblemId();
 
   private String title;
 
