@@ -41,6 +41,7 @@ function LandingPage() {
 
   const logout = () => {
     dispatch(actions.setToken(""));
+    dispatch(actions.setUserInfo({}));
   };
 
   const goChannel = () => {
