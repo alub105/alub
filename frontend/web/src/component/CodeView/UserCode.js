@@ -7,9 +7,9 @@ import {
   darcula,
 } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
-import Utterances from "./Utterances";
+import Comments from "./Comments";
 
-const UserCode = ({ user, codeList }) => {
+const UserCode = ({ user, codeList, problemInfo }) => {
   const [selected, setSelected] = useState(codeList.length - 1);
 
   const goGit = () => {
@@ -29,7 +29,7 @@ const UserCode = ({ user, codeList }) => {
           title={codeList[selected].fileName}
           onSelect={(eventKey) => setSelected(eventKey)}
         >
-          {codeList.map(({ fileName }, idx) => {
+          {codeList?.map(({ fileName }, idx) => {
             return (
               <Dropdown.Item key={idx} eventKey={idx}>
                 {fileName}
@@ -50,7 +50,7 @@ const UserCode = ({ user, codeList }) => {
       >
         {Buffer.from(codeList[selected].contents, "base64").toString("utf-8")}
       </SyntaxHighlighter>
-      {/* <Utterances /> */}
+      <Comments className="comment" user={user} problemInfo={problemInfo} />
     </div>
   );
 };

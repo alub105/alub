@@ -54,7 +54,7 @@ const reducers = (state = initialState, action) => {
     case studyActions.ADD_RUNNING_STUDY_LIST:
       return {
         ...state,
-        runningStudyList: state.runningStudyList.concat(action.payload),
+        runningStudyList: state.runningStudyList?.concat(action.payload),
       };
     default:
       return state;

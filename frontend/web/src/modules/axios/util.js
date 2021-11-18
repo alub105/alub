@@ -60,7 +60,6 @@ export const getStudyInfo = async (channelId, token) => {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            // console.log(data);
             resolve(data);
           });
         }

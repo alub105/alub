@@ -67,6 +67,10 @@
     padding-top: 14px;
   }
 
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
   .nav {
     margin-top: 15px;
     height: 96%;
@@ -79,7 +83,6 @@
     color: var(--white);
     overflow-y: scroll;
     flex-wrap: nowrap;
-    // position: relative;
 
     // hover effect를 위한 class
     .item {

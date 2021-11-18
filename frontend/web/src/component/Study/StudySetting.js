@@ -59,7 +59,6 @@ const StudySetting = ({ match }) => {
     });
   };
   const onChangeHost = (e) => {
-    console.log(e.target.value);
     setHost(e.target.value);
   };
 
@@ -86,7 +85,6 @@ const StudySetting = ({ match }) => {
   };
 
   const addMember = (member) => {
-    console.log(member);
     // 결과 리스트에 선택한 멤버 추가
     // 중복 없을 때만 add
     if (members.filter((m) => m.id === member.id).length === 0) {
@@ -111,7 +109,6 @@ const StudySetting = ({ match }) => {
         storeToken
       )
       .then((data) => {
-        console.log(data.data);
         setToastShow(true);
         setStudyInfo({
           ...studyInfo,
@@ -267,7 +264,7 @@ const StudySetting = ({ match }) => {
       <Alert show={show} variant="dark" className="my-alert">
         <Alert.Heading> {studyInfo.name} 삭제</Alert.Heading>
         <p>
-          정말 {studyInfo.name}을 삭제 하시겠습니까? 삭제된 채널은 복구할 수
+          정말 {studyInfo?.name}을 삭제 하시겠습니까? 삭제된 채널은 복구할 수
           없어요.
         </p>
         <hr />

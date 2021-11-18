@@ -5,11 +5,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { setSelectedChannel } from "../../modules/actions/study";
 
-const ChannelComponent = ({ info, selectChannel, selectId, setClicked }) => {
-  const { selectedChannel: storeSelectedChannel } = useSelector(
-    (state) => state.study
-  );
-
+const ChannelComponent = ({ info, selectId, setClicked }) => {
   return (
     <div>
       <OverlayTrigger

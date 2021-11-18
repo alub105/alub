@@ -18,15 +18,17 @@ const Profile = () => {
   const selectRef = useRef();
 
   const [repoSelect, setRepoSelect] = useState("");
-  const [userConfig, setUserConfig] = useState({});
   const [repos, setRepos] = useState([]);
   const [existSelect, setExistSelect] = useState("");
+
+  const [initRepoName, setInitRepoName] = useState("");
 
   const [errorMsg, setErrorMsg] = useState("");
   const [invalid, setInvalid] = useState(false);
   const [errorMsg2, setErrorMsg2] = useState("");
   const [invalid2, setInvalid2] = useState(false);
   const [valid, setValid] = useState(false);
+  const [invalid3, setInvalid3] = useState(false);
 
   const [duplicateCheck, setDuplicateCheck] = useState(false);
 
@@ -41,6 +43,8 @@ const Profile = () => {
     dirName: "",
   });
   const { repoName, dirName } = inputs;
+  const [email, setEmail] = useState("");
+  const [gitPath, setGitPath] = useState("");
 
   const [isClick, setIsClick] = useState(false);
 
@@ -55,8 +59,23 @@ const Profile = () => {
     });
     util.getUserConfig(storeToken).then((data) => {
       info = data.data;
-      setUserConfig({ ...data.data });
+      let temp = `github/${storeUserInfo?.name}`;
+      setInitRepoName(temp);
+
+      if (info.repoPath === null) {
+        setGitPath(`연결된 레포지토리가 없습니다.`);
+      } else {
+        setGitPath(
+          `github/${storeUserInfo.name}/${info.repoName}/${info.dirPath}`
+        );
+      }
     });
+
+    if (storeUserInfo.email === null) {
+      setEmail("Git에 설정한 이메일이 없습니다");
+    } else {
+      setEmail(storeUserInfo.email);
+    }
   };
 
   const repoInit = () => {
@@ -66,7 +85,7 @@ const Profile = () => {
         ...inputs,
         repoName: "Alub",
       });
-    } else if (info.dirPath === "") {
+    } else if (info.dirPath === null || info.dirPath === "") {
       setRepoSelect("newRepo");
       setInputs({
         repoName: info.repoName,
@@ -91,6 +110,7 @@ const Profile = () => {
     setErrorMsg2("");
     setInvalid2(false);
     setValid(false);
+    setInvalid3(false);
 
     setInputs({
       ...inputs,
@@ -129,19 +149,6 @@ const Profile = () => {
       setRepoSelect("existRepo");
     }
   };
-
-  const setGitRepoName = useCallback(
-    (user, repo, dir) => {
-      if (repo === null) {
-        return `연결된 레포지토리가 없습니다`;
-      } else if (dir === null) {
-        return `github.com/${user}/${repo}`;
-      } else {
-        return `github.com/${user}/${repo}/${dir}`;
-      }
-    },
-    [info]
-  );
 
   const searchRepoExist = () => {
     if (repoName === "") {
@@ -191,6 +198,8 @@ const Profile = () => {
 
       if (existSelect === "") {
         selectRef.current.focus();
+        setInvalid3(true);
+        return;
       }
 
       _repoName = existSelect;
@@ -200,6 +209,7 @@ const Profile = () => {
 
     util.setRepo(_repoName, _creation, _dirName, storeToken).then((data) => {
       setRepos([...repos, { name: _repoName }]);
+
       if (data.code === "fail") {
         setToastMsg("이미 존재하는 repository입니다.");
       } else {
@@ -207,7 +217,8 @@ const Profile = () => {
       }
       setShow(true);
       info.repoName = _repoName;
-      info.dirPath = _repoName;
+      info.dirPath = _dirName;
+
       let temp = _creation ? "newRepo" : "existRepo";
       setRepoSelect(temp);
       if (!temp) {
@@ -226,7 +237,7 @@ const Profile = () => {
           <div className="user-box">
             <div className="img-box">
               <img
-                src={storeUserInfo.imageUrl}
+                src={storeUserInfo?.imageUrl}
                 className="image"
                 alt="profile"
               />
@@ -237,7 +248,7 @@ const Profile = () => {
                 <input
                   type="text"
                   className="form-control"
-                  value={storeUserInfo.name}
+                  value={storeUserInfo?.name}
                   readOnly
                 />
               </div>
@@ -247,7 +258,7 @@ const Profile = () => {
                   type="text"
                   readOnly
                   className="form-control"
-                  value={storeUserInfo.email}
+                  value={email || ""}
                 />
               </div>
               <div className="grid-row">
@@ -256,11 +267,7 @@ const Profile = () => {
                   type="text"
                   readOnly
                   className="form-control"
-                  value={setGitRepoName(
-                    storeUserInfo.name,
-                    userConfig.repoName,
-                    userConfig.dirPath
-                  )}
+                  value={gitPath || ""}
                 />
               </div>
             </div>
@@ -296,7 +303,7 @@ const Profile = () => {
                   readOnly
                   placeholder=""
                   className="form-control"
-                  value="github/eunsong/"
+                  value={initRepoName || ""}
                 />
                 <div className="form-group has-success">
                   <input
@@ -353,23 +360,31 @@ const Profile = () => {
                   readOnly
                   placeholder=""
                   className="form-control"
-                  value="github/eunsong/"
+                  value={initRepoName || ""}
                 />
-                <select
-                  className="form-select"
-                  value={existSelect || ""}
-                  onChange={handleExistRepo}
-                  onFocus={focusHandler}
-                  ref={selectRef}
-                >
-                  {repos.map((repo, index) => {
-                    return (
-                      <option key={index} value={repo.name}>
-                        {repo.name}
-                      </option>
-                    );
-                  })}
-                </select>
+                <div>
+                  <select
+                    className="form-select"
+                    value={existSelect || ""}
+                    onChange={handleExistRepo}
+                    onFocus={focusHandler}
+                    ref={selectRef}
+                  >
+                    {repos.map((repo, index) => {
+                      return (
+                        <option key={index} value={repo.name}>
+                          {repo.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div
+                    className="invalid-feedback"
+                    style={{ display: invalid3 ? "block" : "none" }}
+                  >
+                    레포지토리를 선택해 주세요.
+                  </div>
+                </div>
                 <div>
                   <input
                     type="text"

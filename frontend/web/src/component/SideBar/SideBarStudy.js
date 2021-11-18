@@ -81,7 +81,6 @@ const SideBarStudy = ({ match }) => {
     } else {
       setMainWidth(232);
     }
-    console.log(mainWidth);
   };
 
   const doingToggle = useCallback(

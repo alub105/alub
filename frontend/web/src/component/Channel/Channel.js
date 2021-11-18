@@ -98,7 +98,7 @@ const Channel = ({ match }) => {
                   <img
                     className="image"
                     alt="profile"
-                    src={storeUserInfo.imageUrl}
+                    src={storeUserInfo?.imageUrl}
                   />
                   <div className="overlay-profile" />
                 </div>
@@ -113,7 +113,6 @@ const Channel = ({ match }) => {
                   key={index}
                   selectId={selectId}
                   setClicked={setClicked}
-                  selectChannel={selectChannel}
                 />
               );
             })}
