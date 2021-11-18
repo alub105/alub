@@ -37,15 +37,15 @@ h1 {
 }
 
 .codeview .container {
-  width: 100%;
+  width: 98%;
   min-width: 900px;
   padding: 0;
+  margin: 0 auto;
+  max-width: 100% !important;
 }
 
 .nameList {
   background: var(--background-linear);
-  /* background: var(--text-green); */
-
   width: 100%;
   margin: 0 10px;
   border-radius: 6px;
@@ -68,6 +68,10 @@ h1 {
 
 .nameList .draggName {
   background-color: white;
+}
+
+.fileList {
+  min-width: 300px;
 }
 
 .fileList .usercode {

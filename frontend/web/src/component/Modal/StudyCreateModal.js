@@ -134,11 +134,6 @@ const StudyCreateModal = (props) => {
       homeworkEnd.toString()
     );
 
-    let blank = [{ id: 2, name: "eunsong" }, { id: 3, name: "eunsong" }];
-    let add = { id: 1, name: "eunsong" };
-    blank = [...blank, add];
-    console.log(blank);
-
     util
       .createStudy(
         channelId,
@@ -151,7 +146,6 @@ const StudyCreateModal = (props) => {
         storeToken
       )
       .then((data) => {
-        console.log(data.data);
         dispatch(studyActions.addRunningStudyList(data.data));
         props.onHide();
       });

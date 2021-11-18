@@ -1,3 +1,4 @@
+/* eslint-disable */
 import "./Profile.scoped.scss";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -5,7 +6,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as util from "../../modules/axios/util";
 
 import { Toast } from "react-bootstrap";
-import { resolvePlugin } from "@babel/core";
 
 const Profile = () => {
   let info = {};
@@ -130,15 +130,18 @@ const Profile = () => {
     }
   };
 
-  const setGitRepoName = useCallback((user, repo, dir) => {
-    if (repo === null) {
-      return `연결된 레포지토리가 없습니다`;
-    } else if (dir === null) {
-      return `github.com/${user}/${repo}`;
-    } else {
-      return `github.com/${user}/${repo}/${dir}`;
-    }
-  });
+  const setGitRepoName = useCallback(
+    (user, repo, dir) => {
+      if (repo === null) {
+        return `연결된 레포지토리가 없습니다`;
+      } else if (dir === null) {
+        return `github.com/${user}/${repo}`;
+      } else {
+        return `github.com/${user}/${repo}/${dir}`;
+      }
+    },
+    [info]
+  );
 
   const searchRepoExist = () => {
     if (repoName === "") {

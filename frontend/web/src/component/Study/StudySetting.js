@@ -1,3 +1,4 @@
+/* eslint-disable */
 import "./StudySetting.scoped.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";

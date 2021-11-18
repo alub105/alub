@@ -46,7 +46,9 @@ const Channel = ({ match }) => {
 
       let url = window.location.href;
       let temp = url.split("channel/");
-      temp = temp[1].split("/");
+      if (temp.length > 1) {
+        temp = temp[1].split("/");
+      }
       if (temp[0] === "common") {
         setSelectId(-1);
       } else if (temp[0] === "codeview") {
