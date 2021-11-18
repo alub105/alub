@@ -49,7 +49,6 @@ const ChannelCreateModal = (props) => {
   };
 
   const searchMemberApi = () => {
-    console.log("channel");
     fetch(API_BASE_URL + "/api/users/searches", {
       method: "POST",
       headers: {

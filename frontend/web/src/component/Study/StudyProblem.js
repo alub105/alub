@@ -49,8 +49,8 @@ const StudyProblem = ({ match }) => {
     }
   }, []);
 
-  const problemFormat = useCallback((title, site, level) => {
-    return `[${site}] ${title} - ${level}`;
+  const problemFormat = useCallback((title, site, level, num) => {
+    return `[${site}] ${title} ${num}번 - ${level}`;
   });
 
   const isFinish = () => {
@@ -78,6 +78,13 @@ const StudyProblem = ({ match }) => {
       // console.log(data);
       history.push(`/channel/${channelId}`);
     });
+  };
+
+  const goBoj = (problem) => {
+    if (problem.site === "BOJ") {
+      let url = `https://www.acmicpc.net/problem/${problem.num}`;
+      window.open(url, "_blank").focus();
+    }
   };
 
   return (
@@ -132,8 +139,13 @@ const StudyProblem = ({ match }) => {
             {studyDetail?.assignedProblems?.map((problem) => {
               return (
                 <tr key={problem.id}>
-                  <td>
-                    {problemFormat(problem.title, problem.site, problem.level)}
+                  <td onClick={() => goBoj(problem)} className="site">
+                    {problemFormat(
+                      problem.title,
+                      problem.site,
+                      problem.level,
+                      problem.num
+                    )}
                   </td>
                   <td className="go-code">
                     <Link
