@@ -313,7 +313,7 @@ function copyCode(
                     body.appendChild(template);
                     setTimeout(() => {
                       document.querySelector("#alub-noti").remove();
-                    }, 3000);
+                    }, 5000);
                   });
                 }
               })
@@ -328,6 +328,7 @@ function copyCode(
               }
               const inputModal = document.createElement("div");
               inputModal.setAttribute("class", "modal");
+              inputModal.id = "inputModal";
               inputModal.style.width = "100%";
               inputModal.style.height = "100%";
               inputModal.style.backgroundColor = "black";
@@ -368,58 +369,50 @@ function copyCode(
               inputButton.style.padding = "15px 20px";
               inputButton.style.fontSize = "20px";
 
-              inputButton.addEventListener("click", submitCommitData);
-              inputButton.innerText = "Commit";
-              inputModalHeader.appendChild(inputForm);
-              inputForm.append(inputText);
-              inputForm.appendChild(inputDiv);
-              inputForm.appendChild(inputButton);
-              inputModal.appendChild(inputModalHeader);
+              inputButton.addEventListener(
+                "click",
+                function submitCommitData(event) {
+                  event.preventDefault();
+                  chrome.storage.sync.set({ commitNow: false }, () => {});
+                  let fileName = fileNameInput.value;
+                  if (timerRunning) {
+                    var spendTime = `${consumedHour}:${consumedMinute}:${consumedSecond}`;
+                  } else {
+                    var spendTime = null;
+                  }
+                  const data = {
+                    timer: spendTime,
+                    srcCode: answerCode,
+                    commit: commitConfig,
+                    language: codeLang,
+                    fileName: fileName,
+                    runningTime: timeConsumed,
+                    runningMemory: memory,
+                    problemTitle: problemTitle,
+                    problemNum: problemNumber,
+                    site: site,
+                  };
+                  chrome.storage.sync.remove([
+                    "leftHour",
+                    "leftMinute",
+                    "leftSecond",
+                    "timerRunning",
+                  ]);
 
-              document
-                .querySelector(".container.content")
-                ?.appendChild(inputModal);
-
-              function submitCommitData() {
-                chrome.storage.sync.set({ commitNow: false }, () => {});
-                let fileName = fileNameInput.value;
-                if (timerRunning) {
-                  var spendTime = `${consumedHour}:${consumedMinute}:${consumedSecond}`;
-                } else {
-                  var spendTime = null;
-                }
-                const data = {
-                  timer: spendTime,
-                  srcCode: answerCode,
-                  commit: commitConfig,
-                  language: codeLang,
-                  fileName: fileName,
-                  runningTime: timeConsumed,
-                  runningMemory: memory,
-                  problemTitle: problemTitle,
-                  problemNum: problemNumber,
-                  site: site,
-                };
-                chrome.storage.sync.remove([
-                  "leftHour",
-                  "leftMinute",
-                  "leftSecond",
-                  "timerRunning",
-                ]);
-
-                fetch(BASE_URL + "/api/user/commits", {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${token.token}`,
-                    "Content-Type": "application/json;charset=UTF-8",
-                  },
-                  body: JSON.stringify(data),
-                })
-                  .then((response) => {
-                    if (response.ok) {
-                      response.json().then((data) => {
-                        const body = document.querySelector(".wrapper");
-                        const element = `<div style=' position: fixed; top: 25px; right: 0; z-index: 100' id='alub-noti'>
+                  fetch(BASE_URL + "/api/user/commits", {
+                    method: "POST",
+                    headers: {
+                      Authorization: `Bearer ${token.token}`,
+                      "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    body: JSON.stringify(data),
+                  })
+                    .then((response) => {
+                      if (response.ok) {
+                        response.json().then((data) => {
+                          document.getElementById("inputModal").remove();
+                          const body = document.querySelector(".wrapper");
+                          const element = `<div style=' position: fixed; top: 25px; right: 0; z-index: 100' id='alub-noti'>
                       <div
                         style='
                           width: 350px;
@@ -450,19 +443,30 @@ function copyCode(
                         </div>
                       </div>
                     </div>`;
-                        const template = document.createElement("div");
-                        template.innerHTML = element;
-                        body.appendChild(template);
-                        setTimeout(() => {
-                          document.querySelector("#alub-noti").remove();
-                        }, 3000);
-                      });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              }
+                          const template = document.createElement("div");
+                          template.innerHTML = element;
+                          body.appendChild(template);
+                          setTimeout(() => {
+                            document.querySelector("#alub-noti").remove();
+                          }, 5000);
+                        });
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                }
+              );
+              inputButton.innerText = "Commit";
+              inputModalHeader.appendChild(inputForm);
+              inputForm.append(inputText);
+              inputForm.appendChild(inputDiv);
+              inputForm.appendChild(inputButton);
+              inputModal.appendChild(inputModalHeader);
+
+              document
+                .querySelector(".container.content")
+                ?.appendChild(inputModal);
             });
           }
         });
@@ -599,13 +603,13 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     chrome.storage.sync.set({ timerRunning: true });
     if (!timerPause) {
       timerPause = true;
-      startPauseButton.style.backgroundColor = "green";
+      startPauseButton.style.backgroundColor = "#006400";
       timerRunning = false;
       chrome.storage.sync.set({ timerPause: true });
       startPauseButton.innerText = "시작";
     } else {
       timerRunning = true;
-      startPauseButton.style.backgroundColor = "red";
+      startPauseButton.style.backgroundColor = "#8B0000";
       timerPause = false;
       isStop = false;
       chrome.storage.sync.set({ timerPause: false }, () => {});
@@ -670,11 +674,14 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     chrome.storage.sync.remove(
       ["leftHour", "leftMinute", "leftSecond", "timerRunning"],
       () => {
-        timeComponent.innerText = `${startHour} : ${startMinute} : ${startSecond}`;
-
+        
         h = startHour;
         m = startMinute;
         s = startSecond;
+        let firstHour = String(h).padStart(2, "0");
+        let firstMinute = String(m).padStart(2, "0");
+        let firstSecond = String(s).padStart(2, "0");
+        timeComponent.innerText = `${firstHour} : ${firstMinute} : ${firstSecond}`;
       }
     );
   }
@@ -762,11 +769,7 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   window.onload = correctPause();
 
   document.querySelector(".container.content")?.appendChild(component);
-
-  var timerPause = true;
-  var hour = 0;
-  var minute = 0;
-  var second = 0;
+}
 
   function elementDrag(e) {
     e = e || window.event;
@@ -780,24 +783,6 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     component.style.top = component.offsetTop - pos2 + "px";
     component.style.left = component.offsetLeft - pos1 + "px";
   }
-
-  function closeDragElement() {
-    // stop moving when mouse button is released:
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-
-  document.querySelector(".container.content")?.appendChild(component);
-  // console.log(timerPause, timerRunning)
-  // if(!timerPause) {
-  //   startPauseTimer()
-  // }
-}
-
-var timerPause = true;
-var hour = 0;
-var minute = 0;
-var second = 0;
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
