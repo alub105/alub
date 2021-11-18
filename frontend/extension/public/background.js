@@ -762,6 +762,65 @@ function createTimer(h, m, s, timerRunning, timerPause) {
 
   document.querySelector(".container.content")?.appendChild(component);
 
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    component.style.top = component.offsetTop - pos2 + "px";
+    component.style.left = component.offsetLeft - pos1 + "px";
+  }
+
+  function closeDragElement() {
+    // stop moving when mouse button is released:
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+  // 맞았습니다가 나올경우 stop시키는 함수
+  const statusTable = document.getElementById("status-table");
+  const userId = document.querySelector(".loginbar .username")?.innerHTML;
+  const result =
+    statusTable?.childNodes[1]?.childNodes[0]?.childNodes[3]?.childNodes[0]
+      ?.textContent;
+
+  function correctPause() {
+    const judging = statusTable?.childNodes[1]?.childNodes[0]?.childNodes[3]
+      ?.querySelector("span")
+      ?.classList.contains("result-judging");
+    if (judging) {
+      setTimeout(function () {
+        correctPause();
+        // console.log("채점중")
+      }, 5000);
+    } else {
+      // console.log("채점끝")
+      if (
+        (result?.includes("맞") || result?.includes("100")) &&
+        userId ===
+          statusTable?.childNodes[1]?.childNodes[0]?.childNodes[1]?.textContent
+      ) {
+        // console.log("내가 푼 문제가 맞네")
+        timerPause = true;
+        startPauseButton.style.backgroundColor = "green";
+        timerRunning = false;
+        chrome.storage.sync.set({ timerPause: true });
+        startPauseButton.innerText = "시작";
+      }
+    }
+  }
+  window.onload = correctPause();
+
+  document.querySelector(".container.content")?.appendChild(component);
+
+
+var timerPause = true;
+var hour = 0;
+var minute = 0;
+var second = 0;
 
 var timerPause = true;
 var hour = 0;
