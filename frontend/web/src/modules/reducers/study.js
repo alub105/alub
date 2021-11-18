@@ -1,13 +1,13 @@
 import * as studyActions from "../actions/study";
 
 const initialState = {
-  selectedChannel: -1, //선택한 채널 id
+  selectedChannel: 0, //선택한 채널 id
   channelList: [],
-  studyInfo: {},
+  runningStudyList: [],
+  endedStudyList: [],
 };
 
 const reducers = (state = initialState, action) => {
-  console.log(action.payload);
   switch (action.type) {
     case studyActions.SET_SELECTED_CHANNEL:
       return {
@@ -15,17 +15,46 @@ const reducers = (state = initialState, action) => {
         selectedChannel: action.payload,
       };
     case studyActions.SET_CHANNEL_LIST:
-      if (!state.channelList.find((channel) => action.payload.id === channel.id)) {
-        return {
-          channelList: state.channelList.concat(action.payload),
-          selectedChannel: action.payload.id,
-        };
-      }
-
-    case studyActions.SET_STUDY_INFO:
+      return {
+        channelList: [...action.payload],
+        selectedChannel: action.payload.id,
+      };
+    case studyActions.UPDATE_CHANNEL_LIST:
+      return {
+        // ...state,
+        channelList: state.channelList.concat(action.payload),
+        selectedChannel: action.payload.id,
+      };
+    case studyActions.UPDATE_CHANNEL:
       return {
         ...state,
-        studyInfo: action.payload,
+        channelList: state.channelList.map((content) =>
+          content.id === Number(action.payload.id)
+            ? { ...content, name: action.payload.name }
+            : content
+        ),
+      };
+    case studyActions.DELETE_CHANNEL:
+      return {
+        ...state,
+        channelList: state.channelList.filter(
+          (channel) => channel.id !== Number(action.payload)
+        ),
+      };
+    case studyActions.SET_RUNNING_STUDY_LIST:
+      return {
+        ...state,
+        runningStudyList: [...action.payload],
+      };
+    case studyActions.SET_ENDED_STUDY_LIST:
+      return {
+        ...state,
+        endedStudyList: [...action.payload],
+      };
+    case studyActions.ADD_RUNNING_STUDY_LIST:
+      return {
+        ...state,
+        runningStudyList: state.runningStudyList?.concat(action.payload),
       };
     default:
       return state;

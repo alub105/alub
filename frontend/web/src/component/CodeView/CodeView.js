@@ -8,6 +8,8 @@ import MiniMap from "./MiniMap";
 import UserCodeList from "./UserCodeList";
 import "./CodeView.scoped.css";
 
+import * as util from "../../modules/axios/util";
+
 const CodeView = ({ match, location }) => {
   const { token: storeToken } = useSelector((state) => state.user);
 
@@ -15,14 +17,28 @@ const CodeView = ({ match, location }) => {
 
   const channelId = match.params.channelId;
   const siteName = query[1].split("&")[0];
-  const problemNum = query[2];
+  var problemNum = query[2];
 
   const [userList, setUserList] = useState([]);
   const [fileList, setFileList] = useState([]);
 
+  const [problemInfo, setProblemInfo] = useState({});
+
   useEffect(() => {
     getMembers();
+    getProblem();
+
+    let problemParams = problemNum.split("&");
+    if (problemParams.length > 1) {
+      problemNum = problemParams[0];
+    }
   }, []);
+
+  function getProblem() {
+    util.searchProblem(siteName, problemNum, storeToken).then((data) => {
+      setProblemInfo(data.data[0]);
+    });
+  }
 
   function getMembers() {
     fetch(API_BASE_URL + `/api/channels/${channelId}/members`, {
@@ -67,7 +83,7 @@ const CodeView = ({ match, location }) => {
       })
     );
 
-    setUserList(members.filter((user, idx) => fileList[idx].codeList != null ));
+    setUserList(members.filter((user, idx) => fileList[idx].codeList != null));
     setFileList(fileList.filter((file) => file.codeList != null));
   }
 
@@ -82,7 +98,6 @@ const CodeView = ({ match, location }) => {
      * 2. 드래그가 끝난 당시의 index에 현재 드래그 중인 요소를 넣는다
      */
 
-    console.log(result);
     if (!result.destination) return;
 
     const draggingItemIndex = result.source.index;
@@ -105,11 +120,20 @@ const CodeView = ({ match, location }) => {
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <div className="header">
           <h1>
-            {siteName} {problemNum}
+            [{siteName}] {problemInfo?.title} {problemNum} -{" "}
+            {problemInfo?.level}
           </h1>
-          <MiniMap userList={userList} fileList={fileList} />
+          <div className="container">
+            <MiniMap userList={userList} fileList={fileList} />
+          </div>
         </div>
-        <UserCodeList fileList={fileList} />
+        <UserCodeList fileList={fileList} problemInfo={problemInfo} />
+        <div
+          style={{ display: fileList.length === 0 ? "block" : "none" }}
+          className="no-file-div"
+        >
+          <h3>아직 제출한 멤버가 없습니다.</h3>
+        </div>
       </DragDropContext>
     </div>
   );

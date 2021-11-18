@@ -2,7 +2,17 @@
   width: 100%;
   height: 100%;
   margin: 0 auto;
-  padding: 20px 30px;
+  padding: 20px 5vw;
+  font-family: var(--IBM);
+  max-width: 1200px;
+  min-width: 1000px;
+
+  $ended-bg: #d9fbf4;
+  $ended-text: #4ab899;
+  $running-bg: #e6e0fe;
+  $running-text: #7556f5;
+  $todo-bg: rgb(252, 225, 229);
+  $todo-text: rgb(224, 104, 119);
 
   a {
     text-decoration: none;
@@ -17,6 +27,9 @@
   h1 {
     padding-top: 30px;
     padding-left: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 2.4rem;
   }
   .study-wrapper {
     margin-top: 3vh;
@@ -26,13 +39,36 @@
       margin-top: 10vh;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 35px;
+      gap: 30px;
       width: 100%;
       height: 100%;
 
       .study-list {
         width: 100%;
-        height: 100%;
+
+        .end {
+          display: flex;
+          flex-direction: row;
+          width: 90%;
+          justify-content: space-between;
+          padding: 0;
+          margin: 0;
+          align-items: center;
+
+          h3 {
+            margin: 0;
+          }
+
+          .btn {
+            padding: 0.4rem 1.4rem;
+            font-size: 1rem;
+          }
+        }
+
+        h3 {
+          font-size: 1.4rem;
+          padding: 0.3rem 0;
+        }
 
         table {
           width: 100%;
@@ -43,12 +79,13 @@
             width: 100%;
             display: block;
             td {
-              padding: 5px;
+              padding: 10px;
               display: inline-block;
               width: 50%;
+              margin-bottom: 0.2rem;
 
               &.name {
-                font-size: 1.1rem;
+                font-size: 1rem;
                 i {
                   margin-right: 5px;
                 }
@@ -57,6 +94,27 @@
               &.time {
                 width: 50%;
                 text-align: center;
+
+                .tag {
+                  border-radius: 18px;
+                  padding: 3px 20px;
+                  font-size: 0.9rem;
+
+                  &.running {
+                    background-color: $running-bg;
+                    color: $running-text;
+                  }
+
+                  &.done {
+                    background-color: $ended-bg;
+                    color: $ended-text;
+                  }
+
+                  &.todo {
+                    background-color: $todo-bg;
+                    color: $todo-text;
+                  }
+                }
               }
             }
 

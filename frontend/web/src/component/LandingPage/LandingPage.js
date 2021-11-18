@@ -26,7 +26,6 @@ function LandingPage() {
   useEffect(() => {
     AOS.init();
 
-    console.log(storeToken);
     if (!storeToken) {
       setIsLogin(false);
     } else {
@@ -42,10 +41,17 @@ function LandingPage() {
 
   const logout = () => {
     dispatch(actions.setToken(""));
+    dispatch(actions.setUserInfo({}));
   };
 
   const goChannel = () => {
     history.push("/channel");
+  };
+
+  const goExtension = () => {
+    window.open(
+      "https://chrome.google.com/webstore/detail/alub/joknofdeknbhkjfpmhleippabhejlagn?hl=ko"
+    );
   };
 
   return (
@@ -87,13 +93,18 @@ function LandingPage() {
             </h1>
             <div className="title-box">
               <h3 className="sub-title">
-                ALUB 스터디는 백준과 프로그래머스 사이트에 특화된 온라인 코딩 스터디 사이트입니다.
-                ALUB Extension을 설치하면 더 간편하게 스터디 할 수 있어요! 지금 시작해 볼까요?
+                ALUB 스터디는 백준과 프로그래머스 사이트에 특화된 온라인 코딩
+                스터디 사이트입니다. ALUB Extension을 설치하면 더 간편하게
+                스터디 할 수 있어요! 지금 시작해 볼까요?
               </h3>
             </div>
             <div>
               <div className="button-box">
-                <button type="button" className="btn btn-dark btn-lg">
+                <button
+                  type="button"
+                  className="btn btn-dark btn-lg"
+                  onClick={() => goExtension()}
+                >
                   <i className="fab fa-chrome" />
                   Extension 설치하기
                 </button>
@@ -118,8 +129,8 @@ function LandingPage() {
           <div className="flex-column text-box">
             <h1>코딩 전용 온라인 스터디 채널을 만들어 보세요</h1>
             <p>
-              ALUB 스터디는 그룹별 채널로 나뉩니다. 이메일을 통해 멤버를 초대하고, 스터디를
-              생성하고, 과제를 만들 수 있어요.
+              ALUB 스터디는 그룹별 채널로 나뉩니다. 이메일을 통해 멤버를
+              초대하고, 스터디를 생성하고, 과제를 만들 수 있어요.
             </p>
           </div>
         </section>
@@ -127,8 +138,9 @@ function LandingPage() {
           <div className="flex-column text-box">
             <h1>백준, 프로그래머스에 특화된 스터디</h1>
             <p>
-              백준, 프로그래머스의 문제를 검색해 문제집을 만들 수 있어요. 사이트에서 문제를 제출하면
-              바로 코드를 불러오기까지! 그야말로 개발자를 위한 스터디 아닌가요?
+              백준, 프로그래머스의 문제를 검색해 문제집을 만들 수 있어요.
+              사이트에서 문제를 제출하면 바로 코드를 불러오기까지! 그야말로
+              개발자를 위한 스터디 아닌가요?
             </p>
           </div>
           <div className="image-box ">
@@ -144,12 +156,17 @@ function LandingPage() {
           <div className="flex-column text-box">
             <h1>쉽고 보기 편한 코드 비교</h1>
             <p>
-              스터디 하면서 코드를 한번에 비교하고 싶지 않나요? ALUB 스터디에서는 멤버의 코드를
-              한곳에서 비교하고, 댓글을 달면 GitHub 이슈까지 생성됩니다!
+              스터디 하면서 코드를 한번에 비교하고 싶지 않나요? ALUB
+              스터디에서는 멤버의 코드를 한곳에서 비교하고, 댓글을 달면 GitHub
+              이슈까지 생성됩니다!
             </p>
           </div>
         </section>
-        <img src={ellipse_white} className="ellipse-white" alt="ellipse-white" />
+        <img
+          src={ellipse_white}
+          className="ellipse-white"
+          alt="ellipse-white"
+        />
         {/* -----x-- descript -x-------- */}
       </main>
       <footer>
@@ -158,7 +175,11 @@ function LandingPage() {
             <p>© 2021 ALUB. All rights reserved.</p>
             <p>Git과 Email을 통해 자유롭게 이슈를 올려보세요</p>
             <div className="flex-row">
-              <a href="https://github.com/alub105/alub" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://github.com/alub105/alub"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fab fa-github " />
               </a>
               <a

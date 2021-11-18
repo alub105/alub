@@ -4,9 +4,137 @@
   margin: 0 auto;
   padding: 20px 30px;
   font-family: var(—IBM);
+  max-width: 850px;
+  min-width: 600px;
 
   h1 {
     text-align: center;
     padding: 30px 10px;
+    font-size: 2.4rem;
+  }
+
+  .setting-container {
+    width: 90% !important;
+    margin: 0 auto;
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+
+    h4 {
+      font-size: 1.3rem;
+      margin: 0;
+    }
+
+    .grid-col {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 3fr;
+      align-items: center;
+    }
+
+    .member {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      margin-top: 10px;
+
+      .member-name {
+        display: grid;
+        grid-template-columns: 85% 15%;
+        gap: 4px;
+
+        button {
+          padding: 0px;
+          border-radius: 6px;
+          font-weight: bold;
+          font-family: var(--IBM);
+        }
+      }
+
+      h4 {
+        font-size: 1.1rem;
+      }
+
+      .result {
+        width: 100%;
+        height: 209px;
+        background-color: var(--background);
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        text-align: center !important;
+        align-items: center;
+        justify-content: center;
+
+        h4 {
+          height: 209px;
+          line-height: 209px;
+        }
+
+        p {
+          margin: 0;
+          padding: 0 10px;
+          font-family: var(--IBM);
+          font-weight: bold;
+          color: var(--text-black-light);
+        }
+
+        .member-item {
+          width: 100%;
+          padding: 6px 10px;
+          font-size: 1.1rem;
+          color: var(--text-black);
+          align-items: center;
+          border-radius: 6px;
+
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          gap: 8px;
+          text-align: left !important;
+
+          button {
+            border-radius: 6px;
+            padding: 3px 0;
+            width: 3.5rem;
+          }
+
+          &:hover {
+            background-color: var(--background-light);
+          }
+        }
+      }
+    }
+
+    .btn-submit {
+      font-size: 1.2rem;
+      padding: 3px;
+    }
+  }
+  .btn-delete {
+    font-size: 1rem;
+    padding: 5px 30px;
+    margin-left: 30px;
+  }
+
+  .my-alert {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-60%, -50%);
+    width: 450px;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+
+    font-family: var(--IBM);
+    color: white;
   }
 }

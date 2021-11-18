@@ -12,11 +12,6 @@
     height: 357px;
   }
 
-  .btn-close {
-    position: absolute !important;
-    color: red !important;
-  }
-
   .my-modal-header {
     display: flex;
     flex-direction: column;
@@ -84,6 +79,7 @@
 
       h4 {
         font-size: 1.1rem;
+        text-align: left;
       }
 
       .result {
@@ -94,7 +90,6 @@
         display: flex;
         flex-direction: column;
         overflow-y: scroll;
-        text-align: center !important;
         align-items: center;
         justify-content: center;
 
@@ -102,6 +97,7 @@
           color: var(--text-black-light);
           height: 209px;
           line-height: 209px;
+          text-align: center;
         }
 
         p {

@@ -80,6 +80,7 @@ public class GitHubAuthenticate {
    */
   private User updateExistingUser(User user, GithubUserRes githubUserRes, String accessToken) {
     user.setName(githubUserRes.getLogin());
+    user.setEmail(githubUserRes.getEmail());
     user.setImageUrl(githubUserRes.getAvatarUrl());
     user.setGithubAccessToken(accessToken);
     return userRepository.save(user);

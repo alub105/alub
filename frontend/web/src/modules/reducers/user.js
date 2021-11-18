@@ -21,10 +21,6 @@ const reducers = (state = initialStates, action) => {
     case userActions.SET_USER_INFO:
       return {
         ...state,
-        // userId: action.payload.userId,
-        // name: action.payload.name,
-        // email: action.payload.email,
-        // imageUrl: action.payload.imageUrl,
         userInfo: action.payload,
       };
     default:

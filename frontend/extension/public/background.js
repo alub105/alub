@@ -38,6 +38,7 @@ function authListener(tabId, changeInfo, tab) {
           }),
         })
           .then((response) => {
+            console.log("move ");
             if (response.ok) {
               response.json().then((data) => {
                 chrome.storage.sync.set(
@@ -770,10 +771,18 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   document.querySelector(".container.content")?.appendChild(component);
 }
 
-var timerPause = true;
-var hour = 0;
-var minute = 0;
-var second = 0;
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    component.style.top = component.offsetTop - pos2 + "px";
+    component.style.left = component.offsetLeft - pos1 + "px";
+  }
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {

@@ -16,7 +16,10 @@
   "background": {
     "service_worker": "background.js"
   },
-  "host_permissions": ["https://*.acmicpc.net/*", "https://programmers.co.kr/*"],
+  "host_permissions": [
+    "https://*.acmicpc.net/*",
+    "https://programmers.co.kr/*"
+  ],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
