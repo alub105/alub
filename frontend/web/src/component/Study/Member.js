@@ -17,7 +17,6 @@ const Member = ({ match }) => {
   }, []);
 
   const goGit = (member) => {
-    console.log("go");
     let url = `https://github.com/${member.name}/${member.repoName}/`;
     window.open(url, "_blank").focus();
   };

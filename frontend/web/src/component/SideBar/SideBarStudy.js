@@ -18,6 +18,12 @@ import Member from "../Study/Member";
 const SideBarStudy = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
   const { userInfo: storeUserInfo } = useSelector((state) => state.user);
+  const { runningStudyList: storeRunningStudyList } = useSelector(
+    (state) => state.study
+  );
+  const { endedStudyList: storeEndedStudyList } = useSelector(
+    (state) => state.study
+  );
 
   const dispatch = useDispatch();
 
@@ -41,36 +47,6 @@ const SideBarStudy = ({ match }) => {
     host: {},
   });
 
-  const [runningStudyList, setRunningStudyList] = useState([
-    {
-      id: 5,
-      startTime: "2021-11-05 20:00:00",
-      endTime: "2021-11-15 20:00:00",
-      studyName: "5주차 스터디",
-    },
-    {
-      id: 6,
-      startTime: "2021-11-05 20:00:00",
-      endTime: "2021-11-15 20:00:00",
-      studyName: "6주차 스터디",
-    },
-  ]);
-
-  const [endStudyList, setEndStudyList] = useState([
-    {
-      id: 4,
-      startTime: "2021-11-01 20:00:00",
-      endTime: "2021-11-03 20:00:00",
-      studyName: "4주차 스터디",
-    },
-    {
-      id: 3,
-      startTime: "2021-11-01 20:00:00",
-      endTime: "2021-11-03 20:00:00",
-      studyName: "3주차 스터디",
-    },
-  ]);
-
   useEffect(() => {
     // 스터디 정보 가져오기
     util.getStudyInfo(channelId, storeToken).then((data) => {
@@ -78,11 +54,19 @@ const SideBarStudy = ({ match }) => {
     });
     // 스터디 리스트 가져오기
     util.getStudyList(channelId, storeToken).then((data) => {
-      console.log(data);
+      dispatch(studyActions.setRunningStudyList(data.data.running));
+      dispatch(studyActions.setEndedStuyList(data.data.ended));
     });
-
+    initSidebarToggle();
     dispatch(studyActions.setSelectedChannel(channelId));
   }, [channelId]);
+
+  const initSidebarToggle = () => {
+    setDoingOpen(false);
+    setDoneOpen(false);
+    doingParentRef.current.style.height = "0%";
+    doneParentRef.current.style.height = "0px";
+  };
 
   const { width } = useSpring({
     from: { width: "232px" },
@@ -136,12 +120,6 @@ const SideBarStudy = ({ match }) => {
     setModalShow(true);
   };
 
-  const updateStudyInfo = (newInfo) => {
-    console.log("updateStudyInfo");
-    console.log(newInfo);
-    setStudyInfo({ ...newInfo });
-  };
-
   return (
     <div className="sidebar-study">
       <i
@@ -184,12 +162,12 @@ const SideBarStudy = ({ match }) => {
             </div>
             <div className="doing" ref={doingParentRef}>
               <div className="list" ref={doingChildRef}>
-                {runningStudyList.map((study, index) => {
+                {storeRunningStudyList?.map((study, index) => {
                   return (
                     <div className="child-study item" key={index}>
                       <Link to={`/channel/${channelId}/study/${study.id}`}>
                         <i className="far fa-hashtag" />
-                        <span>{study.studyName}</span>
+                        <span>{study.name}</span>
                       </Link>
                     </div>
                   );
@@ -203,12 +181,12 @@ const SideBarStudy = ({ match }) => {
             </div>
             <div className="done" ref={doneParentRef}>
               <div className="list" ref={doneChildRef}>
-                {endStudyList.map((study, index) => {
+                {storeEndedStudyList?.map((study, index) => {
                   return (
                     <div className="child-study item" key={index}>
                       <Link to={`/channel/${channelId}/study/${study.id}`}>
                         <i className="far fa-hashtag" />
-                        <span>{study.studyName}</span>
+                        <span>{study.name}</span>
                       </Link>
                     </div>
                   );
@@ -242,12 +220,8 @@ const SideBarStudy = ({ match }) => {
         {/*------------------ 메인 페이지 ------------------*/}
         <Route path="/channel/:channelId" exact={true} component={StudyHome} />
         {/*------------------ 스터디 채널 설정 페이지 ------------------*/}
-        <Route
-          path={`/channel/:channelId/setting`}
-          render={() => (
-            <StudySetting updateStudyInfo={() => updateStudyInfo()} />
-          )}
-        />
+        <Route path={`/channel/:channelId/setting`} component={StudySetting} />
+
         {/*------------------ 멤버 페이지 ------------------*/}
         <Route
           path="/channel/:channelId/member"
@@ -261,7 +235,11 @@ const SideBarStudy = ({ match }) => {
         />
       </Main>
       {/*---------------- 스터디 생성 모달 ----------------*/}
-      <StudyCreateModal show={modalShow} onHide={() => setModalShow(false)} />
+      <StudyCreateModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        id={channelId}
+      />
     </div>
   );
 };

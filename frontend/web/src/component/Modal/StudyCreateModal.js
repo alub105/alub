@@ -11,17 +11,17 @@ import "./StudyCreateModal.scoped.scss";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ko } from "date-fns/esm/locale";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
-import { API_BASE_URL } from "../../config/index";
+import * as util from "../../modules/axios/util";
+import * as studyActions from "../../modules/actions/study";
 
 const StudyCreateModal = (props) => {
-  // const { channelId } = match.params.channelId;
-  const { channelId } = 30;
+  const channelId = props.id;
   const { token: storeToken } = useSelector((state) => state.user);
-  const { selectedChannel: storeSelectedChannel } = useSelector(
-    (state) => state.study
-  );
+
+  const dispatch = useDispatch();
+
   const [inputs, setInputs] = useState({
     studyName: "",
     problem: "",
@@ -64,31 +64,23 @@ const StudyCreateModal = (props) => {
 
   const searchProblem = (e) => {
     if (e.key === "Enter") {
-      fetch(API_BASE_URL + "/api/problems/searches", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${storeToken}`,
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify({
-          terms: {
-            site: site,
-            keyword: problem,
-          },
-        }),
-      }).then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            setSearchResult([...data.data]);
-          });
-        }
-      });
+      searchProblemApi();
     }
+  };
+
+  const searchProblemApi = () => {
+    util.searchProblem(site, problem, storeToken).then((data) => {
+      setSearchResult([...data.data]);
+    });
   };
 
   const addProblem = (item) => {
     setSearchResult(searchResult.filter((result) => result.num !== item.num));
     setProblems([...problems, item]);
+    setInputs({
+      ...inputs,
+      problem: "",
+    });
   };
 
   const removeProblem = (item) => {
@@ -142,44 +134,26 @@ const StudyCreateModal = (props) => {
       homeworkEnd.toString()
     );
 
-    console.log(studyName);
-    console.log(studyStartTime);
-    console.log(studyEndTime);
-    console.log(assignmentStartTime);
-    console.log(assignmentEndTime);
-    console.log(problems);
-    console.log(typeof problems[0].num);
+    let blank = [{ id: 2, name: "eunsong" }, { id: 3, name: "eunsong" }];
+    let add = { id: 1, name: "eunsong" };
+    blank = [...blank, add];
+    console.log(blank);
 
-    let assignedProblems = problems;
-    console.log(assignedProblems);
-
-    fetch(API_BASE_URL + `/api/channels/30/studies`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${storeToken}`,
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-      body: JSON.stringify({
-        name: studyName,
-        startTime: studyStartTime,
-        endTime: studyEndTime,
-        assignmentStartTime: assignmentStartTime,
-        assignmentEndTime: assignmentEndTime,
-        assignedProblems: problems,
-      }),
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          response.json().then((data) => {
-            console.log(data.data);
-            // 스터디 리스트 추가
-            props.onHide();
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
+    util
+      .createStudy(
+        channelId,
+        studyName,
+        studyStartTime,
+        studyEndTime,
+        assignmentStartTime,
+        assignmentEndTime,
+        problems,
+        storeToken
+      )
+      .then((data) => {
+        console.log(data.data);
+        dispatch(studyActions.addRunningStudyList(data.data));
+        props.onHide();
       });
   };
 
@@ -211,7 +185,7 @@ const StudyCreateModal = (props) => {
           />
         </div>
         <div className="grid-column-4">
-          <h4>스터디 날짜</h4>
+          <h4>미팅 일정</h4>
           <DatePicker
             selected={studyDate}
             onChange={(date) => setStudyDate(date)}
@@ -274,6 +248,13 @@ const StudyCreateModal = (props) => {
               onChange={onChange}
               onKeyPress={searchProblem}
             />
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => searchProblemApi()}
+            >
+              검색
+            </button>
           </div>
           <div
             className="result"

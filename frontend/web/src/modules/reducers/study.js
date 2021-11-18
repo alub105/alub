@@ -3,6 +3,8 @@ import * as studyActions from "../actions/study";
 const initialState = {
   selectedChannel: 0, //선택한 채널 id
   channelList: [],
+  runningStudyList: [],
+  endedStudyList: [],
 };
 
 const reducers = (state = initialState, action) => {
@@ -39,7 +41,21 @@ const reducers = (state = initialState, action) => {
           (channel) => channel.id !== Number(action.payload)
         ),
       };
-
+    case studyActions.SET_RUNNING_STUDY_LIST:
+      return {
+        ...state,
+        runningStudyList: [...action.payload],
+      };
+    case studyActions.SET_ENDED_STUDY_LIST:
+      return {
+        ...state,
+        endedStudyList: [...action.payload],
+      };
+    case studyActions.ADD_RUNNING_STUDY_LIST:
+      return {
+        ...state,
+        runningStudyList: state.runningStudyList.concat(action.payload),
+      };
     default:
       return state;
   }

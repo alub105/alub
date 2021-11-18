@@ -1,18 +1,20 @@
 import "./StudySetting.scoped.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router";
 
 import { API_BASE_URL } from "../../config/index";
-import { Alert, Button } from "react-bootstrap";
+import { Alert, Button, Toast } from "react-bootstrap";
 
 import * as studyActions from "../../modules/actions/study";
 import * as util from "../../modules/axios/util";
 
-const StudySetting = (props) => {
+const StudySetting = ({ match }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const { token: storeToken } = useSelector((state) => state.user);
-  const { selectedChannel: storeSelectedChannel } = useSelector((state) => state.study);
+  const channelId = match.params.channelId;
 
   const [studyInfo, setStudyInfo] = useState({});
 
@@ -24,7 +26,10 @@ const StudySetting = (props) => {
 
   const [host, setHost] = useState("");
 
+  // alert show
   const [show, setShow] = useState(false);
+  // toast show
+  const [toastShow, setToastShow] = useState(false);
 
   const [inputs, setInputs] = useState({
     channelName: "",
@@ -33,7 +38,7 @@ const StudySetting = (props) => {
   const { channelName, memberName } = inputs;
 
   useEffect(() => {
-    util.getStudyInfo(storeSelectedChannel, storeToken).then((data) => {
+    util.getStudyInfo(channelId, storeToken).then((data) => {
       setStudyInfo(data.data);
       setInputs({
         ...inputs,
@@ -95,15 +100,30 @@ const StudySetting = (props) => {
   };
 
   const updateChannel = () => {
-    util.updateChannel(channelName, host, deleteMember, addedMember).then((data) => {
-      setStudyInfo({
-        ...studyInfo,
-        name: channelName,
-        member: [...studyInfo.member, members],
+    util
+      .updateChannel(
+        channelId,
+        channelName,
+        host,
+        deleteMember,
+        addedMember,
+        storeToken
+      )
+      .then((data) => {
+        console.log(data.data);
+        setToastShow(true);
+        setStudyInfo({
+          ...studyInfo,
+          name: channelName,
+          member: [...studyInfo.member, members],
+        });
+        dispatch(
+          studyActions.updateChannel({
+            id: channelId,
+            name: channelName,
+          })
+        );
       });
-      props.updateStudyInfo(studyInfo);
-      dispatch(studyActions.updateChannel({ id: storeSelectedChannel, name: channelName }));
-    });
   };
 
   const clickDeleteButton = () => {
@@ -111,7 +131,7 @@ const StudySetting = (props) => {
   };
 
   const deleteChannel = () => {
-    fetch(API_BASE_URL + `/api/channels/${storeSelectedChannel}`, {
+    fetch(API_BASE_URL + `/api/channels/${channelId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${storeToken}`,
@@ -121,8 +141,9 @@ const StudySetting = (props) => {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            dispatch(studyActions.deleteChannel(storeSelectedChannel));
+            dispatch(studyActions.deleteChannel(channelId));
             setShow(false);
+            history.push("/channel/");
           });
         }
       })
@@ -134,7 +155,7 @@ const StudySetting = (props) => {
   return (
     <div className="study-setting">
       <h1> {studyInfo.name} 스터디 채널 설정</h1>
-      <div className="container">
+      <div className="setting-container">
         <div className="grid-col">
           <h4>스터디 이름</h4>
           <input
@@ -178,14 +199,19 @@ const StudySetting = (props) => {
               검색
             </button>
           </div>
-          <div className="result" style={{ display: memberName?.length > 0 ? "none" : "block" }}>
+          <div
+            className="result"
+            style={{ display: memberName?.length > 0 ? "none" : "block" }}
+          >
             {members.map((data, index) => {
               return (
                 <div className="member-item" key={index}>
                   <p>{data.name}</p>
                   <button
                     type="button"
-                    className={`btn btn-danger ${data.id === studyInfo.host.id ? "disabled" : ""}`}
+                    className={`btn btn-danger ${
+                      data.id === studyInfo.host.id ? "disabled" : ""
+                    }`}
                     onClick={() => onRemove(data.id)}
                   >
                     삭제
@@ -194,7 +220,10 @@ const StudySetting = (props) => {
               );
             })}
           </div>
-          <div className="result" style={{ display: memberName?.length > 0 ? "block" : "none" }}>
+          <div
+            className="result"
+            style={{ display: memberName?.length > 0 ? "block" : "none" }}
+          >
             <h4 style={{ display: inviteList?.length > 0 ? "none" : "block" }}>
               검색 결과가 없습니다
             </h4>
@@ -216,7 +245,9 @@ const StudySetting = (props) => {
         </div>
         <button
           type="button"
-          className={`btn btn-success btn-submit ${channelName.length === 0 ? "disabled" : ""}`}
+          className={`btn btn-success btn-submit ${
+            channelName.length === 0 ? "disabled" : ""
+          }`}
           onClick={() => updateChannel()}
         >
           완료
@@ -234,7 +265,10 @@ const StudySetting = (props) => {
       {/*----------------- 삭제 alert ---------------------*/}
       <Alert show={show} variant="dark" className="my-alert">
         <Alert.Heading> {studyInfo.name} 삭제</Alert.Heading>
-        <p>정말 {studyInfo.name}을 삭제 하시겠습니까? 삭제된 채널은 복구할 수 없어요.</p>
+        <p>
+          정말 {studyInfo.name}을 삭제 하시겠습니까? 삭제된 채널은 복구할 수
+          없어요.
+        </p>
         <hr />
         <div className="d-flex justify-content-center gap-3">
           <Button onClick={() => deleteChannel()} variant="danger">
@@ -245,6 +279,20 @@ const StudySetting = (props) => {
           </Button>
         </div>
       </Alert>
+      <Toast
+        onClose={() => setToastShow(false)}
+        show={toastShow}
+        delay={3000}
+        autohide
+        bg={"success"}
+        className="toast"
+      >
+        <Toast.Header>
+          <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
+          <strong className="me-auto">ALUB</strong>
+        </Toast.Header>
+        <Toast.Body>성공적으로 채널 정보가 수정되었습니다</Toast.Body>
+      </Toast>
     </div>
   );
 };

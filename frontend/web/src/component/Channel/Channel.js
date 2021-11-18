@@ -1,6 +1,6 @@
 /* eslint-disable */
 import "./Channel.scoped.scss";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Switch, useHistory } from "react-router";
 import { Route, Link } from "react-router-dom";
@@ -11,6 +11,7 @@ import SideBarStudy from "../SideBar/SideBarStudy";
 import Profile from "./Profile.js";
 import ChannelComponent from "../SideBar/ChannelComponent";
 import ChannelCreateModal from "../Modal/ChannelCreateModal";
+import CodeView from "../CodeView/CodeView";
 
 import * as userActions from "../../modules/actions/user";
 import * as studyActions from "../../modules/actions/study";
@@ -19,9 +20,6 @@ import * as util from "../../modules/axios/util";
 
 const Channel = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
-  const { selectedChannel: storeSelectedChannel } = useSelector(
-    (state) => state.study
-  );
 
   const { channelList: storeChannelList } = useSelector((state) => state.study);
   const { userInfo: storeUserInfo } = useSelector((state) => state.user);
@@ -30,6 +28,7 @@ const Channel = ({ match }) => {
 
   const history = useHistory();
   const dispatch = useDispatch();
+  const [selectId, setSelectId] = useState(-1);
 
   useEffect(() => {
     if (!storeToken || storeToken === "") {
@@ -45,7 +44,17 @@ const Channel = ({ match }) => {
         dispatch(studyActions.setChannelList(data.data));
       });
 
-      console.log(storeSelectedChannel);
+      let url = window.location.href;
+      let temp = url.split("channel/");
+      temp = temp[1].split("/");
+      if (temp[0] === "common") {
+        setSelectId(-1);
+      } else if (temp[0] === "codeview") {
+        let id = temp[1].split("?");
+        setSelectId(id[0]);
+      } else {
+        setSelectId(Number(temp[0]));
+      }
     }
   }, [storeToken]);
 
@@ -55,6 +64,10 @@ const Channel = ({ match }) => {
 
   const createNewChannel = () => {
     setModalShow(true);
+  };
+
+  const setClicked = (id) => {
+    setSelectId(id);
   };
 
   return (
@@ -76,9 +89,9 @@ const Channel = ({ match }) => {
               <Link to="/channel/common/profile">
                 <div
                   className={`image-box channel ${
-                    storeSelectedChannel === -1 ? "selected-profile" : ""
+                    selectId === -1 ? "selected-profile" : ""
                   }`}
-                  onClick={() => selectChannel(-1)}
+                  onClick={() => setClicked(-1)}
                 >
                   <img
                     className="image"
@@ -96,6 +109,8 @@ const Channel = ({ match }) => {
                 <ChannelComponent
                   info={channel}
                   key={index}
+                  selectId={selectId}
+                  setClicked={setClicked}
                   selectChannel={selectChannel}
                 />
               );
@@ -153,6 +168,7 @@ const Channel = ({ match }) => {
             component={SideBarStudy}
           />
           <Route path="/channel/common/profile" component={Profile} />
+          <Route path="/channel/codeview/:channelId" component={CodeView} />
           <Route render={() => <div>not</div>} />
         </Switch>
       </div>

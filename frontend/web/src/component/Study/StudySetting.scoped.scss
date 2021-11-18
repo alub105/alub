@@ -4,7 +4,7 @@
   margin: 0 auto;
   padding: 20px 30px;
   font-family: var(—IBM);
-  max-width: 800px;
+  max-width: 850px;
   min-width: 600px;
 
   h1 {
@@ -13,8 +13,8 @@
     font-size: 2.4rem;
   }
 
-  .container {
-    width: 90%;
+  .setting-container {
+    width: 90% !important;
     margin: 0 auto;
     padding: 30px 0;
     display: flex;
@@ -127,5 +127,14 @@
     left: 50%;
     transform: translate(-60%, -50%);
     width: 450px;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+
+    font-family: var(--IBM);
+    color: white;
   }
 }

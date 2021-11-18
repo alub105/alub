@@ -94,6 +94,7 @@ export const getStudyList = async (channelId, token) => {
   });
 };
 
+// 스터디 상세 정보
 export const getStudyDetail = async (channelId, studyId, token) => {
   return new Promise(function(resolve, reject) {
     fetch(API_BASE_URL + `/api/channels/${channelId}/studies/${studyId}`, {
@@ -166,6 +167,7 @@ export const searchMember = async (memberName, token) => {
 };
 
 export const updateChannel = (
+  channelId,
   name,
   hostId,
   deletedMember,
@@ -173,10 +175,10 @@ export const updateChannel = (
   token
 ) => {
   return new Promise(function(resolve, reject) {
-    fetch(API_BASE_URL + `/api/channels/${token}`, {
+    fetch(API_BASE_URL + `/api/channels/${channelId}`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${storeToken}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json;charset=UTF-8",
       },
       body: JSON.stringify({
@@ -281,6 +283,75 @@ export const setRepo = (repoName, creation, dirPath, token) => {
         repoName: repoName,
         creation: creation,
         dirPath: dirPath,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+// 문제 찾기
+export const searchProblem = (site, problem, token) => {
+  return new Promise(function(resolve, reject) {
+    fetch(API_BASE_URL + "/api/problems/searches", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        terms: {
+          site: site,
+          keyword: problem,
+        },
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+// 스터디 생성
+export const createStudy = (
+  channelId,
+  studyName,
+  studyStartTime,
+  studyEndTime,
+  assignmentStartTime,
+  assignmentEndTime,
+  problems,
+  token
+) => {
+  return new Promise(function(resolve, reject) {
+    fetch(API_BASE_URL + `/api/channels/${channelId}/studies`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        name: studyName,
+        startTime: studyStartTime,
+        endTime: studyEndTime,
+        assignmentStartTime: assignmentStartTime,
+        assignmentEndTime: assignmentEndTime,
+        assignedProblems: problems,
       }),
     })
       .then((response) => {

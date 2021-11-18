@@ -1,0 +1,141 @@
+* {
+  font-size: 100%;
+  line-height: 1.5;
+  font-family: var(--IBM);
+  margin: 0px;
+  padding: 0px;
+}
+
+.header {
+  /* width: 100vw; */
+  width: 100%;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+.codeview {
+  width: 100%;
+  padding: 20px;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: rgb(151, 150, 150);
+}
+*::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+}
+
+.codeview .container {
+  width: 100%;
+  min-width: 900px;
+  padding: 0;
+}
+
+.nameList {
+  background: var(--background-linear);
+  /* background: var(--text-green); */
+
+  width: 100%;
+  margin: 0 10px;
+  border-radius: 6px;
+  min-height: 3.4rem;
+}
+
+.codeview .no-file-div {
+  width: 96%;
+  height: 60vh;
+  background-color: var(--background);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.codeview .no-file-div h3 {
+  height: 100%;
+  line-height: 60vh;
+  font-size: 1.5rem;
+}
+
+.nameList .draggName {
+  background-color: white;
+}
+
+.fileList .usercode {
+  width: 40vw;
+}
+
+.fileList .usercode .file-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
+
+.fileList .usercode .file-container i {
+  padding: 0;
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+.fileList .usercode .file-container i:hover {
+  color: var(--text-gray);
+}
+
+.fileList .usercode .file-container .flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.fileList .usercode .header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fileList .usercode .header h3 {
+  font-size: 1.4rem;
+  font-family: var(--IBM);
+  margin: 0;
+}
+
+.fileList .usercode .code {
+  height: 80vh;
+  width: 100%;
+  border: 1px solid;
+}
+
+.fileList .usercode .code code {
+  width: 100%;
+}
+
+.nameList,
+.fileList {
+  display: inline-flex;
+  margin: 20px 0;
+}
+
+.nameList .draggName {
+  margin: 10px;
+  padding: 0.5rem;
+  font-family: var(--IBM);
+  font-weight: bold;
+  border-radius: 17px;
+  background-color: var(--white);
+  color: var(--text-black);
+}
+
+.fileList .usercode {
+  margin-right: 30px;
+}

@@ -55,17 +55,13 @@ public class StudyChannelServiceImpl implements StudyChannelService {
 
   @Override
   public StudyChannelRes getChannel(Long studyChannelId) {
-    StudyChannel studyChannel = studyChannelRepository.findById(studyChannelId)
+    StudyChannel studyChannel = studyChannelRepository.findByIdAndEnabledIsTrue(studyChannelId)
         .orElseThrow(StudyChannelNotFoundException::new);
-    if (!studyChannel.getEnabled()) {
-      throw new StudyChannelNotFoundException();
-    }
+
     User host =
         userRepository.findById(studyChannel.getHostId()).orElseThrow(UserNotFoundException::new);
     List<UserStudyChannel> userStudyChannelList =
-        userStudyChannelRepository.findAllByStudyChannelId(studyChannelId);
-    userStudyChannelList = userStudyChannelList.stream().filter(UserStudyChannel::isEnabled)
-        .collect(Collectors.toList());
+        userStudyChannelRepository.findAllByStudyChannelIdAndEnabledIsTrue(studyChannelId);
 
     log.info("Get Study Channel: {}", studyChannel);
 
@@ -77,11 +73,9 @@ public class StudyChannelServiceImpl implements StudyChannelService {
   @Transactional
   public void modifyChannel(Long userId, Long studyChannelId,
       StudyChannelModifyReq channelModifyReq) {
-    StudyChannel studyChannel = studyChannelRepository.findById(studyChannelId)
+    StudyChannel studyChannel = studyChannelRepository.findByIdAndEnabledIsTrue(studyChannelId)
         .orElseThrow(StudyChannelNotFoundException::new);
-    if (!studyChannel.getEnabled()) {
-      throw new StudyChannelNotFoundException();
-    }
+
     // Host만 수정 가능
     if (!isHost(userId, studyChannel)) {
       throw new NotHostException();
@@ -110,7 +104,7 @@ public class StudyChannelServiceImpl implements StudyChannelService {
   @Override
   @Transactional
   public void deleteChannel(Long userId, Long studyChannelId) {
-    StudyChannel studyChannel = studyChannelRepository.findById(studyChannelId)
+    StudyChannel studyChannel = studyChannelRepository.findByIdAndEnabledIsTrue(studyChannelId)
         .orElseThrow(StudyChannelNotFoundException::new);
 
     if (!isHost(userId, studyChannel)) {
@@ -123,7 +117,7 @@ public class StudyChannelServiceImpl implements StudyChannelService {
     } else {
 
       List<UserStudyChannel> deletedMember =
-          userStudyChannelRepository.findAllByStudyChannelId(studyChannelId);
+          userStudyChannelRepository.findAllByStudyChannelIdAndEnabledIsTrue(studyChannelId);
       deleteUserStudyChannelList(deletedMember);
       log.info("Delete All User Study Channel ID: {}", studyChannelId);
 
@@ -138,9 +132,7 @@ public class StudyChannelServiceImpl implements StudyChannelService {
   @Override
   public List<StudyChannelDto> getChannelList(Long userId) {
     List<UserStudyChannel> userStudyChannelList =
-        userStudyChannelRepository.findAllByUserId(userId);
-    userStudyChannelList = userStudyChannelList.stream().filter(UserStudyChannel::isEnabled)
-        .collect(Collectors.toList());
+        userStudyChannelRepository.findAllByUserIdAndEnabledIsTrue(userId);
 
     List<StudyChannelDto> studyChannelList = new LinkedList<StudyChannelDto>();
     userStudyChannelList.stream().forEach(userStudyChannel -> {
@@ -152,16 +144,11 @@ public class StudyChannelServiceImpl implements StudyChannelService {
 
   @Override
   public List<StudyChannelMemberDto> getMemberList(Long studyChannelId) {
-    StudyChannel studyChannel = studyChannelRepository.findById(studyChannelId)
+    StudyChannel studyChannel = studyChannelRepository.findByIdAndEnabledIsTrue(studyChannelId)
         .orElseThrow(StudyChannelNotFoundException::new);
-    if (!studyChannel.getEnabled()) {
-      throw new StudyChannelNotFoundException();
-    }
 
     List<UserStudyChannel> userStudyChannelList =
-        userStudyChannelRepository.findAllByStudyChannelId(studyChannelId);
-    userStudyChannelList = userStudyChannelList.stream().filter(UserStudyChannel::isEnabled)
-        .collect(Collectors.toList());
+        userStudyChannelRepository.findAllByStudyChannelIdAndEnabledIsTrue(studyChannelId);
 
     List<StudyChannelMemberDto> memberList = new LinkedList<StudyChannelMemberDto>();
     userStudyChannelList.stream().forEach(list -> {
@@ -203,7 +190,7 @@ public class StudyChannelServiceImpl implements StudyChannelService {
   private UserStudyChannel getUserStudyChannel(StudyChannel studyChannel, Long userId) {
 
     UserStudyChannelId userStudyChannelId = new UserStudyChannelId(userId, studyChannel.getId());
-    UserStudyChannel userStudyChannel = userStudyChannelRepository.findById(userStudyChannelId)
+    UserStudyChannel userStudyChannel = userStudyChannelRepository.findByUserStudyChannelIdAndEnabledIsTrue(userStudyChannelId)
         .orElseThrow(UserStudyChannelNotFoundException::new);
 
     return userStudyChannel;
@@ -215,7 +202,7 @@ public class StudyChannelServiceImpl implements StudyChannelService {
 
     memberList.stream().forEach(userId -> {
       UserStudyChannelId userStudyChannelId = new UserStudyChannelId(userId, studyChannel.getId());
-      UserStudyChannel userStudyChannel = userStudyChannelRepository.findById(userStudyChannelId)
+      UserStudyChannel userStudyChannel = userStudyChannelRepository.findByUserStudyChannelIdAndEnabledIsTrue(userStudyChannelId)
           .orElseThrow(UserStudyChannelNotFoundException::new);
       member.add(userStudyChannel);
     });

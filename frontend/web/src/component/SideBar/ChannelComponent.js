@@ -3,8 +3,9 @@ import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { setSelectedChannel } from "../../modules/actions/study";
 
-const ChannelComponent = ({ info, selectChannel }) => {
+const ChannelComponent = ({ info, selectChannel, selectId, setClicked }) => {
   const { selectedChannel: storeSelectedChannel } = useSelector(
     (state) => state.study
   );
@@ -23,10 +24,9 @@ const ChannelComponent = ({ info, selectChannel }) => {
         <Link to={`/channel/${info.id}`}>
           <div
             className={`exist-channel channel ${
-              storeSelectedChannel === info.id ? "selected" : ""
-            } `}
-            // className={`exist-channel channel`}
-            onClick={() => selectChannel(info.id)}
+              info.id === selectId ? "selected" : ""
+            }`}
+            onClick={() => setClicked(info.id)}
           >
             {info.name}
             <div className="overlay-channel" />

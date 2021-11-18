@@ -11,6 +11,8 @@
 
   --study-color: #0d47a1;
 
+  --running-bg: #e6e0fe;
+
   --nav-width: 86px;
   --nav-color: #023e8a;
   --channel-width: 50px;
@@ -27,7 +29,11 @@
   --btn-gray: #9da5af;
 
   /* --background-linear: linear-gradient(to bottom, #e9ecef, #b3c7db); */
-  --background-linear: linear-gradient(120deg, rgba(0, 172, 193, 1) 0, rgba(84, 58, 183, 1) 100%);
+  --background-linear: linear-gradient(
+    120deg,
+    rgba(0, 172, 193, 1) 0,
+    rgba(84, 58, 183, 1) 100%
+  );
 
   --IBM: "IBM", cursive;
   --Mulish: "Mulish", cursive;

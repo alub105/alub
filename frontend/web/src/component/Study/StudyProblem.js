@@ -10,138 +10,102 @@ import * as util from "../../modules/axios/util";
 
 const StudyProblem = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
+
   const studyId = match.params.studyId;
   const channelId = match.params.channelId;
 
-  const [members, setMembers] = useState([
-    { id: 1, email: "ssafy@gamil.com", name: "choieunsong" },
-    { id: 2, email: "ssafy@gamil.com", name: "dlguswjd0258" },
-    { id: 3, email: "ssafy@gamil.com", name: "hoonti06" },
-    { id: 4, email: "ssafy@gamil.com", name: "greenboy94" },
-    { id: 5, email: "ssafy@gamil.com", name: "WoogiJung" },
-  ]);
+  const [members, setMembers] = useState([]);
 
-  const [studyDetail, setStudyDetail] = useState({
-    id: 23,
-    name: "5주차 스터디",
-    startTime: "2021-09-12 00:00",
-    endTime: "2021-09-12 02:00",
-    assignmentStartTime: "2021-09-10 00:00",
-    assignmentEndTime: "2021-09-11 00:00",
-    assignedProblems: [
-      {
-        id: 32,
-        num: 1,
-        title: "hi1",
-        site: "BOJ",
-        level: "ruby1",
-        members: [
-          {
-            userId: 1,
-            userName: "choieunsong",
-            solved: true,
-            solvedTime: null,
-          },
-          {
-            userId: 1,
-            userName: "dlguswjd0258",
-            solved: false,
-            solvedTime: null,
-          },
-          {
-            userId: 1,
-            userName: "hoonti06",
-            solved: true,
-            solvedTime: null,
-          },
-          {
-            userId: 1,
-            userName: "greenboy94",
-            solved: false,
-            solvedTime: null,
-          },
-          {
-            userId: 1,
-            userName: "WoogiJung",
-            solved: true,
-            solvedTime: null,
-          },
-        ],
-      },
-      {
-        id: 33,
-        num: 1,
-        title: "hi2",
-        site: "BOJ",
-        level: "ruby1",
-        members: [
-          {
-            userId: 1,
-            userName: "choieunsong",
-            solved: true,
-            solvedTime: null,
-          },
-          {
-            userId: 1,
-            userName: "dlguswjd0258",
-            solved: false,
-            solvedTime: null,
-          },
-          {
-            userId: 1,
-            userName: "hoonti06",
-            solved: true,
-            solvedTime: null,
-          },
-          {
-            userId: 1,
-            userName: "greenboy94",
-            solved: false,
-            solvedTime: null,
-          },
-          {
-            userId: 1,
-            userName: "WoogiJung",
-            solved: true,
-            solvedTime: null,
-          },
-        ],
-      },
-    ],
-  });
+  const [studyDetail, setStudyDetail] = useState({});
+
+  const [mode, setMode] = useState("");
 
   useEffect(() => {
     // 스터디 정보 불러오기
-    // 스터디 멤버 불러오기
-  }, [studyId, channelId]);
+    util.getStudyDetail(channelId, studyId, storeToken).then((data) => {
+      setStudyDetail({ ...data.data });
 
-  const dateFormat = useCallback((date) => {
-    let yt = date.split(" ");
-    let year = yt[0].split("-");
-    return `${year[0]}년 ${year[1]}월 ${year[2]}일 ${yt[1]}`;
+      isFinish();
+    });
+    // 스터디 멤버 불러오기
+    util.getMembers(channelId, storeToken).then((data) => {
+      setMembers(data.data);
+    });
+  }, [studyId, channelId, mode]);
+
+  const dateFormat = useCallback((str) => {
+    if (str !== undefined) {
+      let yt = str?.split(" ");
+      let year = yt[0]?.split("-");
+      return `${year[0]}년 ${year[1]}월 ${year[2]}일 ${yt[1]}`;
+    } else {
+      return str;
+    }
   }, []);
 
   const problemFormat = useCallback((title, site, level) => {
     return `[${site}] ${title} - ${level}`;
   });
 
+  const isFinish = () => {
+    let now = new Date().toLocaleDateString();
+    now = now.replace(/\s+/g, "");
+    now = now.replaceAll(".", "-");
+    now = now.slice(0, -1);
+    let time = new Date().toLocaleTimeString("en-US", {
+      hour12: false,
+      hour: "numeric",
+      minute: "numeric",
+    });
+    let current = now + " " + time;
+
+    if (studyDetail.endTime < current) {
+      setMode("완료된 스터디");
+    } else if (
+      studyDetail.startTime < current &&
+      studyDetail.endTime < current
+    ) {
+      setMode("진행 중 스터디");
+    } else {
+      setMode("예정된 스터디");
+    }
+  };
+
   return (
     <div className="study-problem">
       <header className="header">
-        <h1>{studyDetail.name} </h1>
+        <h1>{studyDetail?.name} </h1>
 
-        <p>스터디 날짜: </p>
+        <p className="label">미팅 일정: </p>
         <div className="time-tag">
-          {dateFormat(studyDetail.startTime)} &nbsp;<span>-</span> &nbsp;
-          {dateFormat(studyDetail.endTime)}
+          {dateFormat(studyDetail?.startTime)} &nbsp;<span>-</span> &nbsp;
+          {dateFormat(studyDetail?.endTime)}
         </div>
       </header>
       <main>
         <div className="flex-row">
-          <p>과제 기한: </p>
-          <div className="time-tag assignment">
-            {dateFormat(studyDetail.startTime)} &nbsp;<span>-</span> &nbsp;
-            {dateFormat(studyDetail.endTime)}
+          <div
+            className={`mode-tag todo`}
+            style={{ display: mode === "예정된 스터디" ? "block" : "none" }}
+          >
+            <span>{mode}</span>
+          </div>
+          <div
+            className={`mode-tag doing`}
+            style={{ display: mode === "진행 중 스터디" ? "block" : "none" }}
+          >
+            <span>{mode}</span>
+          </div>
+          <div
+            className={`mode-tag done`}
+            style={{ display: mode === "완료된 스터디" ? "block" : "none" }}
+          >
+            {mode}
+          </div>
+          <p className="label">과제 기한: </p>
+          <div className={`time-tag`}>
+            {dateFormat(studyDetail?.startTime)} &nbsp;<span>-</span> &nbsp;
+            {dateFormat(studyDetail?.endTime)}
           </div>
         </div>
         <table className="table">
@@ -149,31 +113,46 @@ const StudyProblem = ({ match }) => {
             <tr>
               <th className="problem-td">문제</th>
               <th>코드비교</th>
-              {members.map((member, index) => {
+              {members?.map((member, index) => {
                 return <th key={index}>{member.name}</th>;
               })}
             </tr>
           </thead>
           <tbody>
-            {studyDetail.assignedProblems.map((problem) => {
+            {studyDetail?.assignedProblems?.map((problem) => {
               return (
                 <tr key={problem.id}>
-                  <td>{problemFormat(problem.title, problem.site, problem.level)}</td>
+                  <td>
+                    {problemFormat(problem.title, problem.site, problem.level)}
+                  </td>
                   <td className="go-code">
-                    {/* <Link to={`/channel/${channelId}/study/${studyId}/code`}>보러가기</Link> */}
-                    보러가기
+                    <Link
+                      to={`/channel/codeview/${channelId}?siteName=${
+                        problem.site
+                      }&problemNum=${problem.num}`}
+                    >
+                      보러가기
+                    </Link>
                   </td>
                   {problem.members.map((member) => {
                     if (member.solved) {
                       return (
                         <td key={member.userId}>
-                          <img src={checked} alt="solved image" className="solved" />
+                          <img
+                            src={checked}
+                            alt="solved image"
+                            className="solved"
+                          />
                         </td>
                       );
                     } else {
                       return (
                         <td key={member.userId}>
-                          <img src={cancel} alt="unsolved image" className="solved" />
+                          <img
+                            src={cancel}
+                            alt="unsolved image"
+                            className="solved"
+                          />
                         </td>
                       );
                     }

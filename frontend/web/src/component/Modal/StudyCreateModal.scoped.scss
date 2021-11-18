@@ -84,9 +84,14 @@
       height: 45%;
       .grid-column-problem {
         display: grid;
-        grid-template-columns: 0.79fr 1.4fr 3fr;
-        gap: 15px;
+        grid-template-columns: 0.79fr 1.6fr 3fr 0.9fr;
+        gap: 10px;
         align-items: center;
+
+        button {
+          border-radius: 6px;
+          padding: 11px;
+        }
       }
 
       .result {

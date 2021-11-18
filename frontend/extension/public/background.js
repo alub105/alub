@@ -41,22 +41,13 @@ function authListener(tabId, changeInfo, tab) {
             console.log("move ");
             if (response.ok) {
               response.json().then((data) => {
-<<<<<<< HEAD
                 chrome.storage.sync.set(
                   { token: data.data.token },
                   function () {
-                    chrome.storage.sync.get("token", function (token) {
-                      const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
-                      chrome.tabs.update({ url: welcome_url });
-                    });
+                    const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
+                    chrome.tabs.update({ url: welcome_url });
                   }
                 );
-=======
-                chrome.storage.sync.set({ token: data.data.token }, function () {
-                  const welcome_url = `chrome-extension://${chrome.runtime.id}/welcome.html`;
-                  chrome.tabs.update({ url: welcome_url });
-                });
->>>>>>> 8b19619124d2441428b4df940a33054175fa7d9d
               });
             }
           })
