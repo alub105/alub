@@ -1,5 +1,10 @@
 package com.a105.alub.api.service;
 
+import com.a105.alub.domain.entity.AssignedProblem;
+import com.a105.alub.domain.entity.Study;
+import com.a105.alub.domain.enums.Site;
+import com.a105.alub.domain.repository.SolvedRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,8 +59,6 @@ import com.a105.alub.domain.repository.UserRepository;
 import com.a105.alub.security.GitHubAuthenticate;
 import com.a105.alub.security.UserPrincipal;
 import com.google.common.net.HttpHeaders;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -67,6 +70,7 @@ public class UserServiceImpl implements UserService {
 
   private final GithubConfig githubConfig;
   private final UserRepository userRepository;
+  private final SolvedRepository solvedRepository;
   private final GitHubAuthenticate gitHubAuthenticate;
   private final WebClient githubApiClient;
 
@@ -514,15 +518,34 @@ public class UserServiceImpl implements UserService {
     uri.append("/{problemNum}");
     uriPathVariables.put("problemNum", commitReq.getProblemNum());
 
-    try {
-      if (commitReq.getCommit() == CommitType.DEFAULT) {
-        return defaultCommit(user, commitReq, uri, uriPathVariables);
-      } else {
-        return customCommit(user, commitReq, uri, uriPathVariables);
-      }
-    } catch (Exception e) {
-      throw e;
+    CommitRes commitRes;
+    if (commitReq.getCommit() == CommitType.DEFAULT) {
+      commitRes = defaultCommit(user, commitReq, uri, uriPathVariables);
+    } else {
+      commitRes = customCommit(user, commitReq, uri, uriPathVariables);
     }
+
+    updateSolved(user.getId(), commitReq.getSite(), Long.parseLong(commitReq.getProblemNum()));
+
+    return commitRes;
+  }
+
+  private void updateSolved(Long userId, Site site, Long problemNum) {
+    LocalDateTime now = LocalDateTime.now();
+    solvedRepository.findByUser_IdAndSolvedIsFalse(userId)
+        .stream()
+        .filter(s -> {
+          AssignedProblem assignedProblem = s.getAssignedProblem();
+          Study study = assignedProblem.getStudy();
+          return assignedProblem.getNum().equals(problemNum)
+              && assignedProblem.getSite() == site
+              && study.getAssignmentEndTime().isAfter(now)
+              && study.getAssignmentStartTime().isBefore(now);
+        })
+        .forEach(s -> {
+          s.solveAssignedProblem(now);
+          solvedRepository.save(s);
+        });
   }
 
   /**

@@ -38,7 +38,7 @@ public interface UserService extends UserDetailsService {
 
   void setAlubRepo(Long userId, RepoSetReq repoSetReq);
 
-  public FileGetRes getFile(Long id, FileGetReq fileGetReq);
+  FileGetRes getFile(Long id, FileGetReq fileGetReq);
 
-  public CommitRes commit(Long id, CommitReq commitReq);
+  CommitRes commit(Long id, CommitReq commitReq);
 }
