@@ -122,7 +122,6 @@ const StudyCreateModal = (props) => {
       studyDate.toLocaleDateString(),
       studyStartRef.current.value
     );
-
     let studyEndTime = studyDateFormat(
       studyDate.toLocaleDateString(),
       studyEndRef.current.value

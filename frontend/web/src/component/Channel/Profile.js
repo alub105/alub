@@ -18,17 +18,27 @@ const Profile = () => {
   const selectRef = useRef();
 
   const [repoSelect, setRepoSelect] = useState("");
+<<<<<<< HEAD
   const [repos, setRepos] = useState([]);
   const [existSelect, setExistSelect] = useState("");
 
   const [initRepoName, setInitRepoName] = useState("");
 
+=======
+  const [userConfig, setUserConfig] = useState({});
+  const [repos, setRepos] = useState([]);
+  const [existSelect, setExistSelect] = useState("");
+
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
   const [errorMsg, setErrorMsg] = useState("");
   const [invalid, setInvalid] = useState(false);
   const [errorMsg2, setErrorMsg2] = useState("");
   const [invalid2, setInvalid2] = useState(false);
   const [valid, setValid] = useState(false);
+<<<<<<< HEAD
   const [invalid3, setInvalid3] = useState(false);
+=======
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
 
   const [duplicateCheck, setDuplicateCheck] = useState(false);
 
@@ -43,8 +53,11 @@ const Profile = () => {
     dirName: "",
   });
   const { repoName, dirName } = inputs;
+<<<<<<< HEAD
   const [email, setEmail] = useState("");
   const [gitPath, setGitPath] = useState("");
+=======
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
 
   const [isClick, setIsClick] = useState(false);
 
@@ -59,6 +72,7 @@ const Profile = () => {
     });
     util.getUserConfig(storeToken).then((data) => {
       info = data.data;
+<<<<<<< HEAD
       let temp = `github/${storeUserInfo?.name}`;
       setInitRepoName(temp);
 
@@ -76,6 +90,10 @@ const Profile = () => {
     } else {
       setEmail(storeUserInfo.email);
     }
+=======
+      setUserConfig({ ...data.data });
+    });
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
   };
 
   const repoInit = () => {
@@ -85,7 +103,11 @@ const Profile = () => {
         ...inputs,
         repoName: "Alub",
       });
+<<<<<<< HEAD
     } else if (info.dirPath === null || info.dirPath === "") {
+=======
+    } else if (info.dirPath === "") {
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
       setRepoSelect("newRepo");
       setInputs({
         repoName: info.repoName,
@@ -110,7 +132,10 @@ const Profile = () => {
     setErrorMsg2("");
     setInvalid2(false);
     setValid(false);
+<<<<<<< HEAD
     setInvalid3(false);
+=======
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
 
     setInputs({
       ...inputs,
@@ -150,6 +175,22 @@ const Profile = () => {
     }
   };
 
+<<<<<<< HEAD
+=======
+  const setGitRepoName = useCallback(
+    (user, repo, dir) => {
+      if (repo === null) {
+        return `연결된 레포지토리가 없습니다`;
+      } else if (dir === null) {
+        return `github.com/${user}/${repo}`;
+      } else {
+        return `github.com/${user}/${repo}/${dir}`;
+      }
+    },
+    [info]
+  );
+
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
   const searchRepoExist = () => {
     if (repoName === "") {
       return;
@@ -198,8 +239,11 @@ const Profile = () => {
 
       if (existSelect === "") {
         selectRef.current.focus();
+<<<<<<< HEAD
         setInvalid3(true);
         return;
+=======
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
       }
 
       _repoName = existSelect;
@@ -209,7 +253,10 @@ const Profile = () => {
 
     util.setRepo(_repoName, _creation, _dirName, storeToken).then((data) => {
       setRepos([...repos, { name: _repoName }]);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
       if (data.code === "fail") {
         setToastMsg("이미 존재하는 repository입니다.");
       } else {
@@ -217,8 +264,12 @@ const Profile = () => {
       }
       setShow(true);
       info.repoName = _repoName;
+<<<<<<< HEAD
       info.dirPath = _dirName;
 
+=======
+      info.dirPath = _repoName;
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
       let temp = _creation ? "newRepo" : "existRepo";
       setRepoSelect(temp);
       if (!temp) {
@@ -237,7 +288,11 @@ const Profile = () => {
           <div className="user-box">
             <div className="img-box">
               <img
+<<<<<<< HEAD
                 src={storeUserInfo?.imageUrl}
+=======
+                src={storeUserInfo.imageUrl}
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
                 className="image"
                 alt="profile"
               />
@@ -248,7 +303,11 @@ const Profile = () => {
                 <input
                   type="text"
                   className="form-control"
+<<<<<<< HEAD
                   value={storeUserInfo?.name}
+=======
+                  value={storeUserInfo.name}
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
                   readOnly
                 />
               </div>
@@ -258,7 +317,11 @@ const Profile = () => {
                   type="text"
                   readOnly
                   className="form-control"
+<<<<<<< HEAD
                   value={email || ""}
+=======
+                  value={storeUserInfo.email}
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
                 />
               </div>
               <div className="grid-row">
@@ -267,7 +330,15 @@ const Profile = () => {
                   type="text"
                   readOnly
                   className="form-control"
+<<<<<<< HEAD
                   value={gitPath || ""}
+=======
+                  value={setGitRepoName(
+                    storeUserInfo.name,
+                    userConfig.repoName,
+                    userConfig.dirPath
+                  )}
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
                 />
               </div>
             </div>
@@ -303,7 +374,11 @@ const Profile = () => {
                   readOnly
                   placeholder=""
                   className="form-control"
+<<<<<<< HEAD
                   value={initRepoName || ""}
+=======
+                  value="github/eunsong/"
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
                 />
                 <div className="form-group has-success">
                   <input
@@ -360,6 +435,7 @@ const Profile = () => {
                   readOnly
                   placeholder=""
                   className="form-control"
+<<<<<<< HEAD
                   value={initRepoName || ""}
                 />
                 <div>
@@ -385,6 +461,25 @@ const Profile = () => {
                     레포지토리를 선택해 주세요.
                   </div>
                 </div>
+=======
+                  value="github/eunsong/"
+                />
+                <select
+                  className="form-select"
+                  value={existSelect || ""}
+                  onChange={handleExistRepo}
+                  onFocus={focusHandler}
+                  ref={selectRef}
+                >
+                  {repos.map((repo, index) => {
+                    return (
+                      <option key={index} value={repo.name}>
+                        {repo.name}
+                      </option>
+                    );
+                  })}
+                </select>
+>>>>>>> 840aebd4d6bacd39674c1e037c0e7485f5cf243f
                 <div>
                   <input
                     type="text"
