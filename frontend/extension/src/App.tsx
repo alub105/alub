@@ -221,6 +221,11 @@ const App = () => {
     chrome.tabs.create({ url: welcome_url });
   };
 
+  const goAlub = () => {
+    const newUrl = `https://alub.co.kr`;
+    chrome.tabs.create({ url: newUrl });
+  };
+
   if (authMode) {
     return (
       <div className="app">
@@ -251,7 +256,12 @@ const App = () => {
             </div>
             <div className="flex-row footer">
               <i className="fab fa-github "></i>
-              <img className="logo" src={logo} alt={"logo"} />
+              <img
+                className="logo"
+                src={logo}
+                alt={"logo"}
+                onClick={() => goAlub()}
+              />
             </div>
           </div>
         </main>
@@ -295,7 +305,12 @@ const App = () => {
     return (
       <div className="app">
         <header className="commit-header flex-row">
-          <img src={logo} alt={"logo"} className="logo" />
+          <img
+            src={logo}
+            alt={"logo"}
+            className="logo"
+            onClick={() => goAlub()}
+          />
           <span>{userName}</span>
           <span>/</span>
           <a
