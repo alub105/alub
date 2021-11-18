@@ -771,10 +771,6 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   document.querySelector(".container.content")?.appendChild(component);
 }
 
-
-
-
-
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     const currentUrl = tab.url;
