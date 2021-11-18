@@ -771,19 +771,6 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   document.querySelector(".container.content")?.appendChild(component);
 }
 
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    component.style.top = component.offsetTop - pos2 + "px";
-    component.style.left = component.offsetLeft - pos1 + "px";
-  }
-
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     const currentUrl = tab.url;
@@ -798,7 +785,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (currentUrl.startsWith(boj)) {
       var startHour,
         startMinute,
-        startSecond = 0;
+        startSecond,
+        hour,
+        minute,
+        second = 0;
+      var timerPause = true
       chrome.storage.sync.get("hour", (response) => {
         startHour = parseInt(response.hour);
       });
