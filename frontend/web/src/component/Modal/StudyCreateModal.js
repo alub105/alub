@@ -102,10 +102,20 @@ const StudyCreateModal = (props) => {
 
   const enabled = useMemo(() => checkSubmitEnable(), [problems, studyName]);
 
+  const padToDate = (str) => {
+    let array = str.split("-");
+    let ret = `${array[0].padStart(2, "0")}-${array[1].padStart(
+      2,
+      "0"
+    )}-${array[2].padStart(2, "0")}`;
+    return ret;
+  };
+
   const studyDateFormat = useCallback((str1, str2) => {
     str1 = str1.replace(/\s+/g, "");
     str1 = str1.replaceAll(".", "-");
     str1 = str1.slice(0, -1);
+    str1 = padToDate(str1);
     return str1 + " " + str2;
   });
 
@@ -113,6 +123,7 @@ const StudyCreateModal = (props) => {
     str1 = str1.replace(/\s+/g, "");
     str1 = str1.replaceAll(".", "-");
     str1 = str1.slice(0, -1);
+    str1 = padToDate(str1);
     let time = str2.split(" ")[4].split(":");
     return str1 + " " + time[0] + ":" + time[1];
   });
