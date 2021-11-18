@@ -776,11 +776,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     });
     // 백준에서
     if (currentUrl.startsWith(boj)) {
-      var startHour,
-        startMinute,
-        startSecond,
-        hour,
-        minute,
+      var startHour = 0,
+        startMinute = 0,
+        startSecond = 0,
+        hour = 0,
+        minute = 0,
         second = 0;
       var timerPause = true;
       chrome.storage.sync.get("hour", (response) => {

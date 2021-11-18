@@ -75,7 +75,7 @@ public class StudyServiceImpl implements StudyService {
 
     LocalDateTime now = LocalDateTime.now();
     Map<Boolean, List<Study>> studiesGroup = studies.stream()
-        .collect(Collectors.partitioningBy(x -> now.isAfter(x.getEndTime())));
+        .collect(Collectors.partitioningBy(x -> now.isAfter(x.getAssignmentEndTime())));
 
     List<StudyGetSimpleRes> runningStudies = studiesGroup.get(false).stream()
         .sorted(Comparator.comparing(Study::getAssignmentStartTime))
@@ -84,7 +84,7 @@ public class StudyServiceImpl implements StudyService {
         .collect(Collectors.toList());
 
     List<StudyGetSimpleRes> endedStudies = studiesGroup.get(true).stream()
-        .sorted(Comparator.comparing(Study::getEndTime).reversed())
+        .sorted(Comparator.comparing(Study::getAssignmentEndTime).reversed())
         .limit(5)
         .map(StudyGetSimpleRes::of)
         .collect(Collectors.toList());
