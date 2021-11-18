@@ -1,0 +1,178 @@
+.profile {
+  width: 100%;
+  height: 100%;
+  font-family: var(--IBM) !important;
+
+  .container {
+    max-width: 900px;
+    min-width: 800px;
+    margin: 0 auto;
+    padding: 20px 5vw;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    h1 {
+      padding-top: 30px;
+      text-align: center;
+      font-size: 2.4rem;
+      margin-bottom: 40px;
+    }
+
+    hr {
+      border-top: 1px solid;
+      margin: 25px 0;
+    }
+
+    .title {
+      font-size: 1.3rem;
+      color: var(--text-black-light);
+      margin-bottom: 20px;
+      padding: 0 20px;
+    }
+
+    .user-box {
+      height: 240px;
+      width: 90%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+
+      border-radius: 6px;
+      background-color: var(--background);
+
+      border: 3px solid rgb(241, 241, 241);
+      position: relative;
+
+      .img-box {
+        position: absolute;
+        top: -23%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        border-radius: 50%;
+        width: 90px;
+        height: 90px;
+        box-shadow: 0px 0px 0px 5px rgb(241, 241, 241);
+
+        .image {
+          width: 94px;
+          border-radius: 50%;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+        }
+      }
+
+      .profile-wrapper {
+        width: 98%;
+        height: 100%;
+        margin: 0.4rem;
+        background-color: white;
+        border-radius: 16px;
+      }
+      .profile-box {
+        width: 100%;
+        height: 100%;
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+
+        .grid-row {
+          display: grid;
+          grid-template-columns: 3fr 7fr;
+          margin: 0 30px;
+          align-items: center;
+
+          p {
+            font-family: var(--IBM);
+            font-weight: bold;
+            margin: 0.5rem 0;
+            padding: 0;
+          }
+
+          input {
+            background-color: var(--white);
+          }
+        }
+      }
+    }
+
+    .repo {
+      .title {
+        margin-bottom: 5px !important;
+      }
+      .descript {
+        font-family: var(--IBM);
+        color: var(--text-gray);
+        font-size: 1rem;
+        margin-left: 30px;
+      }
+
+      .flex-column {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        width: 100%;
+        height: 100%;
+        padding: 0 10px;
+
+        .form-check-label {
+          padding: 5px 0;
+          margin-bottom: 5px;
+          font-weight: bold;
+          margin-top: 10px;
+        }
+
+        .git-new-input {
+          display: grid;
+          grid-template-columns: 2.3fr 4fr 1fr;
+          gap: 5px;
+          margin: 0 10px;
+
+          button {
+            border-radius: 6px;
+            font-size: 0.9rem;
+          }
+        }
+
+        .git-exist-input {
+          display: grid;
+          grid-template-columns: 2.3fr 3fr 2fr;
+          gap: 5px;
+          margin: 0 10px;
+        }
+      }
+      .invalid-feedback,
+      .valid-feedback {
+        position: absolute;
+      }
+
+      .footer {
+        width: 100%;
+        height: 10rem;
+        text-align: center;
+        margin-top: 1rem;
+
+        button {
+          width: 50%;
+        }
+      }
+    }
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+
+    font-family: var(--IBM);
+    color: white;
+  }
+}

@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { React, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory, Redirect } from "react-router";
 import { Modal } from "react-bootstrap";
 import "./ChannelCreateModal.scoped.scss";
 import { API_BASE_URL } from "../../config/index";
@@ -9,11 +10,23 @@ import * as studyActions from "../../modules/actions/study";
 
 const ChannelCreateModal = (props) => {
   const { token: storeToken } = useSelector((state) => state.user);
+  const { selectedChannel: storeSelectedChannel } = useSelector(
+    (state) => state.study
+  );
+  const { userInfo: storeUserInfo } = useSelector((state) => state.user);
   const [members, setMembers] = useState([]);
   // 검색한 멤버 결과 목록
   const [memberList, setMemberList] = useState([]);
 
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  useEffect(() => {
+    let host = { id: storeUserInfo.userId, name: storeUserInfo.name };
+    let blank = [host];
+
+    setMembers([...blank]);
+  }, [props.show]);
 
   const [inputs, setInputs] = useState({
     channelName: "",
@@ -36,6 +49,7 @@ const ChannelCreateModal = (props) => {
   };
 
   const searchMemberApi = () => {
+    console.log("channel");
     fetch(API_BASE_URL + "/api/users/searches", {
       method: "POST",
       headers: {
@@ -53,7 +67,9 @@ const ChannelCreateModal = (props) => {
           response.json().then((data) => {
             setMemberList(
               memberList.concat(
-                data.data.filter((member) => !memberList.find((f) => f.id === member.id))
+                data.data.filter(
+                  (member) => !memberList.find((f) => f.id === member.id)
+                )
               )
             );
           });
@@ -78,7 +94,7 @@ const ChannelCreateModal = (props) => {
 
   const submit = () => {
     let idList = members.map((member) => member.id);
-    console.log(storeToken);
+
     fetch(API_BASE_URL + "/api/channels/", {
       method: "POST",
       headers: {
@@ -91,13 +107,14 @@ const ChannelCreateModal = (props) => {
       }),
     }).then((response) => {
       if (response.ok) {
-        console.log(response);
         response.json().then((data) => {
           console.log(data);
           const channelId = data.data?.id;
-          console.log(channelId);
-          dispatch(studyActions.setChannelList({ id: channelId, name: channelName }));
+          dispatch(
+            studyActions.updateChannelList({ id: channelId, name: channelName })
+          );
           props.onHide();
+          history.push(`/channel/${data.data.id}`);
         });
       }
     });
@@ -114,7 +131,9 @@ const ChannelCreateModal = (props) => {
     >
       <Modal.Header className="my-modal-header">
         <i className="fal fa-times fa-2x close-icon" onClick={props.onHide} />
-        <Modal.Title id="contained-modal-title-vcenter">새 채널 만들기</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          새 채널 만들기
+        </Modal.Title>
         <p>멤버들을 초대해 새 스터디 채널을 만들어 보세요</p>
       </Modal.Header>
       <Modal.Body className="my-modal-body">
@@ -153,14 +172,19 @@ const ChannelCreateModal = (props) => {
               검색
             </button>
           </div>
-          <div className="result" style={{ display: memberName?.length > 0 ? "none" : "block" }}>
+          <div
+            className="result"
+            style={{ display: memberName?.length > 0 ? "none" : "block" }}
+          >
             {members.map((data, index) => {
               return (
                 <div className="member-item" key={index}>
                   <p>{data.name}</p>
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className={`btn btn-danger ${
+                      storeUserInfo.userId === data.id ? "disabled" : ""
+                    }`}
                     onClick={() => onRemove(data.id)}
                   >
                     취소
@@ -169,7 +193,10 @@ const ChannelCreateModal = (props) => {
               );
             })}
           </div>
-          <div className="result" style={{ display: memberName?.length > 0 ? "block" : "none" }}>
+          <div
+            className="result"
+            style={{ display: memberName?.length > 0 ? "block" : "none" }}
+          >
             <h4 style={{ display: memberList?.length > 0 ? "none" : "block" }}>
               검색 결과가 없습니다
             </h4>

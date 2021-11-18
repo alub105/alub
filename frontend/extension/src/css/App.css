@@ -37,7 +37,6 @@ body {
   height: 1px;
   margin: 0;
   width: 100%;
-  /* background-image: -webkit-linear-gradient(left, #eee, #777, #eee); */
 }
 
 p {
@@ -277,7 +276,9 @@ p {
   /* justify-content: space-between; */
 }
 
-.timer-setting .default-time-set input[type="number"]::-webkit-inner-spin-button {
+.timer-setting
+  .default-time-set
+  input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
