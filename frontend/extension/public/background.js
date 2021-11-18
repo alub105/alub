@@ -745,12 +745,7 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     const judging = statusTable?.childNodes[1]?.childNodes[0]?.childNodes[3]
       ?.querySelector("span")
       ?.classList.contains("result-judging");
-    if (judging) {
-      setTimeout(function () {
-        correctPause();
-        // console.log("채점중")
-      }, 5000);
-    } else {
+    if (!judging) {
       // console.log("채점끝")
       if (
         (result?.includes("맞") || result?.includes("100")) &&
