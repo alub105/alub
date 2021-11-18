@@ -1,7 +1,7 @@
 {
   "name": "ALUB",
   "description": "백준, 프로그래머스에서 깃허브에 코드를 자동으로 커밋해보세요.",
-  "version": "1.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "action": {
     "default_popup": "index.html",
