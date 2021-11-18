@@ -40,6 +40,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
+
   private static final Pattern DIR_PATH_ANTI_PATTERN = Pattern.compile("//+");
   private final UserService userService;
 
