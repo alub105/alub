@@ -309,7 +309,7 @@ function copyCode(
                     body.appendChild(template);
                     setTimeout(() => {
                       document.querySelector("#alub-noti").remove();
-                    }, 3000);
+                    }, 5000);
                   });
                 }
               })
@@ -324,6 +324,7 @@ function copyCode(
               }
               const inputModal = document.createElement("div");
               inputModal.setAttribute("class", "modal");
+              inputModal.id = 'inputModal'
               inputModal.style.width = "100%";
               inputModal.style.height = "100%";
               inputModal.style.backgroundColor = "black";
@@ -364,19 +365,8 @@ function copyCode(
               inputButton.style.padding = "15px 20px";
               inputButton.style.fontSize = "20px";
 
-              inputButton.addEventListener("click", submitCommitData);
-              inputButton.innerText = "Commit";
-              inputModalHeader.appendChild(inputForm);
-              inputForm.append(inputText);
-              inputForm.appendChild(inputDiv);
-              inputForm.appendChild(inputButton);
-              inputModal.appendChild(inputModalHeader);
-
-              document
-                .querySelector(".container.content")
-                ?.appendChild(inputModal);
-
-              function submitCommitData() {
+              inputButton.addEventListener("click", function submitCommitData(event) {
+                event.preventDefault();
                 chrome.storage.sync.set({ commitNow: false }, () => {});
                 let fileName = fileNameInput.value;
                 if (timerRunning) {
@@ -414,6 +404,7 @@ function copyCode(
                   .then((response) => {
                     if (response.ok) {
                       response.json().then((data) => {
+                        document.getElementById("inputModal").remove()
                         const body = document.querySelector(".wrapper");
                         const element = `<div style=' position: fixed; top: 25px; right: 0; z-index: 100' id='alub-noti'>
                       <div
@@ -451,14 +442,26 @@ function copyCode(
                         body.appendChild(template);
                         setTimeout(() => {
                           document.querySelector("#alub-noti").remove();
-                        }, 3000);
+                        }, 5000);
                       });
                     }
                   })
                   .catch((err) => {
                     console.log(err);
                   });
-              }
+              });
+              inputButton.innerText = "Commit";
+              inputModalHeader.appendChild(inputForm);
+              inputForm.append(inputText);
+              inputForm.appendChild(inputDiv);
+              inputForm.appendChild(inputButton);
+              inputModal.appendChild(inputModalHeader);
+
+              document
+                .querySelector(".container.content")
+                ?.appendChild(inputModal);
+
+              
             });
           }
         });
