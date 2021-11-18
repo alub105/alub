@@ -38,7 +38,6 @@ function authListener(tabId, changeInfo, tab) {
           }),
         })
           .then((response) => {
-            console.log("move ");
             if (response.ok) {
               response.json().then((data) => {
                 chrome.storage.sync.set(
@@ -674,7 +673,6 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     chrome.storage.sync.remove(
       ["leftHour", "leftMinute", "leftSecond", "timerRunning"],
       () => {
-        
         h = startHour;
         m = startMinute;
         s = startSecond;
@@ -784,7 +782,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         hour,
         minute,
         second = 0;
-      var timerPause = true
+      var timerPause = true;
       chrome.storage.sync.get("hour", (response) => {
         startHour = parseInt(response.hour);
       });

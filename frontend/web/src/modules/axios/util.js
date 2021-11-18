@@ -365,3 +365,26 @@ export const createStudy = (
       });
   });
 };
+
+//스터디 삭제
+export const deleteStudy = (channelId, studyId, token) => {
+  return new Promise(function(resolve, reject) {
+    fetch(API_BASE_URL + `/api/channels/${channelId}/studies/${studyId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};

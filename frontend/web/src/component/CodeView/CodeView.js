@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { DragDropContext } from "react-beautiful-dnd";
 import { API_BASE_URL } from "../../config/index";
+import qs from "qs";
 
 import MiniMap from "./MiniMap";
 import UserCodeList from "./UserCodeList";
@@ -12,12 +13,12 @@ import * as util from "../../modules/axios/util";
 
 const CodeView = ({ match, location }) => {
   const { token: storeToken } = useSelector((state) => state.user);
-
-  const query = location.search.split("=");
-
+  const query = qs.parse(location.search, {
+    ignoreQueryPrefix: true,
+  });
   const channelId = match.params.channelId;
-  const siteName = query[1].split("&")[0];
-  var problemNum = query[2];
+  const siteName = query.siteName;
+  const problemNum = query.problemNum;
 
   const [userList, setUserList] = useState([]);
   const [fileList, setFileList] = useState([]);
@@ -25,6 +26,8 @@ const CodeView = ({ match, location }) => {
   const [problemInfo, setProblemInfo] = useState({});
 
   useEffect(() => {
+    //utterances redirect
+
     getMembers();
     getProblem();
 

@@ -123,6 +123,15 @@
         min-width: 7rem;
       }
 
+      .site {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        &:hover {
+          background-color: var(--text-blue);
+          color: var(--white);
+        }
+      }
+
       .problem-td {
         min-width: 12rem;
       }
@@ -140,5 +149,26 @@
         }
       }
     }
+  }
+
+  .footer {
+    margin-top: 15rem;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+
+    button {
+      width: 5rem;
+      font-size: 1rem;
+    }
+  }
+
+  .my-alert {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-60%, -50%);
+    width: 450px;
   }
 }

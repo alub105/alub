@@ -1,7 +1,7 @@
 /* eslint-disable */
 import "./Profile.scoped.scss";
 import { useSelector } from "react-redux";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import * as util from "../../modules/axios/util";
 
@@ -32,6 +32,9 @@ const Profile = () => {
 
   const [duplicateCheck, setDuplicateCheck] = useState(false);
 
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [duplicateLoading, setDuplicateLoading] = useState(false);
+
   //toast
   const [show, setShow] = useState(false);
   const [toastMsg, setToastMsg] = useState(
@@ -54,15 +57,16 @@ const Profile = () => {
 
   const initStates = () => {
     util.getUserRepos(storeToken).then((data) => {
-      setRepos(repos.concat(data.data));
+      setRepos([...data.data]);
       repoInit();
     });
     util.getUserConfig(storeToken).then((data) => {
       info = data.data;
+
       let temp = `github/${storeUserInfo?.name}`;
       setInitRepoName(temp);
 
-      if (info.repoPath === null) {
+      if (info.repoName === null) {
         setGitPath(`연결된 레포지토리가 없습니다.`);
       } else {
         setGitPath(
@@ -86,16 +90,10 @@ const Profile = () => {
         repoName: "Alub",
       });
     } else if (info.dirPath === null || info.dirPath === "") {
-      setRepoSelect("newRepo");
-      setInputs({
-        repoName: info.repoName,
-        dirName: "",
-      });
-    } else {
       setRepoSelect("existRepo");
       setExistSelect(info.repoName);
       setInputs({
-        repoName: "",
+        ...inputs,
         dirName: info.dirPath,
       });
     }
@@ -103,14 +101,6 @@ const Profile = () => {
 
   const handleInputs = (e) => {
     const { value, name } = e.target;
-
-    setDuplicateCheck(false);
-    setErrorMsg("");
-    setInvalid(false);
-    setErrorMsg2("");
-    setInvalid2(false);
-    setValid(false);
-    setInvalid3(false);
 
     setInputs({
       ...inputs,
@@ -138,12 +128,12 @@ const Profile = () => {
   };
 
   const handleExistRepo = (e) => {
-    setInvalid3(false);
     setExistSelect(e.target.value);
   };
 
   const focusHandler = (e) => {
     const { name } = e.target;
+    initValidCheck();
     if (name === "repoName") {
       setRepoSelect("newRepo");
     } else {
@@ -151,20 +141,35 @@ const Profile = () => {
     }
   };
 
+  const initValidCheck = () => {
+    setDuplicateCheck(false);
+    setErrorMsg("");
+    setInvalid(false);
+    setErrorMsg2("");
+    setInvalid2(false);
+    setValid(false);
+    setInvalid3(false);
+  };
+
+  // 중복체크
   const searchRepoExist = () => {
+    initValidCheck();
     if (repoName === "") {
+      setInvalid(true);
+      setErrorMsg("레포지토리를 입력해주세요");
       return;
     }
+    setDuplicateLoading(true);
     util.getRepoDuplicate(repoName, storeToken).then((data) => {
       if (data.code === "success") {
         setInvalid(true);
         setErrorMsg("이미 존재하는 레포지토리 입니다");
+        setDuplicateLoading(false);
         return;
       } else if (data.code === "fail") {
-        setInvalid(false);
         setValid(true);
-        setInvalid(false);
         setDuplicateCheck(true);
+        setDuplicateLoading(false);
       }
     });
   };
@@ -173,6 +178,8 @@ const Profile = () => {
     var _repoName = "";
     var _dirName = "";
     var _creation = false;
+
+    initValidCheck();
 
     if (repoSelect === "newRepo") {
       if (!duplicateCheck) {
@@ -208,6 +215,8 @@ const Profile = () => {
       _creation = false;
     }
 
+    setSubmitLoading(true);
+
     util.setRepo(_repoName, _creation, _dirName, storeToken).then((data) => {
       setRepos([...repos, { name: _repoName }]);
       if (data.code === "fail") {
@@ -215,6 +224,7 @@ const Profile = () => {
       } else {
         setToastMsg("성공적으로 Repository 설정이 완료되었습니다.");
       }
+      setSubmitLoading(false);
       setShow(true);
       info.repoName = _repoName;
       info.dirPath = _dirName;
@@ -334,7 +344,20 @@ const Profile = () => {
                   className="btn btn-primary"
                   onClick={() => searchRepoExist()}
                 >
-                  중복 체크
+                  <div className="d-flex justify-content-center loading">
+                    <div
+                      className="spinner-border text-light spinner-style spinner-border-sm"
+                      style={{ display: duplicateLoading ? "block" : "none" }}
+                      role="status"
+                    >
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                  <span
+                    style={{ display: duplicateLoading ? "none" : "block" }}
+                  >
+                    중복 체크
+                  </span>
                 </button>
               </div>
             </div>
@@ -410,7 +433,18 @@ const Profile = () => {
                 className="btn btn-lg btn-success"
                 onClick={() => submit()}
               >
-                등록
+                <div className="d-flex justify-content-center loading">
+                  <div
+                    className="spinner-border text-light spinner-style"
+                    style={{ display: submitLoading ? "block" : "none" }}
+                    role="status"
+                  >
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                </div>
+                <span style={{ display: submitLoading ? "none" : "block" }}>
+                  등록
+                </span>
               </button>
             </div>
           </form>
