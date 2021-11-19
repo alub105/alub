@@ -200,6 +200,29 @@ export const updateChannel = (
   });
 };
 
+// delete channel
+export const deleteChannel = (channelId, token) => {
+  return new Promise(function(resolve, reject) {
+    fetch(API_BASE_URL + `/api/channels/${channelId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
 // repo setting
 export const getUserConfig = (token) => {
   return new Promise(function(resolve, reject) {

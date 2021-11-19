@@ -19,10 +19,10 @@ const UserCode = ({ user, codeList, problemInfo }) => {
 
   return (
     <div className="file-container">
-      <div className="header">
+      <div className="user-header">
         <div className="flex-row">
           <i className="fab fa-git-square" onClick={() => goGit()} />
-          <h3>{user.name}</h3>
+          <h3 className="user-name">{user.name}</h3>
         </div>
         <DropdownButton
           id="dropdown-basic-button"

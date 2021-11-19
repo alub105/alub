@@ -28,16 +28,15 @@ const StudyCreateModal = (props) => {
   });
   const { studyName, problem } = inputs;
 
-  const [studyDate, setStudyDate] = useState(new Date());
+  const [studyStart, setStudyStart] = useState(new Date());
+  const [studyEnd, setStudyEnd] = useState();
   const [homeworkStart, setHomeworkStart] = useState(new Date());
   const [homeworkEnd, setHomeworkEnd] = useState();
 
   const [site, setSite] = useState("BOJ");
 
-  const studyStartRef = useRef();
-  const studyEndRef = useRef();
-
   const [problems, setProblems] = useState([]);
+  // 문제 검색 history
   const [searchResult, setSearchResult] = useState([]);
 
   useEffect(() => {
@@ -56,6 +55,10 @@ const StudyCreateModal = (props) => {
       ...inputs,
       [name]: value,
     });
+
+    if (problem === "") {
+      initHistory();
+    }
   };
 
   const handleSite = (e) => {
@@ -81,6 +84,7 @@ const StudyCreateModal = (props) => {
       ...inputs,
       problem: "",
     });
+    initHistory();
   };
 
   const removeProblem = (item) => {
@@ -91,9 +95,10 @@ const StudyCreateModal = (props) => {
     if (
       problems.length > 0 &&
       studyName.length > 0 &&
-      studyStartRef.current.value !== "" &&
-      studyEndRef.current.value !== "" &&
-      studyDate !== ""
+      studyStart !== "" &&
+      studyEnd !== "" &&
+      homeworkStart !== "" &&
+      homeworkEnd !== ""
     ) {
       return true;
     }
@@ -111,15 +116,7 @@ const StudyCreateModal = (props) => {
     return ret;
   };
 
-  const studyDateFormat = useCallback((str1, str2) => {
-    str1 = str1.replace(/\s+/g, "");
-    str1 = str1.replaceAll(".", "-");
-    str1 = str1.slice(0, -1);
-    str1 = padToDate(str1);
-    return str1 + " " + str2;
-  });
-
-  const homeworkDateFormat = useCallback((str1, str2) => {
+  const dateFormat = useCallback((str1, str2) => {
     str1 = str1.replace(/\s+/g, "");
     str1 = str1.replaceAll(".", "-");
     str1 = str1.slice(0, -1);
@@ -129,19 +126,19 @@ const StudyCreateModal = (props) => {
   });
 
   const submit = () => {
-    let studyStartTime = studyDateFormat(
-      studyDate.toLocaleDateString(),
-      studyStartRef.current.value
+    let studyStartTime = dateFormat(
+      studyStart.toLocaleDateString(),
+      studyStart.toString()
     );
-    let studyEndTime = studyDateFormat(
-      studyDate.toLocaleDateString(),
-      studyEndRef.current.value
+    let studyEndTime = dateFormat(
+      studyEnd.toLocaleDateString(),
+      studyEnd.toString()
     );
-    let assignmentStartTime = homeworkDateFormat(
+    let assignmentStartTime = dateFormat(
       homeworkStart.toLocaleDateString(),
       homeworkStart.toString()
     );
-    let assignmentEndTime = homeworkDateFormat(
+    let assignmentEndTime = dateFormat(
       homeworkEnd.toLocaleDateString(),
       homeworkEnd.toString()
     );
@@ -161,6 +158,11 @@ const StudyCreateModal = (props) => {
         dispatch(studyActions.addRunningStudyList(data.data));
         props.onHide();
       });
+  };
+
+  const initHistory = () => {
+    let blank = [];
+    setSearchResult([...blank]);
   };
 
   return (
@@ -193,27 +195,26 @@ const StudyCreateModal = (props) => {
         <div className="grid-column-4">
           <h4>미팅 일정</h4>
           <DatePicker
-            selected={studyDate}
-            onChange={(date) => setStudyDate(date)}
+            selected={studyStart}
+            onChange={(date) => setStudyStart(date)}
             locale={ko}
-            dateFormat="yyyy년 MM월 dd일"
+            dateFormat="yyyy년 MM월 dd일 - HH시 mm분"
+            showTimeSelect
             className="my-form study-input"
-            step="5"
+            timeIntervals={15}
             minDate={new Date()}
           />
-          <input
-            type="time"
-            name="studyTime"
-            ref={studyStartRef}
-            step="900"
-            required
+          <DatePicker
+            selected={studyEnd}
+            onChange={(date) => setStudyEnd(date)}
+            locale={ko}
+            dateFormat="yyyy년 MM월 dd일 - HH시 mm분"
+            showTimeSelect
             className="my-form study-input"
-          />
-          <input
-            type="time"
-            name="studyTime"
-            ref={studyEndRef}
-            className="my-form study-input"
+            step="5"
+            minDate={studyStart}
+            timeIntervals={15}
+            placeholderText="미팅 종료 시간을 선택하세요"
           />
         </div>
         <div className="grid-column-3">
@@ -222,19 +223,21 @@ const StudyCreateModal = (props) => {
             selected={homeworkStart}
             onChange={(date) => setHomeworkStart(date)}
             locale={ko}
-            dateFormat="yyyy년 MM월 dd일 - hh시 mm분"
+            dateFormat="yyyy년 MM월 dd일 - HH시 mm분"
             showTimeSelect
             minDate={new Date()}
+            timeIntervals={15}
             className="my-form study-input"
           />
           <DatePicker
             selected={homeworkEnd}
             onChange={(date) => setHomeworkEnd(date)}
             locale={ko}
-            dateFormat="yyyy년 MM월 dd일 - hh시 mm분"
+            dateFormat="yyyy년 MM월 dd일 - HH시 mm분"
             showTimeSelect
             minDate={homeworkStart}
             className="my-form study-input"
+            timeIntervals={15}
             placeholderText="과제 마감일을 선택하세요"
           />
         </div>

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { React, useEffect, useState } from "react";
+import { React, useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory, Redirect } from "react-router";
 import { Modal } from "react-bootstrap";
@@ -14,6 +14,7 @@ const ChannelCreateModal = (props) => {
     (state) => state.study
   );
   const { userInfo: storeUserInfo } = useSelector((state) => state.user);
+  // 추가할 멤버 목록
   const [members, setMembers] = useState([]);
   // 검색한 멤버 결과 목록
   const [memberList, setMemberList] = useState([]);
@@ -40,6 +41,11 @@ const ChannelCreateModal = (props) => {
       ...inputs,
       [name]: value,
     });
+
+    //  input이 빈칸이 될 때마다 history 삭제
+    if (channelName === "") {
+      initHistory();
+    }
   };
 
   const searchMember = (e) => {
@@ -83,12 +89,22 @@ const ChannelCreateModal = (props) => {
     setMembers(members.filter((member) => member.id !== id));
   };
 
-  const addMember = (member) => {
-    setMembers(members.concat(member));
+  const addMember = (newMember) => {
+    // 존재하지 않는 멤버만 추가
+    if (!members.some((member) => member.id === newMember.id)) {
+      setMembers(members.concat(newMember));
+    }
+
     setInputs({
       ...inputs,
       memberName: "",
     });
+    initHistory();
+  };
+
+  const initHistory = () => {
+    let blank = [];
+    setMemberList([...blank]);
   };
 
   const submit = () => {
@@ -118,6 +134,17 @@ const ChannelCreateModal = (props) => {
     });
   };
 
+  const checkInvited = useCallback((newMember) => {
+    // 초대안됐으면 false, 이미 존재하면 true
+    if (!members?.some((member) => member.id === newMember.id)) {
+      return false;
+    } else if (newMember.id === storeUserInfo?.userId) {
+      return true;
+    } else {
+      return true;
+    }
+  });
+
   return (
     <Modal
       {...props}
@@ -132,7 +159,7 @@ const ChannelCreateModal = (props) => {
         <Modal.Title id="contained-modal-title-vcenter">
           새 채널 만들기
         </Modal.Title>
-        <p>멤버들을 초대해 새 스터디 채널을 만들어 보세요</p>
+        <p>멤버들을 초대해 새로운 스터디 공간을 만들어 보세요</p>
       </Modal.Header>
       <Modal.Body className="my-modal-body">
         <div className="name">
@@ -205,8 +232,8 @@ const ChannelCreateModal = (props) => {
                   <button
                     type="button"
                     className={`btn btn-success ${
-                      storeUserInfo?.userId === member.id ? "disabled" : ""
-                    }`}
+                      checkInvited(member) ? "disabled" : ""
+                    } `}
                     onClick={() => addMember(member)}
                   >
                     초대

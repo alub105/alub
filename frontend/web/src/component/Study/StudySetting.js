@@ -1,10 +1,9 @@
 /* eslint-disable */
 import "./StudySetting.scoped.scss";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useHistory } from "react-router";
 
-import { API_BASE_URL } from "../../config/index";
 import { Alert, Button, Toast } from "react-bootstrap";
 
 import * as studyActions from "../../modules/actions/study";
@@ -46,6 +45,8 @@ const StudySetting = ({ match }) => {
         channelName: data.data.name,
       });
       setHost(data.data.host.id);
+      let blank = [];
+      setMembers([...blank]);
       setMembers((members) => members.concat(data.data.host));
       setMembers((members) => members.concat(data.data.member));
     });
@@ -57,6 +58,10 @@ const StudySetting = ({ match }) => {
       ...inputs,
       [name]: value,
     });
+
+    if (memberName === "") {
+      initHistory();
+    }
   };
   const onChangeHost = (e) => {
     setHost(e.target.value);
@@ -77,25 +82,40 @@ const StudySetting = ({ match }) => {
     }
   };
 
-  const onRemove = (id) => {
-    setMembers(members.filter((member) => member.id !== id));
-    if (studyInfo.member.find((f) => f.id === id)) {
-      setDeleteMember((deleteMember) => [...deleteMember, id]);
+  const onRemove = (deleteId) => {
+    // add에 있고 원래 멤버였으면 => delete 추가 안함. add에서 제거
+    if (addedMember?.some((addId) => addId === deleteId)) {
+      setAddedMember(addedMember.filter((addId) => deleteId !== addId));
+    } else {
+      // delete에 없으면 id 추가
+      if (!deleteMember?.some((dm) => dm === deleteId)) {
+        setDeleteMember(deleteMember.concat(deleteId));
+      }
     }
+    setMembers(members.filter((member) => deleteId !== member.id));
   };
 
   const addMember = (member) => {
-    // 결과 리스트에 선택한 멤버 추가
-    // 중복 없을 때만 add
-    if (members.filter((m) => m.id === member.id).length === 0) {
-      setMembers(members.concat(member));
-      setAddedMember(addedMember.concat(member.id));
+    // delete에 있고 원년 멤버였으면 =>  add에 추가 안함. delete에서 삭제
+    if (deleteMember?.some((deleteId) => deleteId === member.id)) {
+      setDeleteMember(
+        deleteMember.filter((deleteId) => deleteId !== member.id)
+      );
+    } else {
+      // add에 없으면 id 추가
+      if (!addedMember?.some((am) => am === member.id)) {
+        setAddedMember(addedMember.concat(member.id));
+      }
     }
+
+    // 결과 리스트에 선택한 멤버 추가
+    setMembers(members.concat(member));
 
     setInputs({
       ...inputs,
       memberName: "",
     });
+    initHistory();
   };
 
   const updateChannel = () => {
@@ -129,26 +149,28 @@ const StudySetting = ({ match }) => {
   };
 
   const deleteChannel = () => {
-    fetch(API_BASE_URL + `/api/channels/${channelId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${storeToken}`,
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            dispatch(studyActions.deleteChannel(channelId));
-            setShow(false);
-            history.push("/channel/");
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    util.deleteChannel(channelId, storeToken).then((data) => {
+      dispatch(studyActions.deleteChannel(channelId));
+      setShow(false);
+      history.push("/channel/");
+    });
   };
+
+  const initHistory = () => {
+    let blank = [];
+    setInviteList([...blank]);
+  };
+
+  const checkInvited = useCallback((newMember) => {
+    // 초대안됐으면 false, 이미 존재하면 true
+    if (!members?.some((member) => member.id === newMember.id)) {
+      return false;
+    } else if (newMember.name === host) {
+      return true;
+    } else {
+      return true;
+    }
+  });
 
   return (
     <div className="study-setting">
@@ -231,7 +253,9 @@ const StudySetting = ({ match }) => {
                   <p>{member.name}</p>
                   <button
                     type="button"
-                    className="btn btn-success"
+                    className={`btn btn-success ${
+                      checkInvited(member) ? "disabled" : ""
+                    }`}
                     onClick={() => addMember(member)}
                   >
                     초대

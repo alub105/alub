@@ -7,7 +7,7 @@ import qs from "qs";
 
 import MiniMap from "./MiniMap";
 import UserCodeList from "./UserCodeList";
-import "./CodeView.scoped.css";
+import "./CodeView.scoped.scss";
 
 import * as util from "../../modules/axios/util";
 
@@ -24,6 +24,8 @@ const CodeView = ({ match, location }) => {
   const [fileList, setFileList] = useState([]);
 
   const [problemInfo, setProblemInfo] = useState({});
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     //utterances redirect
@@ -82,6 +84,9 @@ const CodeView = ({ match, location }) => {
             };
 
             fileList[idx] = file;
+          })
+          .finally(() => {
+            setLoading(false);
           });
       })
     );
@@ -123,19 +128,36 @@ const CodeView = ({ match, location }) => {
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <div className="header">
           <h1>
-            [{siteName}] {problemInfo?.title} {problemNum} -{" "}
+            [{siteName}] {problemInfo?.title} - {problemNum} -{" "}
             {problemInfo?.level}
           </h1>
           <div className="container">
             <MiniMap userList={userList} fileList={fileList} />
           </div>
         </div>
-        <UserCodeList fileList={fileList} problemInfo={problemInfo} />
+        <div className="fileList-wrap">
+          <UserCodeList fileList={fileList} problemInfo={problemInfo} />
+        </div>
         <div
-          style={{ display: fileList.length === 0 ? "block" : "none" }}
+          style={{
+            display: !loading && fileList.length == 0 ? "block" : "none",
+          }}
           className="no-file-div"
         >
           <h3>아직 제출한 멤버가 없습니다.</h3>
+        </div>
+        <div
+          className="no-file-div"
+          style={{ display: loading ? "block" : "none" }}
+        >
+          <div className="d-flex justify-content-center loading">
+            <div
+              className="spinner-border text-primary spinner-style"
+              role="status"
+            >
+              <span className="sr-only">Loading...</span>
+            </div>
+          </div>
         </div>
       </DragDropContext>
     </div>
