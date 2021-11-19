@@ -96,6 +96,13 @@ const Profile = () => {
         ...inputs,
         dirName: info.dirPath,
       });
+    } else {
+      setRepoSelect("existRepo");
+      setExistSelect(info.repoName);
+      setInputs({
+        ...inputs,
+        dirName: info.dirPath,
+      });
     }
   };
 
