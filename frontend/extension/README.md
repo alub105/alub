@@ -6,9 +6,12 @@
 
 <br>
 
-### `npm run build:dev`
+### `npm run build:dev`, `npm run build:prod`
 
-모듈 설치가 끝나면 프로젝트를 build 한다.
+모듈 설치가 끝나면 프로젝트를 build 한다. <br>
+
+`npm run build:dev`: 개발 모드. api가 http://localhost:8080로 요청됨
+`npm run build:prod`: 빌드 모드. api가 https://alub.co.kr로 요청됨
 
 <br>
 
