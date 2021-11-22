@@ -1,10 +1,9 @@
 /* eslint-disable */
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import * as util from "../../modules/axios/util";
-import * as studyActions from "../../modules/actions/study";
 import "./StudyHome.scoped.scss";
 
 const StudyHome = ({ match }) => {
@@ -16,8 +15,6 @@ const StudyHome = ({ match }) => {
   const { endedStudyList: storeEndedStudyList } = useSelector(
     (state) => state.study
   );
-
-  const dispatch = useDispatch();
 
   const routeChannelId = match.params.channelId;
   var channelId = 0;
@@ -39,9 +36,9 @@ const StudyHome = ({ match }) => {
     //   dispatch(studyActions.setRunningStudyList(data.data.running));
     //   dispatch(studyActions.setEndedStuyList(data.data.ended));
     // });
-    // util.getStudyInfo(channelId, storeToken).then((data) => {
-    //   setStudyInfo(data.data);
-    // });
+    util.getStudyInfo(channelId, storeToken).then((data) => {
+      setStudyInfo(data.data);
+    });
     console.log("studyHome");
     console.log(storeRunningStudyList);
   }, [storeRunningStudyList]);
@@ -72,7 +69,10 @@ const StudyHome = ({ match }) => {
     });
     let current = now + " " + time;
 
-    if (study.startTime < current && current < study.endTime) {
+    if (
+      study.assignmentStartTime < current &&
+      current < study.assignmentEndTime
+    ) {
       // 진행
       return true;
     } else {
@@ -108,7 +108,7 @@ const StudyHome = ({ match }) => {
                             display: setTag(study) ? "block" : "none",
                           }}
                         >
-                          진행: {runningSplitTime(study?.endTime)}
+                          진행: {runningSplitTime(study?.assignmentEndTime)}
                         </span>
                         <span
                           className="tag todo"
@@ -116,7 +116,7 @@ const StudyHome = ({ match }) => {
                             display: setTag(study) ? "none" : "block",
                           }}
                         >
-                          예정: {runningSplitTime(study?.endTime)}
+                          예정: {runningSplitTime(study?.assignmentEndTime)}
                         </span>
                       </td>
                     </tr>
