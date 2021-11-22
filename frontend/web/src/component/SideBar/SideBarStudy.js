@@ -27,7 +27,8 @@ const SideBarStudy = ({ match }) => {
 
   const dispatch = useDispatch();
 
-  const channelId = match.params.channelId;
+  const routeChannelId = match.params.channelId;
+  var channelId = 0;
   // 스터디 생성 모달 show
   const [modalShow, setModalShow] = useState(false);
   // 사이드바 토글
@@ -47,13 +48,25 @@ const SideBarStudy = ({ match }) => {
     host: {},
   });
 
+  let url = window.location.href;
+  let temp = url.split("channel/");
+  if (temp[1].includes("/")) {
+    let _channelId = temp[1].split("/");
+    channelId = _channelId[0];
+  } else {
+    channelId = temp[1];
+  }
+  console.log("study bar id: ", channelId);
   useEffect(() => {
+    // 주소 정보 가져오기
+
     // 스터디 정보 가져오기
     util.getStudyInfo(channelId, storeToken).then((data) => {
       setStudyInfo({ ...data.data });
     });
     // 스터디 리스트 가져오기
     util.getStudyList(channelId, storeToken).then((data) => {
+      console.log(data.data.running);
       dispatch(studyActions.setRunningStudyList(data.data.running));
       dispatch(studyActions.setEndedStuyList(data.data.ended));
     });
@@ -145,7 +158,7 @@ const SideBarStudy = ({ match }) => {
         <nav className="nav">
           <div>
             <div className="study item">
-              <Link to={`/channel/${channelId}`}>
+              <Link to={`/channel/${routeChannelId}`}>
                 <div>🏠 HOME</div>
               </Link>
             </div>
@@ -165,7 +178,7 @@ const SideBarStudy = ({ match }) => {
                 {storeRunningStudyList?.map((study, index) => {
                   return (
                     <div className="child-study item" key={index}>
-                      <Link to={`/channel/${channelId}/study/${study.id}`}>
+                      <Link to={`/channel/${routeChannelId}/study/${study.id}`}>
                         <i className="far fa-hashtag" />
                         <span>{study.name}</span>
                       </Link>
@@ -184,7 +197,7 @@ const SideBarStudy = ({ match }) => {
                 {storeEndedStudyList?.map((study, index) => {
                   return (
                     <div className="child-study item" key={index}>
-                      <Link to={`/channel/${channelId}/study/${study.id}`}>
+                      <Link to={`/channel/${routeChannelId}/study/${study.id}`}>
                         <i className="far fa-hashtag" />
                         <span>{study.name}</span>
                       </Link>
@@ -196,7 +209,7 @@ const SideBarStudy = ({ match }) => {
           </div>
           <div>
             <div className="study item">
-              <Link to={`/channel/${channelId}/member`}>
+              <Link to={`/channel/${routeChannelId}/member`}>
                 <div>멤버 목록 </div>
               </Link>
             </div>
@@ -209,8 +222,8 @@ const SideBarStudy = ({ match }) => {
                     : "none",
               }}
             >
-              <Link to={`/channel/${channelId}/setting`}>
-                <div>스터디 설정</div>
+              <Link to={`/channel/${routeChannelId}/setting`}>
+                <div>채널 설정</div>
               </Link>
             </div>
           </div>

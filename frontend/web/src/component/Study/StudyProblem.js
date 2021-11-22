@@ -28,9 +28,10 @@ const StudyProblem = ({ match }) => {
 
   useEffect(() => {
     // 스터디 정보 불러오기
+    console.log(channelId, studyId);
     util.getStudyDetail(channelId, studyId, storeToken).then((data) => {
       setStudyDetail({ ...data.data });
-
+      console.log(studyDetail);
       isFinish();
     });
     // 스터디 멤버 불러오기

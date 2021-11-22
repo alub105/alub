@@ -131,7 +131,7 @@ const CodeView = ({ match, location }) => {
             [{siteName}] {problemInfo?.title} - {problemNum} -{" "}
             {problemInfo?.level}
           </h1>
-          <div className="container">
+          <div className="my-container">
             <MiniMap userList={userList} fileList={fileList} />
           </div>
         </div>

@@ -156,6 +156,7 @@ const StudyCreateModal = (props) => {
       )
       .then((data) => {
         dispatch(studyActions.addRunningStudyList(data.data));
+        // console.log(data.data);
         props.onHide();
       });
   };

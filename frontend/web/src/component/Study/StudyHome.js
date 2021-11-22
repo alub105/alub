@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { StyleSheetManager } from "styled-components";
 
 import * as util from "../../modules/axios/util";
 import "./StudyHome.scoped.scss";
@@ -17,20 +16,32 @@ const StudyHome = ({ match }) => {
     (state) => state.study
   );
 
-  const [mode, setMode] = useState("");
-  const channelId = match.params.channelId;
+  const routeChannelId = match.params.channelId;
+  var channelId = 0;
   const [studyInfo, setStudyInfo] = useState({});
 
   useEffect(() => {
-    if (channelId < 0) {
-      return;
+    let url = window.location.href;
+    let temp = url.split("channel/");
+    if (temp[1].includes("/")) {
+      let _channelId = temp[1].split("/");
+      channelId = _channelId[0];
+    } else {
+      channelId = temp[1];
     }
+    console.log("study home id: ", channelId);
+
+    // util.getStudyList(channelId, storeToken).then((data) => {
+    //   console.log(data.data.running);
+    //   dispatch(studyActions.setRunningStudyList(data.data.running));
+    //   dispatch(studyActions.setEndedStuyList(data.data.ended));
+    // });
     util.getStudyInfo(channelId, storeToken).then((data) => {
       setStudyInfo(data.data);
     });
-
-    setTag();
-  }, [channelId, mode, storeRunningStudyList, storeEndedStudyList]);
+    console.log("studyHome");
+    console.log(storeRunningStudyList);
+  }, [storeRunningStudyList]);
 
   const runningSplitTime = useCallback((endTime) => {
     const yt = endTime.split(" ");
@@ -46,7 +57,7 @@ const StudyHome = ({ match }) => {
     return `완료: ${year[1]}월 ${year[2]}일  ${time[0]}:${time[1]}`;
   });
 
-  const setTag = () => {
+  const setTag = useCallback((study) => {
     let now = new Date().toLocaleDateString();
     now = now.replace(/\s+/g, "");
     now = now.replaceAll(".", "-");
@@ -58,12 +69,17 @@ const StudyHome = ({ match }) => {
     });
     let current = now + " " + time;
 
-    if (studyInfo.startTime < current && studyInfo.endTime < current) {
-      setMode("진행");
+    if (
+      study.assignmentStartTime < current &&
+      current < study.assignmentEndTime
+    ) {
+      // 진행
+      return true;
     } else {
-      setMode("예정");
+      // 예정
+      return false;
     }
-  };
+  });
 
   return (
     <div className="study-home">
@@ -78,7 +94,9 @@ const StudyHome = ({ match }) => {
                   return (
                     <tr key={index}>
                       <td className="name">
-                        <Link to={`/channel/${channelId}/study/${study.id}`}>
+                        <Link
+                          to={`/channel/${routeChannelId}/study/${study.id}`}
+                        >
                           <i className="far fa-hashtag" />
                           {study.name}
                         </Link>
@@ -87,18 +105,18 @@ const StudyHome = ({ match }) => {
                         <span
                           className="tag running"
                           style={{
-                            display: mode === "진행" ? "block" : "none",
+                            display: setTag(study) ? "block" : "none",
                           }}
                         >
-                          진행: {runningSplitTime(study.endTime)}
+                          진행: {runningSplitTime(study?.assignmentEndTime)}
                         </span>
                         <span
                           className="tag todo"
                           style={{
-                            display: mode === "예정" ? "block" : "none",
+                            display: setTag(study) ? "none" : "block",
                           }}
                         >
-                          예정: {runningSplitTime(study.endTime)}
+                          예정: {runningSplitTime(study?.assignmentEndTime)}
                         </span>
                       </td>
                     </tr>
@@ -122,7 +140,9 @@ const StudyHome = ({ match }) => {
                     return (
                       <tr key={index}>
                         <td className="name">
-                          <Link to={`/channel/${channelId}/study/${study.id}`}>
+                          <Link
+                            to={`/channel/${routeChannelId}/study/${study.id}`}
+                          >
                             <i className="far fa-hashtag" />
                             {study.name}
                           </Link>

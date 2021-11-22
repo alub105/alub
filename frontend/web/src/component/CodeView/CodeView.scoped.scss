@@ -27,7 +27,7 @@
 
   .header {
     height: 15vh;
-    width: 100%;
+    width: 95%;
     position: fixed;
     z-index: 10;
     background-color: white;
@@ -38,7 +38,7 @@
     }
 
     // 미니맵
-    .container {
+    .my-container {
       width: 98%;
       min-width: 900px;
       padding: 0;
@@ -48,7 +48,6 @@
       .nameList {
         background: var(--background-linear);
         width: 100%;
-        margin: 0px 10px;
         border-radius: 6px;
         min-height: 3.4rem;
 
