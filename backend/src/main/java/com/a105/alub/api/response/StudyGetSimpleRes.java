@@ -10,15 +10,21 @@ import lombok.Getter;
 @Builder
 public class StudyGetSimpleRes {
 
-  Long id;
+  private final Long id;
 
-  String name;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-  LocalDateTime startTime;
+  private final String name;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-  LocalDateTime endTime;
+  private final LocalDateTime startTime;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+  private final LocalDateTime endTime;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+  private final LocalDateTime assignmentStartTime;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+  private final LocalDateTime assignmentEndTime;
 
   public static StudyGetSimpleRes of(Study study) {
     return StudyGetSimpleRes.builder()
@@ -26,6 +32,8 @@ public class StudyGetSimpleRes {
         .name(study.getName())
         .startTime(study.getStartTime())
         .endTime(study.getEndTime())
+        .assignmentStartTime(study.getAssignmentStartTime())
+        .assignmentEndTime(study.getAssignmentEndTime())
         .build();
   }
 }

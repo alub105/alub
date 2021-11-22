@@ -33,10 +33,10 @@ public class GitHubCommitReq {
   }
 
   private String addPythonCommentToSrcCode(CommitReq commitReq, LocalDateTime now) {
-    String srcCode = "```\n" + " 메모리: " + commitReq.getRunningMemory() + " KB, 시간: "
+    String srcCode = "'''\n" + " 메모리: " + commitReq.getRunningMemory() + " KB, 시간: "
         + commitReq.getRunningTime() + " ms\n" + (commitReq.getTimer() == null ? ""
             : (" 풀이 시간: " + commitReq.getTimer() + "\n")) + " "
-                + now.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) + "\n by Alub\n```\n"
+                + now.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) + "\n by Alub\n'''\n"
                 + commitReq.getSrcCode();
 
     String message = Base64.getEncoder().encodeToString(srcCode.getBytes()).toString();
