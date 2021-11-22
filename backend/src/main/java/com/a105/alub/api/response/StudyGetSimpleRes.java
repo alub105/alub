@@ -20,12 +20,20 @@ public class StudyGetSimpleRes {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
   LocalDateTime endTime;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+  private final LocalDateTime assignmentStartTime;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+  private final LocalDateTime assignmentEndTime;
+
   public static StudyGetSimpleRes of(Study study) {
     return StudyGetSimpleRes.builder()
         .id(study.getId())
         .name(study.getName())
         .startTime(study.getStartTime())
         .endTime(study.getEndTime())
+        .assignmentStartTime(study.getAssignmentStartTime())
+        .assignmentEndTime(study.getAssignmentEndTime())
         .build();
   }
 }
