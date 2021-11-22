@@ -5,7 +5,8 @@
   $hover-color: rgb(0, 112, 231);
   $active-color: #0158b6;
   width: 100%;
-  position: relative;
+  // position: fixed;
+  height: 100vh;
   max-width: 850px;
 
   a {
@@ -55,9 +56,10 @@
   }
 
   .wrapper {
-    position: absolute;
+    // position: absolute;
+    position: fixed;
     // top: 0;
-    left: 0;
+    left: 86px;
     // left: var(--nav-width);
     width: $studyWidth;
     height: 100vh;

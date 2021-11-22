@@ -210,7 +210,7 @@ const SideBarStudy = ({ match }) => {
               }}
             >
               <Link to={`/channel/${channelId}/setting`}>
-                <div>스터디 설정</div>
+                <div>채널 설정</div>
               </Link>
             </div>
           </div>

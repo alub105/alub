@@ -17,7 +17,6 @@ const StudyHome = ({ match }) => {
     (state) => state.study
   );
 
-  const [mode, setMode] = useState("");
   const channelId = match.params.channelId;
   const [studyInfo, setStudyInfo] = useState({});
 
@@ -28,9 +27,9 @@ const StudyHome = ({ match }) => {
     util.getStudyInfo(channelId, storeToken).then((data) => {
       setStudyInfo(data.data);
     });
-
-    setTag();
-  }, [channelId, mode, storeRunningStudyList, storeEndedStudyList]);
+    console.log("studyHome");
+    console.log(storeRunningStudyList);
+  }, [channelId, storeRunningStudyList, storeEndedStudyList]);
 
   const runningSplitTime = useCallback((endTime) => {
     const yt = endTime.split(" ");
@@ -46,7 +45,7 @@ const StudyHome = ({ match }) => {
     return `완료: ${year[1]}월 ${year[2]}일  ${time[0]}:${time[1]}`;
   });
 
-  const setTag = () => {
+  const setTag = useCallback((study) => {
     let now = new Date().toLocaleDateString();
     now = now.replace(/\s+/g, "");
     now = now.replaceAll(".", "-");
@@ -58,12 +57,14 @@ const StudyHome = ({ match }) => {
     });
     let current = now + " " + time;
 
-    if (studyInfo.startTime < current && studyInfo.endTime < current) {
-      setMode("진행");
+    if (study.startTime < current && current < study.endTime) {
+      // 진행
+      return true;
     } else {
-      setMode("예정");
+      // 예정
+      return false;
     }
-  };
+  });
 
   return (
     <div className="study-home">
@@ -87,18 +88,18 @@ const StudyHome = ({ match }) => {
                         <span
                           className="tag running"
                           style={{
-                            display: mode === "진행" ? "block" : "none",
+                            display: setTag(study) ? "block" : "none",
                           }}
                         >
-                          진행: {runningSplitTime(study.endTime)}
+                          진행: {runningSplitTime(study?.endTime)}
                         </span>
                         <span
                           className="tag todo"
                           style={{
-                            display: mode === "예정" ? "block" : "none",
+                            display: setTag(study) ? "none" : "block",
                           }}
                         >
-                          예정: {runningSplitTime(study.endTime)}
+                          예정: {runningSplitTime(study?.endTime)}
                         </span>
                       </td>
                     </tr>
