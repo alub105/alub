@@ -3,11 +3,10 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Route, Link } from "react-router-dom";
 import "./SideBarStudy.scoped.scss";
 import { useSpring, animated } from "react-spring";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import * as util from "../../modules/axios/util";
-import * as studyActions from "../../modules/actions/study";
 
 import StudyHome from "../Study/StudyHome.js";
 import StudyProblem from "../Study/StudyProblem.js";
@@ -18,14 +17,9 @@ import Member from "../Study/Member";
 const SideBarStudy = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
   const { userInfo: storeUserInfo } = useSelector((state) => state.user);
-  const { runningStudyList: storeRunningStudyList } = useSelector(
-    (state) => state.study
-  );
-  const { endedStudyList: storeEndedStudyList } = useSelector(
-    (state) => state.study
-  );
 
-  const dispatch = useDispatch();
+  const [runningStudyList, setRunningStudyList] = useState([]);
+  const [endedStudyList, setEndedStudyList] = useState([]);
 
   const routeChannelId = match.params.channelId;
   var channelId = 0;
@@ -48,6 +42,7 @@ const SideBarStudy = ({ match }) => {
     host: {},
   });
 
+  // 주소 정보 가져오기
   let url = window.location.href;
   let temp = url.split("channel/");
   if (temp[1].includes("/")) {
@@ -56,29 +51,36 @@ const SideBarStudy = ({ match }) => {
   } else {
     channelId = temp[1];
   }
-  console.log("study bar id: ", channelId);
-  useEffect(() => {
-    // 주소 정보 가져오기
 
+  useEffect(() => {
     // 스터디 정보 가져오기
     util.getStudyInfo(channelId, storeToken).then((data) => {
       setStudyInfo({ ...data.data });
     });
     // 스터디 리스트 가져오기
     util.getStudyList(channelId, storeToken).then((data) => {
-      console.log(data.data.running);
-      dispatch(studyActions.setRunningStudyList(data.data.running));
-      dispatch(studyActions.setEndedStuyList(data.data.ended));
+      setRunningStudyList(data.data.running);
+      setEndedStudyList(data.data.ended);
     });
     initSidebarToggle();
-    dispatch(studyActions.setSelectedChannel(channelId));
-  }, [channelId]);
+  }, [
+    channelId,
+    routeChannelId,
+    modalShow,
+    doingChildRef?.current?.clientHeight,
+    doneParentRef?.current?.clientHeight,
+  ]);
 
   const initSidebarToggle = () => {
-    setDoingOpen(false);
-    setDoneOpen(false);
-    doingParentRef.current.style.height = "0%";
-    doneParentRef.current.style.height = "0px";
+    setDoingOpen(true);
+    setDoneOpen(true);
+
+    doingParentRef.current.style.height = `${
+      doingChildRef?.current?.clientHeight
+    }px`;
+    doneParentRef.current.style.height = `${
+      doneChildRef?.current?.clientHeight
+    }px`;
   };
 
   const { width } = useSpring({
@@ -94,7 +96,6 @@ const SideBarStudy = ({ match }) => {
     } else {
       setMainWidth(232);
     }
-    console.log(mainWidth);
   };
 
   const doingToggle = useCallback(
@@ -115,8 +116,10 @@ const SideBarStudy = ({ match }) => {
 
   const doneToggle = useCallback(
     (e) => {
-      if (doneParentRef.current === null || doneChildRef.current === null)
+      console.log("done toggle");
+      if (doneParentRef.current === null || doneChildRef.current === null) {
         return;
+      }
       if (doneParentRef.current.clientHeight > 0) {
         doneParentRef.current.style.height = "0px";
       } else {
@@ -175,7 +178,7 @@ const SideBarStudy = ({ match }) => {
             </div>
             <div className="doing" ref={doingParentRef}>
               <div className="list" ref={doingChildRef}>
-                {storeRunningStudyList?.map((study, index) => {
+                {runningStudyList?.map((study, index) => {
                   return (
                     <div className="child-study item" key={index}>
                       <Link to={`/channel/${routeChannelId}/study/${study.id}`}>
@@ -194,7 +197,7 @@ const SideBarStudy = ({ match }) => {
             </div>
             <div className="done" ref={doneParentRef}>
               <div className="list" ref={doneChildRef}>
-                {storeEndedStudyList?.map((study, index) => {
+                {endedStudyList?.map((study, index) => {
                   return (
                     <div className="child-study item" key={index}>
                       <Link to={`/channel/${routeChannelId}/study/${study.id}`}>
@@ -232,6 +235,11 @@ const SideBarStudy = ({ match }) => {
       <Main width={mainWidth}>
         {/*------------------ 메인 페이지 ------------------*/}
         <Route path="/channel/:channelId" exact={true} component={StudyHome} />
+        {/* <Route
+          path="/channel/:channelId"
+          exact={true}
+          render={() => <StudyHome isCreateNewStudy={isCreateNewStudy} />}
+        /> */}
         {/*------------------ 스터디 채널 설정 페이지 ------------------*/}
         <Route path={`/channel/:channelId/setting`} component={StudySetting} />
 

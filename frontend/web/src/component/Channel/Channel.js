@@ -46,23 +46,22 @@ const Channel = ({ match }) => {
 
       let url = window.location.href;
       let temp = url.split("channel/");
+
       if (temp.length > 1) {
         temp = temp[1].split("/");
-      }
-      if (temp[0] === "common") {
-        setSelectId(-1);
-      } else if (temp[0] === "codeview") {
-        let id = temp[1].split("?");
-        setSelectId(id[0]);
+        if (temp[0] === "common") {
+          setSelectId(-1);
+        } else if (temp[0] === "codeview") {
+          let id = temp[1].split("?");
+          setSelectId(Number(id[0]));
+        } else {
+          setSelectId(Number(temp[0]));
+        }
       } else {
-        setSelectId(Number(temp[0]));
+        setSelectId(-1);
       }
     }
   }, [storeToken]);
-
-  const selectChannel = (value) => {
-    dispatch(studyActions.setSelectedChannel(value));
-  };
 
   const createNewChannel = () => {
     setModalShow(true);
