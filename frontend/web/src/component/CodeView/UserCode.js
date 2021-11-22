@@ -17,6 +17,26 @@ const UserCode = ({ user, codeList, problemInfo }) => {
     window.open(url, "_blank").focus();
   };
 
+  const getLanguage = (type) => {
+    if (type == "js") {
+      return "javascript";
+    }
+
+    if (type == "py") {
+      return "python";
+    }
+
+    if (type == "rbw") {
+      return "ruby";
+    }
+
+    if (type == "rs") {
+      return "rust";
+    }
+
+    return type;
+  };
+
   return (
     <div className="file-container">
       <div className="user-header">
@@ -40,7 +60,7 @@ const UserCode = ({ user, codeList, problemInfo }) => {
       </div>
       <SyntaxHighlighter
         className="code"
-        language={codeList[selected].fileName.split(".")[1]}
+        language={getLanguage(codeList[selected].fileName.split(".")[1])}
         style={githubGist}
         showLineNumbers
         // lineProps={{
