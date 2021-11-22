@@ -54,6 +54,7 @@ const SideBarStudy = ({ match }) => {
     });
     // 스터디 리스트 가져오기
     util.getStudyList(channelId, storeToken).then((data) => {
+      console.log(data.data.running);
       dispatch(studyActions.setRunningStudyList(data.data.running));
       dispatch(studyActions.setEndedStuyList(data.data.ended));
     });
