@@ -1,10 +1,10 @@
 /* eslint-disable */
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { StyleSheetManager } from "styled-components";
 
 import * as util from "../../modules/axios/util";
+import * as studyActions from "../../modules/actions/study";
 import "./StudyHome.scoped.scss";
 
 const StudyHome = ({ match }) => {
@@ -17,19 +17,34 @@ const StudyHome = ({ match }) => {
     (state) => state.study
   );
 
-  const channelId = match.params.channelId;
+  const dispatch = useDispatch();
+
+  const routeChannelId = match.params.channelId;
+  var channelId = 0;
   const [studyInfo, setStudyInfo] = useState({});
 
   useEffect(() => {
-    if (channelId < 0) {
-      return;
+    let url = window.location.href;
+    let temp = url.split("channel/");
+    if (temp[1].includes("/")) {
+      let _channelId = temp[1].split("/");
+      channelId = _channelId[0];
+    } else {
+      channelId = temp[1];
     }
-    util.getStudyInfo(channelId, storeToken).then((data) => {
-      setStudyInfo(data.data);
-    });
+    console.log("study home id: ", channelId);
+
+    // util.getStudyList(channelId, storeToken).then((data) => {
+    //   console.log(data.data.running);
+    //   dispatch(studyActions.setRunningStudyList(data.data.running));
+    //   dispatch(studyActions.setEndedStuyList(data.data.ended));
+    // });
+    // util.getStudyInfo(channelId, storeToken).then((data) => {
+    //   setStudyInfo(data.data);
+    // });
     console.log("studyHome");
     console.log(storeRunningStudyList);
-  }, [channelId, storeRunningStudyList, storeEndedStudyList]);
+  }, [storeRunningStudyList]);
 
   const runningSplitTime = useCallback((endTime) => {
     const yt = endTime.split(" ");
@@ -79,7 +94,9 @@ const StudyHome = ({ match }) => {
                   return (
                     <tr key={index}>
                       <td className="name">
-                        <Link to={`/channel/${channelId}/study/${study.id}`}>
+                        <Link
+                          to={`/channel/${routeChannelId}/study/${study.id}`}
+                        >
                           <i className="far fa-hashtag" />
                           {study.name}
                         </Link>
@@ -123,7 +140,9 @@ const StudyHome = ({ match }) => {
                     return (
                       <tr key={index}>
                         <td className="name">
-                          <Link to={`/channel/${channelId}/study/${study.id}`}>
+                          <Link
+                            to={`/channel/${routeChannelId}/study/${study.id}`}
+                          >
                             <i className="far fa-hashtag" />
                             {study.name}
                           </Link>

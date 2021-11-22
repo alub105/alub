@@ -143,12 +143,6 @@ const StudyCreateModal = (props) => {
       homeworkEnd.toString()
     );
 
-    let saveData = {
-      name: studyName,
-      startTime: assignmentStartTime,
-      endTime: assignmentEndTime,
-    };
-
     util
       .createStudy(
         channelId,
@@ -161,7 +155,7 @@ const StudyCreateModal = (props) => {
         storeToken
       )
       .then((data) => {
-        dispatch(studyActions.addRunningStudyList(saveData));
+        dispatch(studyActions.addRunningStudyList(data.data));
         // console.log(data.data);
         props.onHide();
       });
