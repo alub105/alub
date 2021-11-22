@@ -174,7 +174,7 @@ const StudySetting = ({ match }) => {
 
   return (
     <div className="study-setting">
-      <h1> {studyInfo.name} 채널 설정</h1>
+      <h1> 채널 설정</h1>
       <div className="setting-container">
         <div className="grid-col">
           <h4>채널 이름</h4>
@@ -199,7 +199,7 @@ const StudySetting = ({ match }) => {
           </select>
         </div>
         <div className="member">
-          <h4>멤버 추가</h4>
+          <h4>멤버 관리</h4>
           <div className="member-name">
             <input
               type="text"

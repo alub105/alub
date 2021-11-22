@@ -1,27 +1,24 @@
 import * as studyActions from "../actions/study";
 
 const initialState = {
-  selectedChannel: 0, //선택한 채널 id
   channelList: [],
-  runningStudyList: [],
-  endedStudyList: [],
+  isCreateNewStudy: false,
 };
 
 const reducers = (state = initialState, action) => {
   switch (action.type) {
-    case studyActions.SET_SELECTED_CHANNEL:
-      return {
-        ...state,
-        selectedChannel: action.payload,
-      };
     case studyActions.SET_CHANNEL_LIST:
       return {
         channelList: [...action.payload],
         selectedChannel: action.payload.id,
       };
+    case studyActions.SET_IS_CREATE_NEW_STUDY:
+      return {
+        ...state,
+        isCreateNewStudy: !state.isCreateNewStudy,
+      };
     case studyActions.UPDATE_CHANNEL_LIST:
       return {
-        // ...state,
         channelList: state.channelList.concat(action.payload),
         selectedChannel: action.payload.id,
       };
@@ -41,21 +38,7 @@ const reducers = (state = initialState, action) => {
           (channel) => channel.id !== Number(action.payload)
         ),
       };
-    case studyActions.SET_RUNNING_STUDY_LIST:
-      return {
-        ...state,
-        runningStudyList: [...action.payload],
-      };
-    case studyActions.SET_ENDED_STUDY_LIST:
-      return {
-        ...state,
-        endedStudyList: [...action.payload],
-      };
-    case studyActions.ADD_RUNNING_STUDY_LIST:
-      return {
-        ...state,
-        runningStudyList: state.runningStudyList?.concat(action.payload),
-      };
+
     default:
       return state;
   }

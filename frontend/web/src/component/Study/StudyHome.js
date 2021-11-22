@@ -8,19 +8,19 @@ import "./StudyHome.scoped.scss";
 
 const StudyHome = ({ match }) => {
   const { token: storeToken } = useSelector((state) => state.user);
+  const { isCreateNewStudy: setIsCreateNewStudy } = useSelector(
+    (state) => state.study
+  );
 
-  const { runningStudyList: storeRunningStudyList } = useSelector(
-    (state) => state.study
-  );
-  const { endedStudyList: storeEndedStudyList } = useSelector(
-    (state) => state.study
-  );
+  const [runningStudyList, setRunningStudyList] = useState([]);
+  const [endedStudyList, setEndedStudyList] = useState([]);
 
   const routeChannelId = match.params.channelId;
   var channelId = 0;
   const [studyInfo, setStudyInfo] = useState({});
 
   useEffect(() => {
+    // 새로고침할 때
     let url = window.location.href;
     let temp = url.split("channel/");
     if (temp[1].includes("/")) {
@@ -29,19 +29,15 @@ const StudyHome = ({ match }) => {
     } else {
       channelId = temp[1];
     }
-    console.log("study home id: ", channelId);
 
-    // util.getStudyList(channelId, storeToken).then((data) => {
-    //   console.log(data.data.running);
-    //   dispatch(studyActions.setRunningStudyList(data.data.running));
-    //   dispatch(studyActions.setEndedStuyList(data.data.ended));
-    // });
+    util.getStudyList(channelId, storeToken).then((data) => {
+      setRunningStudyList(data.data.running);
+      setEndedStudyList(data.data.ended);
+    });
     util.getStudyInfo(channelId, storeToken).then((data) => {
       setStudyInfo(data.data);
     });
-    console.log("studyHome");
-    console.log(storeRunningStudyList);
-  }, [storeRunningStudyList]);
+  }, [channelId, routeChannelId, setIsCreateNewStudy]);
 
   const runningSplitTime = useCallback((endTime) => {
     const yt = endTime.split(" ");
@@ -90,7 +86,7 @@ const StudyHome = ({ match }) => {
             <h3>진행 중인 스터디</h3>
             <table>
               <tbody>
-                {storeRunningStudyList?.map((study, index) => {
+                {runningStudyList?.map((study, index) => {
                   return (
                     <tr key={index}>
                       <td className="name">
@@ -134,8 +130,8 @@ const StudyHome = ({ match }) => {
             </div>
             <table>
               <tbody>
-                {storeEndedStudyList
-                  ?.filter((item, idx) => idx < 10)
+                {endedStudyList
+                  ?.filter((item, idx) => idx < 20)
                   .map((study, index) => {
                     return (
                       <tr key={index}>

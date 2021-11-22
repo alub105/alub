@@ -28,11 +28,9 @@ const StudyProblem = ({ match }) => {
 
   useEffect(() => {
     // 스터디 정보 불러오기
-    console.log(channelId, studyId);
     util.getStudyDetail(channelId, studyId, storeToken).then((data) => {
       setStudyDetail({ ...data.data });
-      console.log(studyDetail);
-      isFinish();
+      isFinish(data.data);
     });
     // 스터디 멤버 불러오기
     util.getMembers(channelId, storeToken).then((data) => {
@@ -54,7 +52,7 @@ const StudyProblem = ({ match }) => {
     return `[${site}] ${title} ${num}번 - ${level}`;
   });
 
-  const isFinish = () => {
+  const isFinish = (data) => {
     let now = new Date();
     now.setHours(now.getHours() + 9);
     now = now
@@ -62,12 +60,9 @@ const StudyProblem = ({ match }) => {
       .replace("T", " ")
       .substring(0, 16);
 
-    if (studyDetail.assignmentEndTime < now) {
+    if (data.assignmentEndTime < now) {
       setMode("완료된 스터디");
-    } else if (
-      studyDetail.assignmentStartTime < now &&
-      now < studyDetail.assignmentEndTime
-    ) {
+    } else if (data.assignmentStartTime < now && now < data.assignmentEndTime) {
       setMode("진행 중 스터디");
     } else {
       setMode("예정된 스터디");
