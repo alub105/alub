@@ -18,20 +18,24 @@ const UserCode = ({ user, codeList, problemInfo }) => {
   };
 
   const getLanguage = (type) => {
-    if(type == "py"){
+    if (type == "js") {
+      return "javascript";
+    }
+
+    if (type == "py") {
       return "python";
     }
 
-    if(type == "rbw"){
-      return "ruby"; 
+    if (type == "rbw") {
+      return "ruby";
     }
-    
-    if(type == "rs"){
-      return "rust"; 
+
+    if (type == "rs") {
+      return "rust";
     }
-    
+
     return type;
-  }
+  };
 
   return (
     <div className="file-container">
