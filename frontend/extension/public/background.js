@@ -330,8 +330,7 @@ function copyCode(
               inputModal.id = "inputModal";
               inputModal.style.width = "100%";
               inputModal.style.height = "100%";
-              inputModal.style.backgroundColor = "black";
-              inputModal.style.opacity = "1";
+              inputModal.style.backgroundColor = "rgba(0,0,0,0.7)";
               inputModal.style.display = "flex";
               inputModal.style.position = "fixed";
               inputModal.style.top = 0;
@@ -508,16 +507,27 @@ function createTimer(h, m, s, timerRunning, timerPause) {
 
   const startPauseButton = document.createElement("button");
   startPauseButton.innerText = timerPause ? "시작" : "일시정지";
-  startPauseButton.style.backgroundColor = timerPause ? "#006400" : "#8B0000";
+  startPauseButton.style.backgroundColor = timerPause ? "#02b875" : "#d9534f";
   startPauseButton.style.color = "white";
+  startPauseButton.style.border = "transparent 4px solid";
+  startPauseButton.style.borderRadius = "4px";
+  startPauseButton.style.padding = "0 3px";
+  startPauseButton.style.margin = "0 10px";
+  startPauseButton.style.textShadow = "1px 1px #000000";
+  
+
 
   startPauseButton.addEventListener("click", startPauseTimer);
 
   const stopButton = document.createElement("button");
   stopButton.innerText = "초기화";
-  stopButton.style.backgroundColor = "#FFD700";
+  stopButton.style.backgroundColor = "#f0ad4e";
   stopButton.style.color = "white";
-
+  stopButton.style.border = "transparent 4px solid";
+  stopButton.style.borderRadius = "4px !important";
+  stopButton.style.padding = "0 3px";
+  stopButton.style.margin = "0 10px";
+  stopButton.style.textShadow = "1px 1px #000000";
   stopButton.addEventListener("click", reset);
 
   var startHour,
@@ -602,13 +612,13 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     chrome.storage.sync.set({ timerRunning: true });
     if (!timerPause) {
       timerPause = true;
-      startPauseButton.style.backgroundColor = "#006400";
+      startPauseButton.style.backgroundColor = "#02b875";
       timerRunning = false;
       chrome.storage.sync.set({ timerPause: true });
       startPauseButton.innerText = "시작";
     } else {
       timerRunning = true;
-      startPauseButton.style.backgroundColor = "#8B0000";
+      startPauseButton.style.backgroundColor = "#d9534f";
       timerPause = false;
       isStop = false;
       chrome.storage.sync.set({ timerPause: false }, () => {});
@@ -665,7 +675,7 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   }
   function reset() {
     startPauseButton.innerText = "시작";
-    startPauseButton.style.backgroundColor = "green";
+    startPauseButton.style.backgroundColor = "#02b875";
     timerPause = true;
     timerRunning = false;
     isStop = true;
