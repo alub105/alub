@@ -68,7 +68,7 @@ const SideBarStudy = ({ match }) => {
     routeChannelId,
     modalShow,
     doingChildRef?.current?.clientHeight,
-    doneParentRef?.current?.clientHeight,
+    // doneParentRef?.current?.clientHeight,
   ]);
 
   const initSidebarToggle = () => {
@@ -116,7 +116,6 @@ const SideBarStudy = ({ match }) => {
 
   const doneToggle = useCallback(
     (e) => {
-      console.log("done toggle");
       if (doneParentRef.current === null || doneChildRef.current === null) {
         return;
       }

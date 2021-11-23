@@ -30,6 +30,7 @@ const StudyProblem = ({ match }) => {
     // 스터디 정보 불러오기
     util.getStudyDetail(channelId, studyId, storeToken).then((data) => {
       setStudyDetail({ ...data.data });
+      console.log(data);
       isFinish(data.data);
     });
     // 스터디 멤버 불러오기
@@ -53,6 +54,7 @@ const StudyProblem = ({ match }) => {
   });
 
   const isFinish = (data) => {
+    console.log(data);
     let now = new Date();
     now.setHours(now.getHours() + 9);
     now = now
@@ -60,9 +62,12 @@ const StudyProblem = ({ match }) => {
       .replace("T", " ")
       .substring(0, 16);
 
-    if (data.assignmentEndTime < now) {
+    if (data?.assignmentEndTime < now) {
       setMode("완료된 스터디");
-    } else if (data.assignmentStartTime < now && now < data.assignmentEndTime) {
+    } else if (
+      data?.assignmentStartTime < now &&
+      now < data?.assignmentEndTime
+    ) {
       setMode("진행 중 스터디");
     } else {
       setMode("예정된 스터디");

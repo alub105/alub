@@ -70,7 +70,7 @@ const UserCode = ({ user, codeList, problemInfo }) => {
       >
         {Buffer.from(codeList[selected].contents, "base64").toString("utf-8")}
       </SyntaxHighlighter>
-      <Comments className="comment" user={user} problemInfo={problemInfo} />
+      <Comments user={user} problemInfo={problemInfo} />
     </div>
   );
 };
