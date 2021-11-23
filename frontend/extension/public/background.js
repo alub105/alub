@@ -330,47 +330,67 @@ function copyCode(
               inputModal.id = "inputModal";
               inputModal.style.width = "100%";
               inputModal.style.height = "100%";
-              inputModal.style.backgroundColor = "black";
-              inputModal.style.opacity = "1";
+              inputModal.style.backgroundColor = "rgba(0,0,0,0.7)";
               inputModal.style.display = "flex";
               inputModal.style.position = "fixed";
+              inputModal.style.fontSize = '17px'
               inputModal.style.top = 0;
               inputModal.style.left = 0;
               inputModal.style.justifyContent = "center";
               inputModal.style.alignItems = "center";
 
-              const inputModalHeader = document.createElement("div");
-              inputModalHeader.style.textAlign = "center";
-              inputModalHeader.style.position = "relative";
-              inputModalHeader.style.backgroundColor = "#F0FFFF";
-              inputModalHeader.style.borderRadius = "10px";
+              const element = `<div style=' position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100' id='alub-input'>
 
-              inputModalHeader.style.padding = "45px 25px";
-              inputModalHeader.style.width = "35%";
-              inputModalHeader.style.height = "35%";
+                  <div
+                  style='
+                  width: 450px;
+                  height: 273px;
+                  display: flex;
+                  flex-direction: column;
+                  '
+                  >
 
-              const inputForm = document.createElement("form");
-              inputForm.style.marginTop = "15px";
-              const inputText = document.createElement("p");
-              inputText.innerText = `repo위치: ${repoName}/${site}/${problemNumber}/`;
-              inputText.style.fontSize = "25px";
-              const inputDiv = document.createElement("div");
-              inputDiv.style.margin = "25px";
-              const fileNameInput = document.createElement("input");
-              inputDiv.innerHTML = "<span>파일명: </span>";
-              inputDiv.style.fontSize = "25px";
-              fileNameInput.setAttribute("minlength", 2);
-              inputDiv.appendChild(fileNameInput);
-              inputDiv.append(` .${codeLang}`);
+                    <div style=' background-color: #edf0f6; height: 60px; width: 450px; border-radius: 6px 6px 0 0 !important; padding: 15px 20px; font-size: 20px;'>
+                        <strong style='color: #20c997;'>ALUB</strong>
+                    </div>
 
-              const inputButton = document.createElement("button");
-              inputButton.setAttribute("class", "btn btn-primary");
-              inputButton.style.padding = "15px 20px";
-              inputButton.style.fontSize = "20px";
+                    <div
+                    style='
+                    background-color: rgba(0,0,0, 0.7);
+                    height: 80%;
+                    width: 100%;
+                    font-size: 17px;
+                    padding: 15px 20px;
+                    margin: 0 auto;
+                    text-align: center;
+                    line-height: 24px;
+                    color: white;
+                    border-radius: 0 0 6px 6px !important;
+                    '
 
-              inputButton.addEventListener(
-                "click",
-                function submitCommitData(event) {
+                    >
+                      <div style="width: 100%; height: 100%; text-align: 'center' display: flex; flex-direction: column;">
+                          <div>
+                              <span style="font-size: 17px;">repo 위치:</span>
+                              <span>${repoName}/${site}/${problemNumber}</span>
+                          </div>
+                          <form class="form-group" style="margin-top: 25px; display: flex; flex-direction: row; gap: 10px; height: 30px; align-items: center; justify-content: center">
+                              <label class="form-label">파일명: </label>
+                              <input type="text" class="form-control" style="width: 65%; padding: 10px 5px;" id="fileNameInput" minlength="2"></input>
+                              <span style="font-size: 21px;">.${codeLang}</span>
+                          </form>
+                          <button style="margin-top: 25px; padding: 6px 15px; border-radius: 10px; border: none; font-size: 17px; background-color: #18ad60; color: #ffffff; cursor: pointer;" type="button" id="button">Commit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+              const template = document.createElement("div");
+              template.innerHTML = element;
+              inputModal.appendChild(template)
+              document.querySelector(".container.content")?.appendChild(inputModal);
+              template
+                .querySelector("button")
+                .addEventListener("click", function submitCommitData(event) {
                   event.preventDefault();
                   chrome.storage.sync.set({ commitNow: false }, () => {});
                   let fileName = fileNameInput.value;
@@ -454,18 +474,7 @@ function copyCode(
                     .catch((err) => {
                       console.log(err);
                     });
-                }
-              );
-              inputButton.innerText = "Commit";
-              inputModalHeader.appendChild(inputForm);
-              inputForm.append(inputText);
-              inputForm.appendChild(inputDiv);
-              inputForm.appendChild(inputButton);
-              inputModal.appendChild(inputModalHeader);
-
-              document
-                .querySelector(".container.content")
-                ?.appendChild(inputModal);
+                });
             });
           }
         });
@@ -508,16 +517,25 @@ function createTimer(h, m, s, timerRunning, timerPause) {
 
   const startPauseButton = document.createElement("button");
   startPauseButton.innerText = timerPause ? "시작" : "일시정지";
-  startPauseButton.style.backgroundColor = timerPause ? "#006400" : "#8B0000";
+  startPauseButton.style.backgroundColor = timerPause ? "#02b875" : "#d9534f";
   startPauseButton.style.color = "white";
+  startPauseButton.style.border = "transparent 4px solid";
+  startPauseButton.style.borderRadius = "4px";
+  startPauseButton.style.padding = "0 3px";
+  startPauseButton.style.margin = "0 10px";
+  startPauseButton.style.textShadow = "1px 1px #000000";
 
   startPauseButton.addEventListener("click", startPauseTimer);
 
   const stopButton = document.createElement("button");
   stopButton.innerText = "초기화";
-  stopButton.style.backgroundColor = "#FFD700";
+  stopButton.style.backgroundColor = "#f0ad4e";
   stopButton.style.color = "white";
-
+  stopButton.style.border = "transparent 4px solid";
+  stopButton.style.borderRadius = "4px !important";
+  stopButton.style.padding = "0 3px";
+  stopButton.style.margin = "0 10px";
+  stopButton.style.textShadow = "1px 1px #000000";
   stopButton.addEventListener("click", reset);
 
   var startHour,
@@ -602,13 +620,13 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     chrome.storage.sync.set({ timerRunning: true });
     if (!timerPause) {
       timerPause = true;
-      startPauseButton.style.backgroundColor = "#006400";
+      startPauseButton.style.backgroundColor = "#02b875";
       timerRunning = false;
       chrome.storage.sync.set({ timerPause: true });
       startPauseButton.innerText = "시작";
     } else {
       timerRunning = true;
-      startPauseButton.style.backgroundColor = "#8B0000";
+      startPauseButton.style.backgroundColor = "#d9534f";
       timerPause = false;
       isStop = false;
       chrome.storage.sync.set({ timerPause: false }, () => {});
@@ -665,7 +683,7 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   }
   function reset() {
     startPauseButton.innerText = "시작";
-    startPauseButton.style.backgroundColor = "green";
+    startPauseButton.style.backgroundColor = "#02b875";
     timerPause = true;
     timerRunning = false;
     isStop = true;
