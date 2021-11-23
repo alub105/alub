@@ -172,6 +172,9 @@ const App = () => {
     let h = String(hour).padStart(2, "0");
     let m = String(minute).padStart(2, "0");
     let s = String(second).padStart(2, "0");
+    setHour(h);
+    setMinute(m);
+    setSecond(s);
 
     const url = API_BASE_URL + "/api/user/configs";
     fetch(url, {
@@ -185,9 +188,6 @@ const App = () => {
       }),
     })
       .then(() => {
-        setHour(h);
-        setMinute(m);
-        setSecond(s);
       })
 
       .catch((error) => {});

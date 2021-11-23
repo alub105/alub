@@ -333,43 +333,64 @@ function copyCode(
               inputModal.style.backgroundColor = "rgba(0,0,0,0.7)";
               inputModal.style.display = "flex";
               inputModal.style.position = "fixed";
+              inputModal.style.fontSize = '17px'
               inputModal.style.top = 0;
               inputModal.style.left = 0;
               inputModal.style.justifyContent = "center";
               inputModal.style.alignItems = "center";
 
-              const inputModalHeader = document.createElement("div");
-              inputModalHeader.style.textAlign = "center";
-              inputModalHeader.style.position = "relative";
-              inputModalHeader.style.backgroundColor = "#F0FFFF";
-              inputModalHeader.style.borderRadius = "10px";
+              const element = `<div style=' position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100' id='alub-input'>
 
-              inputModalHeader.style.padding = "25px 25px";
-              inputModalHeader.style.width = "480px";
-              inputModalHeader.style.height = "280px";
+                  <div
+                  style='
+                  width: 450px;
+                  height: 273px;
+                  display: flex;
+                  flex-direction: column;
+                  '
+                  >
 
-              const inputForm = document.createElement("form");
+                    <div style=' background-color: #edf0f6; height: 60px; width: 450px; border-radius: 6px 6px 0 0 !important; padding: 15px 20px; font-size: 20px;'>
+                        <strong style='color: #20c997;'>ALUB</strong>
+                    </div>
 
-              const inputText = document.createElement("p");
-              inputText.innerText = `repo위치: ${repoName}/${site}/${problemNumber}/`;
-              inputText.style.fontSize = "25px";
-              const inputDiv = document.createElement("div");
-              inputDiv.style.margin = "25px";
-              const fileNameInput = document.createElement("input");
-              inputDiv.innerHTML = "<span>파일명: </span>";
-              inputDiv.style.fontSize = "25px";
-              fileNameInput.setAttribute("minlength", 2);
-              inputDiv.appendChild(fileNameInput);
-              inputDiv.append(` .${codeLang}`);
+                    <div
+                    style='
+                    background-color: rgba(0,0,0, 0.7);
+                    height: 80%;
+                    width: 100%;
+                    font-size: 17px;
+                    padding: 15px 20px;
+                    margin: 0 auto;
+                    text-align: center;
+                    line-height: 24px;
+                    color: white;
+                    border-radius: 0 0 6px 6px !important;
+                    '
 
-              const inputButton = document.createElement("button");
-              inputButton.setAttribute("class", "btn btn-primary");
-              inputButton.style.padding = "15px 20px";
-              inputButton.style.fontSize = "20px";
-
-              inputButton.addEventListener(
-                "click",
-                function submitCommitData(event) {
+                    >
+                      <div style="width: 100%; height: 100%; text-align: 'center' display: flex; flex-direction: column;">
+                          <div>
+                              <span style="font-size: 17px;">repo 위치:</span>
+                              <span>${repoName}/${site}/${problemNumber}</span>
+                          </div>
+                          <form class="form-group" style="margin-top: 25px; display: flex; flex-direction: row; gap: 10px; height: 30px; align-items: center; justify-content: center">
+                              <label class="form-label">파일명: </label>
+                              <input type="text" class="form-control" style="width: 65%; padding: 10px 5px;" id="fileNameInput" minlength="2"></input>
+                              <span style="font-size: 21px;">.${codeLang}</span>
+                          </form>
+                          <button style="margin-top: 25px; padding: 6px 15px; border-radius: 10px; border: none; font-size: 17px; background-color: #18ad60; color: #ffffff; cursor: pointer;" type="button" id="button">Commit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+              const template = document.createElement("div");
+              template.innerHTML = element;
+              inputModal.appendChild(template)
+              document.querySelector(".container.content")?.appendChild(inputModal);
+              template
+                .querySelector("button")
+                .addEventListener("click", function submitCommitData(event) {
                   event.preventDefault();
                   chrome.storage.sync.set({ commitNow: false }, () => {});
                   let fileName = fileNameInput.value;
@@ -453,18 +474,7 @@ function copyCode(
                     .catch((err) => {
                       console.log(err);
                     });
-                }
-              );
-              inputButton.innerText = "Commit";
-              inputModalHeader.appendChild(inputForm);
-              inputForm.append(inputText);
-              inputForm.appendChild(inputDiv);
-              inputForm.appendChild(inputButton);
-              inputModal.appendChild(inputModalHeader);
-
-              document
-                .querySelector(".container.content")
-                ?.appendChild(inputModal);
+                });
             });
           }
         });
@@ -514,8 +524,6 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   startPauseButton.style.padding = "0 3px";
   startPauseButton.style.margin = "0 10px";
   startPauseButton.style.textShadow = "1px 1px #000000";
-  
-
 
   startPauseButton.addEventListener("click", startPauseTimer);
 
