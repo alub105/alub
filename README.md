@@ -1,8 +1,7 @@
 <img src="https://user-images.githubusercontent.com/24693833/142531329-34337015-a738-4865-b077-284c36200d0d.png" style="width: 240px; "/>
 
-🌱 깃허브 자디 심기 서비스 ALUB
+🌱 깃허브 잔디 심기 서비스 ALUB
 
-<hr>
 
 <br>
 
