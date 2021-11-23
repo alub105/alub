@@ -344,12 +344,12 @@ function copyCode(
               inputModalHeader.style.backgroundColor = "#F0FFFF";
               inputModalHeader.style.borderRadius = "10px";
 
-              inputModalHeader.style.padding = "45px 25px";
+              inputModalHeader.style.padding = "25px 25px";
               inputModalHeader.style.width = "480px";
               inputModalHeader.style.height = "280px";
 
               const inputForm = document.createElement("form");
-              inputForm.style.marginTop = "15px";
+
               const inputText = document.createElement("p");
               inputText.innerText = `repo위치: ${repoName}/${site}/${problemNumber}/`;
               inputText.style.fontSize = "25px";
