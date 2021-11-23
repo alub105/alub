@@ -345,8 +345,8 @@ function copyCode(
               inputModalHeader.style.borderRadius = "10px";
 
               inputModalHeader.style.padding = "45px 25px";
-              inputModalHeader.style.width = "35%";
-              inputModalHeader.style.height = "35%";
+              inputModalHeader.style.width = "480px";
+              inputModalHeader.style.height = "280px";
 
               const inputForm = document.createElement("form");
               inputForm.style.marginTop = "15px";
