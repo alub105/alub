@@ -41,6 +41,7 @@
 .web {
   background: var(--background-linear);
   width: 100vw;
+  height: 100vh;
 }
 
 .app {

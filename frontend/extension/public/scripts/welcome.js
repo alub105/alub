@@ -67,6 +67,7 @@ function getExistRepo(callback) {
       if (response.ok) {
         response.json().then((data) => {
           var select = document.getElementById("exist-repo-names");
+          $("#exist-repo-names").empty();
 
           var el = document.createElement("option");
           el.textContent = "";
