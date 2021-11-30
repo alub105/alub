@@ -107,12 +107,29 @@ function addStatusTable() {
           let newButton = commitRow.cloneNode(true);
           const commitForm = document.createElement("form");
           commitForm.action = `https://acmicpc.net/source/${answerNumber}`;
+
           const commitButton = document.createElement("button");
           commitButton.addEventListener("click", function () {
             chrome.storage.sync.set({ commitNow: true }, () => {});
+            commitButton.style.cssText = `box-shadow: 0 0 0 4px rgba(2,184,117,0.5);
+            background-color: #18ad60;
+            border-radius: 15px !important;
+            font-size: 12px;
+            color: #ffffff;
+            cursor: pointer;`;
           });
+
           commitButton.innerHTML = "Commit";
           commitButton.setAttribute("class", "btn");
+
+          commitButton.style.cssText = `
+          background-color: #18ad60;
+          border-radius: 15px !important;
+          font-size: 12px;
+          color: #ffffff;
+          cursor: pointer;
+          `;
+
           commitForm.append(commitButton);
           // commit하는 버튼을 row에 알맞게 추가.
           newButton.appendChild(commitForm);
@@ -333,7 +350,7 @@ function copyCode(
               inputModal.style.backgroundColor = "rgba(0,0,0,0.7)";
               inputModal.style.display = "flex";
               inputModal.style.position = "fixed";
-              inputModal.style.fontSize = '17px'
+              inputModal.style.fontSize = "17px";
               inputModal.style.top = 0;
               inputModal.style.left = 0;
               inputModal.style.justifyContent = "center";
@@ -386,8 +403,10 @@ function copyCode(
                 </div>`;
               const template = document.createElement("div");
               template.innerHTML = element;
-              inputModal.appendChild(template)
-              document.querySelector(".container.content")?.appendChild(inputModal);
+              inputModal.appendChild(template);
+              document
+                .querySelector(".container.content")
+                ?.appendChild(inputModal);
               template
                 .querySelector("button")
                 .addEventListener("click", function submitCommitData(event) {
