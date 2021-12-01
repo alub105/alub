@@ -107,12 +107,29 @@ function addStatusTable() {
           let newButton = commitRow.cloneNode(true);
           const commitForm = document.createElement("form");
           commitForm.action = `https://acmicpc.net/source/${answerNumber}`;
+
           const commitButton = document.createElement("button");
           commitButton.addEventListener("click", function () {
             chrome.storage.sync.set({ commitNow: true }, () => {});
+            commitButton.style.cssText = `box-shadow: 0 0 0 4px rgba(2,184,117,0.5);
+            background-color: #18ad60;
+            border-radius: 15px !important;
+            font-size: 12px;
+            color: #ffffff;
+            cursor: pointer;`;
           });
+
           commitButton.innerHTML = "Commit";
           commitButton.setAttribute("class", "btn");
+
+          commitButton.style.cssText = `
+          background-color: #18ad60;
+          border-radius: 15px !important;
+          font-size: 12px;
+          color: #ffffff;
+          cursor: pointer;
+          `;
+
           commitForm.append(commitButton);
           // commit하는 버튼을 row에 알맞게 추가.
           newButton.appendChild(commitForm);
@@ -333,7 +350,7 @@ function copyCode(
               inputModal.style.backgroundColor = "rgba(0,0,0,0.7)";
               inputModal.style.display = "flex";
               inputModal.style.position = "fixed";
-              inputModal.style.fontSize = '17px'
+              inputModal.style.fontSize = "17px";
               inputModal.style.top = 0;
               inputModal.style.left = 0;
               inputModal.style.justifyContent = "center";
@@ -386,8 +403,10 @@ function copyCode(
                 </div>`;
               const template = document.createElement("div");
               template.innerHTML = element;
-              inputModal.appendChild(template)
-              document.querySelector(".container.content")?.appendChild(inputModal);
+              inputModal.appendChild(template);
+              document
+                .querySelector(".container.content")
+                ?.appendChild(inputModal);
               template
                 .querySelector("button")
                 .addEventListener("click", function submitCommitData(event) {
@@ -488,54 +507,82 @@ function copyCode(
 function createTimer(h, m, s, timerRunning, timerPause) {
   const component = document.createElement("div");
   component.id = "component";
+  component.style.cssText = `
+    width: 240px;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    position: fixed; top: 19rem; right:11rem;
+    z-index: 100 !important;'
+    `;
   const componentHeader = document.createElement("div");
   componentHeader.id = "componentHeader";
-  componentHeader.innerText = "Timer";
+  componentHeader.style.cssText = `
+    background-color: rgba(29,41,55,0.8);
+    height: 40px; width: 100%;
+    border-radius: 6px 6px 0 0 !important;
+    padding: 0 20px;
+    font-size: 19px;
+    text-align:center;
+    color: #20c997;
+    cursor: grab;
+    `;
+  componentHeader.innerHTML = `<strong style="line-height: 40px;">TIMER</strong>`;
   component.appendChild(componentHeader);
 
-  component.style.position = "absolute";
-  component.style.zIndex = 9;
-  component.style.backgroundColor = "#222";
-  component.style.border = "1px solid #111";
-  component.style.textAlign = "center";
-  component.style.top = "90px";
-  component.style.left = "1200px";
-  component.style.width = "165px";
-  component.style.height = "130px";
+  const timerWrapper = document.createElement("div");
+  timerWrapper.style.cssText = `
+    background-color: rgba(29,41,55,0.8);
+    height: 100px;
+    width: 100%;
+    padding: 3px 20px 15px 20px;
+    margin: 0 auto;
+    text-align: center;
+    color: white;
+    justify-content: start;
+    border-radius: 0 0 6px 6px !important;
+    `;
+  component.appendChild(timerWrapper);
 
-  componentHeader.style.padding = "5px";
-  componentHeader.style.cursor = "move";
-  componentHeader.style.zIndex = 10;
-  componentHeader.style.backgroundColor = "#2196F3";
-  componentHeader.style.color = "#fff";
-  componentHeader.style.fontSize = "20px";
+  const timeComponent = document.createElement("div");
+  timeComponent.style.cssText = `
+    display: flex; flex-direction: row; gap: 9px; margin: 3px 0 11px 0; justify-content: center; font-size: 25px; 
+    `;
 
-  const timeComponent = document.createElement("p");
-  timeComponent.style.fontSize = "20px";
-  timeComponent.style.color = "white";
-  component.appendChild(timeComponent);
+  timeComponent.innerHTML = `  <span style="font-size: 25px; id="hour">${strHour}</span>
+      <span style="font-size: 15px;">:</span>
+      <span style="font-size: 15px;" id="minute">${strMinute}<span>
+      <span style="font-size: 15px;">:</span>
+      <span style="font-size: 15px;" id="second">${strSecond}</span>`;
+
+  timerWrapper.appendChild(timeComponent);
+
+  const buttonWrapper = document.createElement("div");
+  buttonWrapper.style.cssText = `display: flex; flex-direction: row; gap: 9px; margin-top: 15px; justify-content: center; height: 30px;`;
 
   const startPauseButton = document.createElement("button");
+  startPauseButton.setAttribute("style", "border-radius: 15px !important;");
   startPauseButton.innerText = timerPause ? "시작" : "일시정지";
-  startPauseButton.style.backgroundColor = timerPause ? "#02b875" : "#d9534f";
+  startPauseButton.style.backgroundColor = timerPause ? "#18ad60" : "#ce3c3e";
+  startPauseButton.style.padding = "3px 12px";
+  startPauseButton.style.width = "77px";
+  // startPauseButton.style.borderradius = "15px !important";
+  startPauseButton.style.border = "none";
+  startPauseButton.style.fontSize = "13px";
   startPauseButton.style.color = "white";
-  startPauseButton.style.border = "transparent 4px solid";
-  startPauseButton.style.borderRadius = "4px";
-  startPauseButton.style.padding = "0 3px";
-  startPauseButton.style.margin = "0 10px";
-  startPauseButton.style.textShadow = "1px 1px #000000";
+  startPauseButton.style.cursor = "pointer";
 
-  startPauseButton.addEventListener("click", startPauseTimer);
+  buttonWrapper.appendChild(startPauseButton);
 
   const stopButton = document.createElement("button");
   stopButton.innerText = "초기화";
-  stopButton.style.backgroundColor = "#f0ad4e";
-  stopButton.style.color = "white";
-  stopButton.style.border = "transparent 4px solid";
-  stopButton.style.borderRadius = "4px !important";
-  stopButton.style.padding = "0 3px";
-  stopButton.style.margin = "0 10px";
-  stopButton.style.textShadow = "1px 1px #000000";
+  stopButton.style.cssText = `
+  padding: 3px 12px; width: 77px; border-radius: 15px !important; border: none; font-size: 13px; background-color: #ea9e3e; color: #ffffff; cursor: pointer;
+  `;
+  buttonWrapper.appendChild(stopButton);
+  timerWrapper.appendChild(buttonWrapper);
+
+  startPauseButton.addEventListener("click", startPauseTimer);
   stopButton.addEventListener("click", reset);
 
   var startHour,
@@ -551,9 +598,9 @@ function createTimer(h, m, s, timerRunning, timerPause) {
     startSecond = parseInt(response.second);
   });
 
-  component.appendChild(startPauseButton);
+  // component.appendChild(startPauseButton);
 
-  component.appendChild(stopButton);
+  // component.appendChild(stopButton);
   var pos1 = 0,
     pos2 = 0,
     pos3 = 0,
@@ -564,7 +611,11 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   var strHour = String(h).padStart(2, "0");
   var strMinute = String(m).padStart(2, "0");
   var strSecond = String(s).padStart(2, "0");
-  timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
+  timeComponent.innerHTML = `  <span style="font-size: 25px; id="hour">${strHour}</span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="minute">${strMinute}<span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="second">${strSecond}</span>`;
   if (timerRunning) {
     let autotimer = setInterval(() => {
       if (!isStop) {
@@ -595,7 +646,11 @@ function createTimer(h, m, s, timerRunning, timerPause) {
               strHour = String(h).padStart(2, "0");
               strMinute = String(m).padStart(2, "0");
               strSecond = String(s).padStart(2, "0");
-              timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
+              timeComponent.innerHTML = `  <span style="font-size: 25px; id="hour">${strHour}</span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="minute">${strMinute}<span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="second">${strSecond}</span>`;
             }
           );
         } else {
@@ -606,7 +661,11 @@ function createTimer(h, m, s, timerRunning, timerPause) {
               strHour = String(h).padStart(2, "0");
               strMinute = String(m).padStart(2, "0");
               strSecond = String(s).padStart(2, "0");
-              timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
+              timeComponent.innerHTML = `  <span style="font-size: 25px; id="hour">${strHour}</span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="minute">${strMinute}<span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="second">${strSecond}</span>`;
             }
           );
         }
@@ -660,7 +719,11 @@ function createTimer(h, m, s, timerRunning, timerPause) {
                 strHour = String(h).padStart(2, "0");
                 strMinute = String(m).padStart(2, "0");
                 strSecond = String(s).padStart(2, "0");
-                timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
+                timeComponent.innerHTML = `  <span style="font-size: 25px; id="hour">${strHour}</span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="minute">${strMinute}<span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="second">${strSecond}</span>`;
               }
             );
           } else {
@@ -671,7 +734,11 @@ function createTimer(h, m, s, timerRunning, timerPause) {
                 let strHour = String(h).padStart(2, "0");
                 let strMinute = String(m).padStart(2, "0");
                 let strSecond = String(s).padStart(2, "0");
-                timeComponent.innerText = `${strHour} : ${strMinute} : ${strSecond}`;
+                timeComponent.innerHTML = `  <span style="font-size: 25px; id="hour">${strHour}</span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="minute">${strMinute}<span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="second">${strSecond}</span>`;
               }
             );
           }
@@ -683,7 +750,7 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   }
   function reset() {
     startPauseButton.innerText = "시작";
-    startPauseButton.style.backgroundColor = "#02b875";
+    startPauseButton.style.backgroundColor = "#18ad60";
     timerPause = true;
     timerRunning = false;
     isStop = true;
@@ -697,26 +764,30 @@ function createTimer(h, m, s, timerRunning, timerPause) {
         let firstHour = String(h).padStart(2, "0");
         let firstMinute = String(m).padStart(2, "0");
         let firstSecond = String(s).padStart(2, "0");
-        timeComponent.innerText = `${firstHour} : ${firstMinute} : ${firstSecond}`;
+        timeComponent.innerHTML = `  <span style="font-size: 25px; id="hour">${firstHour}</span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="minute">${firstMinute}<span>
+      <span style="font-size: 25px;">:</span>
+      <span style="font-size: 25px;" id="second">${firstSecond}</span>`;
       }
     );
   }
   // scroll할때 스크롤 하는만큼 타이머 위치 변화
-  chrome.storage.sync.set({ scrollY: 0 });
-  window.onscroll = function () {
-    var diffY = window.scrollY;
-    var presentY = parseInt(component.style.top.replace("px", ""));
-    chrome.storage.sync.get("scrollY", (response) => {
-      if (Object.keys(response).length !== 0) {
-        if (diffY > response.scrollY) {
-          component.style.top = `${presentY + diffY - response.scrollY}px`;
-        } else {
-          component.style.top = `${presentY + diffY - response.scrollY}px`;
-        }
-        chrome.storage.sync.set({ scrollY: diffY });
-      }
-    });
-  };
+  // chrome.storage.sync.set({ scrollY: 0 });
+  // window.onscroll = function () {
+  //   var diffY = window.scrollY;
+  //   var presentY = parseInt(component.style.top.replace("px", ""));
+  //   chrome.storage.sync.get("scrollY", (response) => {
+  //     if (Object.keys(response).length !== 0) {
+  //       if (diffY > response.scrollY) {
+  //         component.style.top = `${presentY + diffY - response.scrollY}px`;
+  //       } else {
+  //         component.style.top = `${presentY + diffY - response.scrollY}px`;
+  //       }
+  //       chrome.storage.sync.set({ scrollY: diffY });
+  //     }
+  //   });
+  // };
 
   // header를 잡고 드래그하면 위치를 변화시키게하는 함수
   componentHeader.onmousedown = dragMouseDown;
