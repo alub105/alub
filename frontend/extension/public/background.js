@@ -750,7 +750,7 @@ function createTimer(h, m, s, timerRunning, timerPause) {
   }
   function reset() {
     startPauseButton.innerText = "시작";
-    startPauseButton.style.backgroundColor = "#02b875";
+    startPauseButton.style.backgroundColor = "#18ad60";
     timerPause = true;
     timerRunning = false;
     isStop = true;
