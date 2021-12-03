@@ -1,5 +1,14 @@
 name: deploy extension
 
+on:
+  push:
+    paths:
+      - 'frontend/extension/public/manifest.json'
+    tags:
+      - 'v*'
+    branches:
+      - master
+
 jobs:
   build-images:
     runs-on: ubuntu-latest
@@ -15,7 +24,7 @@ jobs:
           node-version: '16'
           cache: 'npm'
       - run: npm install
-      - run: cd frontend/extension 
+      - run: cd frontend/extension
       - run: npm run build:prod
       - run: zip -r build.zip build
 
