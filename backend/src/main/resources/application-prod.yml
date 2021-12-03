@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update # 나중에 none으로 변경
+    properties:
+      hibernate:
+        format_sql: true
+
+github:
+  clientId: ${GITHUB_CLIENT_ID}
+  clientSecret: ${GITHUB_CLIENT_SECRET}
+
+app:
+  tokenSecret: ${JWT_SECRET}
+  tokenExpirationExtension: 31556952000
+  tokenExpirationWeb: 1209601000

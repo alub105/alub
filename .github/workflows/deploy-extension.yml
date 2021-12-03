@@ -1,0 +1,53 @@
+name: deploy extension
+
+on: workflow_dispatch
+  #  push:
+  #    paths:
+  #      - 'frontend/extension/public/manifest.json'
+  #    tags:
+  #      - 'v*'
+  #    branches:
+  #      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+
+      - run: npm install
+        working-directory: 'frontend/extension'
+
+      - run: npm run build:prod
+        working-directory: 'frontend/extension'
+        env:
+          CI: false
+
+      - run: zip -r build.zip build
+        working-directory: 'frontend/extension'
+
+        #      - uses: Klemensas/chrome-extension-upload-action@$VERSION
+        #        with:
+        #          refresh-token: ${{ secrets.GCP_REFRESH_TOKEN }}
+        #          client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+        #          client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        #          file-name: frontend/extension/build.zip
+        #          app-id: 'joknofdeknbhkjfpmhleippabhejlagn'
+        #          publish: true
+
+      - name: Upload & release
+        uses: mnao305/chrome-extension-upload@2.1.0
+        with:
+          file-path: frontend/extension/build.zip
+          extension-id: 'joknofdeknbhkjfpmhleippabhejlagn'
+          client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          refresh-token: ${{ secrets.GOOGLE_REFRESH_TOKEN }}

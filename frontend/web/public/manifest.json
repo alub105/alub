@@ -1,0 +1,16 @@
+{
+  "short_name": "ALUB",
+  "name": "백준, 프로그래머스 자동 커밋",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "permissions": ["storage"],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

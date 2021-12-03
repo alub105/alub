@@ -1,0 +1,58 @@
+/*------------------- Global ----------------------*/
+
+:root {
+  --white: #ffffff;
+  --text-gray: #868e96;
+  --text-green: #20c997;
+  --text-black: #343a40;
+  --text-black-light: #4c5055;
+  --text-red: #d9534f;
+  --text-blue: #007aff;
+
+  --study-color: #0d47a1;
+
+  --running-bg: #e6e0fe;
+
+  --nav-width: 86px;
+  --nav-color: #023e8a;
+  --channel-width: 50px;
+  --channel-height: 50px;
+
+  --landing-section-height: 53vh;
+
+  --channel-border-radius: 10px;
+
+  --background: #f4f4f4;
+  --background-light: #fafafa;
+
+  --btn-success: #18ad60;
+  --btn-gray: #9da5af;
+
+  /* --background-linear: linear-gradient(to bottom, #e9ecef, #b3c7db); */
+  --background-linear: linear-gradient(
+    120deg,
+    rgba(0, 172, 193, 1) 0,
+    rgba(84, 58, 183, 1) 100%
+  );
+
+  --IBM: "IBM", cursive;
+  --Mulish: "Mulish", cursive;
+}
+
+@font-face {
+  font-family: IBM;
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Regular.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: Mulish;
+  src: url("./static/font/Mulish-Bold.ttf");
+}
+
+/*----------------x--- Global ----x------------------*/
+
+.App {
+  text-align: center;
+}
