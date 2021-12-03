@@ -23,7 +23,8 @@ jobs:
         with:
           node-version: '14'
           cache: 'npm'
-      - run: cd frontend/extension
+      - run: rm package-lock.json
+        working-directory: 'frontend/extension'
       - run: npm install
         working-directory: 'frontend/extension'
 
