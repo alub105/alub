@@ -10,7 +10,7 @@ on: push
   #      - master
 
 jobs:
-  build-images:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,8 +23,8 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
-      - run: npm install
       - run: cd frontend/extension
+      - run: npm install
       - run: npm run build:prod
       - run: zip -r build.zip build
 
