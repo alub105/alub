@@ -1,6 +1,6 @@
 name: deploy extension
 
-on: push
+on: workflow_dispatch
   #  push:
   #    paths:
   #      - 'frontend/extension/public/manifest.json'
