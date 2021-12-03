@@ -1,13 +1,13 @@
 name: deploy extension
 
-on:
-  push:
-    paths:
-      - 'frontend/extension/public/manifest.json'
-    tags:
-      - 'v*'
-    branches:
-      - master
+on: push
+  #  push:
+  #    paths:
+  #      - 'frontend/extension/public/manifest.json'
+  #    tags:
+  #      - 'v*'
+  #    branches:
+  #      - master
 
 jobs:
   build-images:
